@@ -88,18 +88,16 @@ Pelo enunciado e pela configuração presente no projeto, a solução foi pensad
 
 ### Visão arquitetural
 
-```mermaid
-flowchart LR
-    Cliente[Cliente] --> Web[Interface Web]
-    Agente[Agente] --> Web
-    Web --> Controllers[Controllers MVC]
-    Controllers --> Services[Serviços de Negócio]
-    Services --> Dominio[Domínio]
-    Services --> Repositorios[Repositórios JPA]
-    Repositorios --> Banco[(H2 Database)]
-    Services --> Pedidos[Módulo de Pedidos]
-    Services --> Contratos[Módulo de Contratos]
-```
+O fluxo arquitetural esperado para o projeto é:
+
+`Cliente/Agente -> Interface Web -> Controllers -> Services -> Repositories -> Banco de Dados`
+
+Além disso, a camada de serviços concentra as regras de negócio ligadas aos módulos de:
+
+- `Pedidos`
+- `Contratos`
+- `Clientes`
+- `Rendimentos`
 
 ### Subsystems identificados no enunciado
 
@@ -110,14 +108,13 @@ O documento da atividade divide o sistema em dois grandes subsistemas:
 
 ### Arquitetura de implementação esperada
 
-```mermaid
-flowchart TD
-    Views[Views Thymeleaf] --> Controller[Controllers]
-    Controller --> Service[Services]
-    Service --> Repository[Repositories]
-    Repository --> Database[(H2 Database)]
-    Service --> Domain[Entidades de Domínio]
-```
+| Camada | Responsabilidade |
+|---|---|
+| `Views` | Renderização das páginas com `Thymeleaf` |
+| `Controllers` | Recebimento das requisições e controle do fluxo MVC |
+| `Services` | Aplicação das regras de negócio |
+| `Repositories` | Persistência com `JPA/Hibernate` |
+| `Database` | Armazenamento local com `H2` |
 
 > **Observação**
 >
@@ -133,6 +130,10 @@ Os modelos UML já presentes no repositório estão na pasta `Diagrams/`:
 Esses arquivos podem ser abertos no [diagrams.net](https://www.diagrams.net/) para edição e visualização completa.
 
 ### Diagrama de Casos de Uso
+
+<div align="center">
+  <img src="./Diagrams/CasoDeUso.drawio.png" alt="Diagrama de Casos de Uso do Sistema de Aluguel de Carros" width="100%" />
+</div>
 
 O diagrama de casos de uso modela os principais atores e suas interações:
 
@@ -159,67 +160,11 @@ O diagrama de classes apresenta as entidades centrais do domínio e seus relacio
 
 ## Modelo de domínio
 
-Resumo visual da modelagem atual:
+### Diagrama de Classes
 
-```mermaid
-classDiagram
-    class Cliente {
-        int id
-        String nome
-        String cpf
-        String rg
-        String endereco
-        String profissao
-    }
-
-    class Rendimento {
-        float valor
-    }
-
-    class Empregador {
-        String nome
-        String cnpj
-    }
-
-    class Automovel {
-        int id
-        String marca
-        String modelo
-        int ano
-        String placa
-    }
-
-    class PedidoAluguel {
-        int id
-        LocalDate dataCriacao
-        StatusPedido status
-    }
-
-    class Contrato {
-        int id
-        String tipo
-        float valor
-        LocalDate dataInicio
-        LocalDate dataFim
-    }
-
-    class Agente {
-        int id
-        String nome
-    }
-
-    class Banco
-    class Empresa
-
-    Cliente "1" --> "0..*" PedidoAluguel
-    Cliente "1" --> "0..3" Rendimento
-    Rendimento "*" --> "1" Empregador
-    PedidoAluguel "1" --> "1" Automovel
-    PedidoAluguel "1" --> "0..1" Contrato
-    Agente "0..*" --> "0..*" PedidoAluguel
-    Agente <|-- Banco
-    Agente <|-- Empresa
-```
+<div align="center">
+  <img src="./Diagrams/DiagramaDeClasses.drawio.png" alt="Diagrama de Classes do Sistema de Aluguel de Carros" width="100%" />
+</div>
 
 ### Entidades principais
 
