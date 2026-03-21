@@ -237,6 +237,202 @@ As principais regras de negócio levantadas até o momento são:
 | `Contrato condicionado` | O contrato só pode ser gerado após aprovação |
 | `Autenticação` | Apenas usuários autenticados podem criar pedidos |
 
+## Histórias de usuário
+
+### Resumo funcional
+
+| ID | História | Ator |
+|---|---|---|
+| `HU01` | Cadastro de cliente | Cliente |
+| `HU02` | Login | Cliente |
+| `HU03` | Criar pedido de aluguel | Cliente |
+| `HU04` | Consultar pedido | Cliente |
+| `HU05` | Modificar pedido | Cliente |
+| `HU06` | Cancelar pedido | Cliente |
+| `HU07` | Analisar pedido | Agente |
+| `HU08` | Aprovar pedido | Agente |
+| `HU09` | Reprovar pedido | Agente |
+| `HU10` | Gerar contrato | Sistema |
+| `HU11` | Gerenciar rendimentos | Cliente |
+| `HU12` | Transferência de propriedade de automóvel | Sistema |
+
+<details>
+<summary><strong>HU01 - Cadastro de Cliente</strong></summary>
+
+**História**  
+Como cliente, quero me cadastrar no sistema para poder solicitar aluguel de automóveis.
+
+**Critérios de aceitação**
+
+- Dado que estou na tela de cadastro;
+- quando informo todos os dados corretamente;
+- então o sistema deve cadastrar o cliente com sucesso.
+- Dado que o CPF já existe;
+- então o sistema deve impedir o cadastro.
+
+</details>
+
+<details>
+<summary><strong>HU02 - Login</strong></summary>
+
+**História**  
+Como cliente, quero fazer login para acessar minhas funcionalidades no sistema.
+
+**Critérios de aceitação**
+
+- Dado que informo credenciais válidas;
+- então devo acessar o sistema.
+- Dado que informo dados inválidos;
+- então devo receber uma mensagem de erro.
+
+</details>
+
+<details>
+<summary><strong>HU03 - Criar Pedido de Aluguel</strong></summary>
+
+**História**  
+Como cliente, quero criar um pedido de aluguel para solicitar um automóvel.
+
+**Critérios de aceitação**
+
+- Dado que estou logado;
+- quando seleciono um automóvel válido;
+- então o sistema deve criar o pedido com status `PENDENTE`.
+- Dado que não estou logado;
+- então não posso criar pedido.
+
+</details>
+
+<details>
+<summary><strong>HU04 - Consultar Pedido</strong></summary>
+
+**História**  
+Como cliente, quero consultar meus pedidos para acompanhar o status.
+
+**Critérios de aceitação**
+
+- Dado que tenho pedidos cadastrados;
+- quando acesso a lista;
+- então vejo todos os pedidos com seus respectivos status.
+
+</details>
+
+<details>
+<summary><strong>HU05 - Modificar Pedido</strong></summary>
+
+**História**  
+Como cliente, quero modificar um pedido para alterar informações antes da aprovação.
+
+**Critérios de aceitação**
+
+- Dado que o pedido está com status `PENDENTE`;
+- quando solicito alteração;
+- então o sistema deve permitir a modificação.
+- Dado que o pedido já foi aprovado ou reprovado;
+- então o sistema não deve permitir alteração.
+
+</details>
+
+<details>
+<summary><strong>HU06 - Cancelar Pedido</strong></summary>
+
+**História**  
+Como cliente, quero cancelar um pedido para desistir do aluguel.
+
+**Critérios de aceitação**
+
+- Dado que o pedido está com status `PENDENTE`;
+- quando solicito cancelamento;
+- então o status deve ser alterado para `CANCELADO`.
+
+</details>
+
+<details>
+<summary><strong>HU07 - Analisar Pedido</strong></summary>
+
+**História**  
+Como agente, quero analisar pedidos para avaliar a viabilidade financeira.
+
+**Critérios de aceitação**
+
+- Dado que existe um pedido pendente;
+- quando o agente acessa o pedido;
+- então deve visualizar os dados do cliente, rendimentos e automóvel.
+
+</details>
+
+<details>
+<summary><strong>HU08 - Aprovar Pedido</strong></summary>
+
+**História**  
+Como agente, quero aprovar pedidos para permitir a execução do contrato.
+
+**Critérios de aceitação**
+
+- Dado que o pedido foi analisado;
+- quando o agente aprova o pedido;
+- então o status deve ser alterado para `APROVADO`.
+- e o sistema deve permitir a geração de contrato.
+
+</details>
+
+<details>
+<summary><strong>HU09 - Reprovar Pedido</strong></summary>
+
+**História**  
+Como agente, quero reprovar pedidos para negar solicitações inválidas.
+
+**Critérios de aceitação**
+
+- Dado que o pedido não atende aos critérios;
+- quando o agente reprova o pedido;
+- então o status deve ser alterado para `REPROVADO`.
+
+</details>
+
+<details>
+<summary><strong>HU10 - Gerar Contrato</strong></summary>
+
+**História**  
+Como sistema, quero gerar um contrato após a aprovação para formalizar o aluguel.
+
+**Critérios de aceitação**
+
+- Dado que o pedido foi aprovado;
+- quando o contrato é gerado;
+- então deve conter `tipo`, `valor`, `data de início` e `data de fim`.
+
+</details>
+
+<details>
+<summary><strong>HU11 - Gerenciar Rendimentos</strong></summary>
+
+**História**  
+Como cliente, quero cadastrar meus rendimentos para comprovar minha capacidade financeira.
+
+**Critérios de aceitação**
+
+- Dado que o cliente possui menos de `3` rendimentos;
+- quando adiciona um novo rendimento;
+- então o sistema deve permitir.
+- Dado que o cliente já possui `3` rendimentos;
+- então o sistema deve impedir a adição de novos.
+
+</details>
+
+<details>
+<summary><strong>HU12 - Transferência de Propriedade de Automóvel</strong></summary>
+
+**História**  
+Como sistema, quero transferir a propriedade de um automóvel para refletir as condições do contrato.
+
+**Critérios de aceitação**
+
+- Dado que existe um contrato válido;
+- quando a transferência é realizada;
+- então o proprietário do automóvel deve ser atualizado corretamente.
+
+</details>
 
 ## Estrutura atual do projeto
 
