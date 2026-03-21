@@ -1,0 +1,30 @@
+<svg width="1200" height="160" viewBox="0 0 1200 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="160" rx="28" fill="#0A1423"/>
+  <text x="48" y="54" fill="white" font-family="Segoe UI, Arial, sans-serif" font-size="30" font-weight="800">Identidade Visual</text>
+  <text x="48" y="88" fill="#9FB3C8" font-family="Segoe UI, Arial, sans-serif" font-size="18">Paleta criada para comunicar tecnologia, confiança, mobilidade e análise.</text>
+
+  <g transform="translate(48 108)">
+    <rect width="148" height="28" rx="14" fill="#07111F"/>
+    <text x="16" y="19" fill="#D8E4F0" font-family="Segoe UI, Arial, sans-serif" font-size="14" font-weight="700">#07111F</text>
+  </g>
+  <g transform="translate(220 108)">
+    <rect width="148" height="28" rx="14" fill="#102E4A"/>
+    <text x="16" y="19" fill="#D8E4F0" font-family="Segoe UI, Arial, sans-serif" font-size="14" font-weight="700">#102E4A</text>
+  </g>
+  <g transform="translate(392 108)">
+    <rect width="148" height="28" rx="14" fill="#60A5FA"/>
+    <text x="16" y="19" fill="#07111F" font-family="Segoe UI, Arial, sans-serif" font-size="14" font-weight="700">#60A5FA</text>
+  </g>
+  <g transform="translate(564 108)">
+    <rect width="148" height="28" rx="14" fill="#4FD1C5"/>
+    <text x="16" y="19" fill="#07111F" font-family="Segoe UI, Arial, sans-serif" font-size="14" font-weight="700">#4FD1C5</text>
+  </g>
+  <g transform="translate(736 108)">
+    <rect width="148" height="28" rx="14" fill="#F59E0B"/>
+    <text x="16" y="19" fill="#07111F" font-family="Segoe UI, Arial, sans-serif" font-size="14" font-weight="700">#F59E0B</text>
+  </g>
+  <g transform="translate(908 108)">
+    <rect width="148" height="28" rx="14" fill="#F8FAFC"/>
+    <text x="16" y="19" fill="#07111F" font-family="Segoe UI, Arial, sans-serif" font-size="14" font-weight="700">#F8FAFC</text>
+  </g>
+</svg>

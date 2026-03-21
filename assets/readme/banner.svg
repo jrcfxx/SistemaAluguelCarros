@@ -1,0 +1,99 @@
+<svg width="1600" height="560" viewBox="0 0 1600 560" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1600" y2="560" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#07111F"/>
+      <stop offset="0.5" stop-color="#0E2238"/>
+      <stop offset="1" stop-color="#102E4A"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="220" y1="80" x2="1280" y2="460" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#4FD1C5"/>
+      <stop offset="0.5" stop-color="#60A5FA"/>
+      <stop offset="1" stop-color="#F59E0B"/>
+    </linearGradient>
+    <linearGradient id="card" x1="0" y1="0" x2="0" y2="1">
+      <stop stop-color="#0F2740" stop-opacity="0.95"/>
+      <stop offset="1" stop-color="#0A1B2D" stop-opacity="0.92"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="18" stdDeviation="18" flood-color="#020617" flood-opacity="0.35"/>
+    </filter>
+  </defs>
+
+  <rect width="1600" height="560" rx="32" fill="url(#bg)"/>
+  <circle cx="1320" cy="120" r="190" fill="#38BDF8" fill-opacity="0.08"/>
+  <circle cx="240" cy="460" r="160" fill="#F59E0B" fill-opacity="0.08"/>
+  <circle cx="780" cy="120" r="260" fill="#22C55E" fill-opacity="0.05"/>
+
+  <path d="M0 438C196 372 349 350 532 374C710 397 844 459 1036 456C1239 453 1388 385 1600 332V560H0V438Z" fill="#071426" fill-opacity="0.7"/>
+  <path d="M0 468C207 412 386 404 562 426C733 447 869 502 1048 500C1263 498 1434 430 1600 392V560H0V468Z" fill="#0A1930"/>
+
+  <g opacity="0.28">
+    <path d="M140 120H450" stroke="#60A5FA" stroke-width="2" stroke-dasharray="8 8"/>
+    <path d="M1150 126H1460" stroke="#4FD1C5" stroke-width="2" stroke-dasharray="8 8"/>
+    <path d="M1110 330H1470" stroke="#F59E0B" stroke-width="2" stroke-dasharray="8 8"/>
+    <path d="M160 330H470" stroke="#38BDF8" stroke-width="2" stroke-dasharray="8 8"/>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="76" y="74" width="720" height="286" rx="28" fill="#0D1F33" fill-opacity="0.88" stroke="#24476A"/>
+    <rect x="106" y="106" width="144" height="34" rx="17" fill="#0B3442"/>
+    <text x="126" y="129" fill="#7DD3FC" font-family="Segoe UI, Arial, sans-serif" font-size="18" font-weight="700">LDS " Projeto Acadêmico</text>
+
+    <text x="106" y="192" fill="white" font-family="Segoe UI, Arial, sans-serif" font-size="56" font-weight="800">Sistema de Aluguel</text>
+    <text x="106" y="256" fill="white" font-family="Segoe UI, Arial, sans-serif" font-size="56" font-weight="800">de Carros</text>
+
+    <text x="106" y="310" fill="#C7D2FE" font-family="Segoe UI, Arial, sans-serif" font-size="24" font-weight="500">
+      Plataforma web para clientes, agentes, contratos,
+    </text>
+    <text x="106" y="344" fill="#C7D2FE" font-family="Segoe UI, Arial, sans-serif" font-size="24" font-weight="500">
+      análise financeira e gestão completa de pedidos.
+    </text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="936" y="92" width="262" height="118" rx="24" fill="url(#card)" stroke="#2B587A"/>
+    <circle cx="986" cy="151" r="22" fill="#102E49"/>
+    <path d="M976 157C976 149.82 981.82 144 989 144C996.18 144 1002 149.82 1002 157V160H976V157Z" fill="#67E8F9"/>
+    <circle cx="989" cy="138" r="8" fill="#67E8F9"/>
+    <text x="1022" y="144" fill="white" font-family="Segoe UI, Arial, sans-serif" font-size="24" font-weight="700">Clientes</text>
+    <text x="1022" y="176" fill="#B6C2D4" font-family="Segoe UI, Arial, sans-serif" font-size="18">Cadastro, login e rendimentos</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="1222" y="92" width="262" height="118" rx="24" fill="url(#card)" stroke="#2B587A"/>
+    <circle cx="1272" cy="151" r="22" fill="#132F49"/>
+    <rect x="1260" y="138" width="24" height="26" rx="6" fill="#93C5FD"/>
+    <path d="M1265 147H1279" stroke="#102A43" stroke-width="2"/>
+    <path d="M1265 154H1277" stroke="#102A43" stroke-width="2"/>
+    <text x="1308" y="144" fill="white" font-family="Segoe UI, Arial, sans-serif" font-size="24" font-weight="700">Pedidos</text>
+    <text x="1308" y="176" fill="#B6C2D4" font-family="Segoe UI, Arial, sans-serif" font-size="18">Criação, consulta e aprovação</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="936" y="236" width="262" height="118" rx="24" fill="url(#card)" stroke="#2B587A"/>
+    <circle cx="986" cy="295" r="22" fill="#14304A"/>
+    <path d="M978 307L986 289L995 300L1002 285" stroke="#4ADE80" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="1022" y="288" fill="white" font-family="Segoe UI, Arial, sans-serif" font-size="24" font-weight="700">Análise</text>
+    <text x="1022" y="320" fill="#B6C2D4" font-family="Segoe UI, Arial, sans-serif" font-size="18">Viabilidade financeira do pedido</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="1222" y="236" width="262" height="118" rx="24" fill="url(#card)" stroke="#2B587A"/>
+    <circle cx="1272" cy="295" r="22" fill="#193149"/>
+    <path d="M1261 301H1283V286H1261V301Z" fill="#FCD34D"/>
+    <path d="M1265 286V280C1265 276.686 1267.686 274 1271 274H1273C1276.314 274 1279 276.686 1279 280V286" stroke="#FCD34D" stroke-width="3"/>
+    <text x="1308" y="288" fill="white" font-family="Segoe UI, Arial, sans-serif" font-size="24" font-weight="700">Contratos</text>
+    <text x="1308" y="320" fill="#B6C2D4" font-family="Segoe UI, Arial, sans-serif" font-size="18">Formalização e propriedade</text>
+  </g>
+
+  <g transform="translate(820 390)">
+    <path d="M80 32C95 12 132 0 196 0H388C430 0 455 14 467 42L494 110H514C542 110 564 132 564 160V174C564 192 550 206 532 206H516C512 228 493 244 470 244C447 244 428 228 424 206H254C250 228 231 244 208 244C185 244 166 228 162 206H124C96 206 74 184 74 156V124C74 90 95 61 128 50L80 32Z" fill="#0E2238" stroke="url(#accent)" stroke-width="4"/>
+    <path d="M153 76H298C330 76 354 85 372 102L411 140H178C151 140 132 121 132 98C132 85 140 76 153 76Z" fill="#14304A"/>
+    <path d="M320 76H383C426 76 459 94 483 140H430L390 103C373 87 349 76 320 76Z" fill="#1A3A5D"/>
+    <circle cx="208" cy="206" r="29" fill="#0B1726" stroke="#93C5FD" stroke-width="4"/>
+    <circle cx="470" cy="206" r="29" fill="#0B1726" stroke="#FCD34D" stroke-width="4"/>
+    <circle cx="208" cy="206" r="10" fill="#93C5FD"/>
+    <circle cx="470" cy="206" r="10" fill="#FCD34D"/>
+    <path d="M102 144H540" stroke="#1D4ED8" stroke-opacity="0.35" stroke-width="8" stroke-linecap="round"/>
+  </g>
+</svg>

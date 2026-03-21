@@ -1,14 +1,16 @@
 <div align="center">
 
+<img src="./assets/readme/banner.svg" alt="Banner do Sistema de Aluguel de Carros" width="100%" />
+
 # Sistema de Aluguel de Carros
 
 <p>
   <strong>Projeto acadêmico</strong> da disciplina de <strong>Laboratório de Desenvolvimento de Software</strong>
-  voltado à modelagem e implementação de uma plataforma web para <strong>aluguel de automóveis</strong>.
+  para modelagem e implementação de uma plataforma web de <strong>aluguel de automóveis</strong>.
 </p>
 
 <p>
-  Cadastro de clientes • Gestão de pedidos • Análise financeira • Contratos • Transferência de propriedade
+  Clientes • Pedidos • Análise financeira • Contratos • Propriedade de veículos
 </p>
 
 <p>
@@ -21,11 +23,12 @@
 </p>
 
 <p>
-  <a href="#sobre-o-projeto"><img src="https://img.shields.io/badge/Sobre-111827?style=flat-square" alt="Sobre" /></a>
-  <a href="#arquitetura-proposta"><img src="https://img.shields.io/badge/Arquitetura-1F2937?style=flat-square" alt="Arquitetura" /></a>
-  <a href="#diagramas-do-projeto"><img src="https://img.shields.io/badge/Diagramas-374151?style=flat-square" alt="Diagramas" /></a>
-  <a href="#histórias-de-usuário"><img src="https://img.shields.io/badge/Histórias-4B5563?style=flat-square" alt="Histórias" /></a>
-  <a href="#como-executar"><img src="https://img.shields.io/badge/Execução-6B7280?style=flat-square" alt="Execução" /></a>
+  <a href="#-sobre-o-projeto"><img src="https://img.shields.io/badge/Sobre-0F172A?style=flat-square" alt="Sobre" /></a>
+  <a href="#-identidade-visual"><img src="https://img.shields.io/badge/Identidade-102E4A?style=flat-square" alt="Identidade" /></a>
+  <a href="#-arquitetura-proposta"><img src="https://img.shields.io/badge/Arquitetura-153B59?style=flat-square" alt="Arquitetura" /></a>
+  <a href="#-diagramas-do-projeto"><img src="https://img.shields.io/badge/Diagramas-1D4ED8?style=flat-square" alt="Diagramas" /></a>
+  <a href="#-histórias-de-usuário"><img src="https://img.shields.io/badge/Histórias-0F766E?style=flat-square" alt="Histórias" /></a>
+  <a href="#-como-executar"><img src="https://img.shields.io/badge/Execução-B45309?style=flat-square" alt="Execução" /></a>
 </p>
 
 </div>
@@ -44,19 +47,19 @@
 
 ## Sumário
 
-- [Sobre o projeto](#sobre-o-projeto)
-- [Objetivos do sistema](#objetivos-do-sistema)
-- [Estado atual do repositório](#estado-atual-do-repositório)
-- [Stack tecnológica](#stack-tecnológica)
-- [Arquitetura proposta](#arquitetura-proposta)
-- [Diagramas do projeto](#diagramas-do-projeto)
-- [Modelo de domínio](#modelo-de-domínio)
-- [Regras de negócio](#regras-de-negócio)
-- [Histórias de usuário](#histórias-de-usuário)
-- [Estrutura atual do projeto](#estrutura-atual-do-projeto)
-- [Como executar](#como-executar)
-- [Roadmap sugerido](#roadmap-sugerido)
-- [Referências](#referências)
+- [Sobre o projeto](#-sobre-o-projeto)
+- [Objetivos do sistema](#-objetivos-do-sistema)
+- [Estado atual do repositório](#-estado-atual-do-repositório)
+- [Identidade visual](#-identidade-visual)
+- [Arquitetura proposta](#-arquitetura-proposta)
+- [Diagramas do projeto](#-diagramas-do-projeto)
+- [Modelo de domínio](#-modelo-de-domínio)
+- [Regras de negócio](#-regras-de-negócio)
+- [Histórias de usuário](#-histórias-de-usuário)
+- [Estrutura atual do projeto](#-estrutura-atual-do-projeto)
+- [Como executar](#-como-executar)
+- [Roadmap sugerido](#-roadmap-sugerido)
+- [Referências](#-referências)
 
 ## Sobre o projeto
 
@@ -103,7 +106,21 @@ Atualmente, o repositório já possui a base de configuração do projeto e os a
 | Base com `Micronaut` | `Concluído` |
 | Diagrama de Casos de Uso | `Concluído` |
 | Diagrama de Classes | `Concluído` |
+| Diagrama de Pacotes | `Concluído` |
 | Implementação em `src/` | `Pendente` |
+
+## Identidade visual
+
+<div align="center">
+  <img src="./assets/readme/palette.svg" alt="Paleta visual do projeto" width="100%" />
+</div>
+
+A identidade visual do projeto foi construída para transmitir:
+
+- **tecnologia e confiabilidade**, com tons profundos de azul;
+- **mobilidade e fluxo**, com contrastes em ciano;
+- **decisão e status**, com acentos em dourado/laranja;
+- **clareza documental**, com composição limpa para GitHub e apresentação acadêmica.
 
 ## Stack tecnológica
 
@@ -120,6 +137,12 @@ Atualmente, o repositório já possui a base de configuração do projeto e os a
 ## Arquitetura proposta
 
 Pelo enunciado e pela configuração presente no projeto, a solução foi pensada como uma aplicação web em `Java`, seguindo o padrão `MVC`, com separação entre apresentação, regras de negócio e persistência.
+
+### Jornada macro do sistema
+
+<div align="center">
+  <img src="./assets/readme/workflow.svg" alt="Fluxo macro do sistema" width="100%" />
+</div>
 
 ### Visão arquitetural
 
@@ -166,10 +189,11 @@ O documento da atividade divide o sistema em dois grandes subsistemas:
 
 ## Diagramas do projeto
 
-Os modelos UML já presentes no repositório estão na pasta `Diagrams/`:
+Os modelos UML presentes no repositório estão na pasta `Diagrams/`:
 
 - `Diagrams/CasoDeUso.drawio`
 - `Diagrams/DiagramaDeClasses.drawio`
+- `Diagrams/DiagramaDePacote.drawio`
 
 Esses arquivos também possuem versão em imagem e podem ser abertos no [diagrams.net](https://www.diagrams.net/) para edição.
 
@@ -188,6 +212,15 @@ O diagrama de casos de uso modela os principais atores e suas interações:
 | `Agente` | analisar pedido, aprovar pedido, reprovar pedido, modificar pedido |
 | `Empresa` | especialização de `Agente` |
 | `Banco` | especialização de `Agente` |
+
+### Diagrama de Pacotes
+
+<div align="center">
+  <img src="./Diagrams/DiagramaDePacote.drawio.png" alt="Diagrama de Pacotes do Sistema de Aluguel de Carros" width="92%" />
+  <p><em>Organização lógica dos módulos e das dependências estruturais do projeto.</em></p>
+</div>
+
+Esse diagrama reforça a organização por responsabilidades e ajuda a alinhar a implementação futura com a arquitetura planejada.
 
 ## Modelo de domínio
 
@@ -438,11 +471,18 @@ Como sistema, quero transferir a propriedade de um automóvel para refletir as c
 
 ```text
 .
+|-- assets/
+|   `-- readme/
+|       |-- banner.svg
+|       |-- palette.svg
+|       `-- workflow.svg
 |-- Diagrams/
 |   |-- CasoDeUso.drawio
 |   |-- CasoDeUso.drawio.png
 |   |-- DiagramaDeClasses.drawio
-|   `-- DiagramaDeClasses.drawio.png
+|   |-- DiagramaDeClasses.drawio.png
+|   |-- DiagramaDePacote.drawio
+|   `-- DiagramaDePacote.drawio.png
 |-- gradle/
 |-- build.gradle
 |-- gradle.properties
@@ -507,4 +547,4 @@ Com base no laboratório e no estado atual do repositório, os próximos passos 
 ## Referências
 
 - Enunciado da atividade: `LABORATÓRIO 02 - Sistema de Aluguel de Carros.pdf`
-- Diagramas UML: `Diagrams/CasoDeUso.drawio` e `Diagrams/DiagramaDeClasses.drawio`
+- Diagramas UML: `Diagrams/CasoDeUso.drawio`, `Diagrams/DiagramaDeClasses.drawio` e `Diagrams/DiagramaDePacote.drawio`
