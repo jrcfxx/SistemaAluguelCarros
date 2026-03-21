@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="assets/readme/banner.svg" alt="Banner do Sistema de Aluguel de Carros" width="100%" />
+<img src="https://capsule-render.vercel.app/api?type=waving&height=240&color=0:07111F,35:102E4A,70:1D4ED8,100:F59E0B&text=Sistema%20de%20Aluguel%20de%20Carros&fontColor=ffffff&fontSize=42&fontAlignY=40&desc=Projeto%20acad%C3%AAmico%20de%20Laborat%C3%B3rio%20de%20Desenvolvimento%20de%20Software&descAlignY=60" alt="Banner do Sistema de Aluguel de Carros" width="100%" />
 
 # Sistema de Aluguel de Carros
 
@@ -116,7 +116,12 @@ Atualmente, o repositório já possui a base de configuração do projeto e os a
 ## Identidade visual
 
 <div align="center">
-  <img src="assets/readme/palette.svg" alt="Paleta visual do projeto" width="100%" />
+
+<img src="https://img.shields.io/badge/Visual-Dark%20Tech%20Blue-07111F?style=for-the-badge" alt="Dark Tech Blue" />
+<img src="https://img.shields.io/badge/Accent-Electric%20Blue-1D4ED8?style=for-the-badge" alt="Electric Blue" />
+<img src="https://img.shields.io/badge/Highlight-Cyan-4FD1C5?style=for-the-badge" alt="Cyan" />
+<img src="https://img.shields.io/badge/Status-Amber-F59E0B?style=for-the-badge" alt="Amber" />
+
 </div>
 
 A identidade visual do projeto foi construída para transmitir:
@@ -145,9 +150,10 @@ Pelo enunciado e pela configuração presente no projeto, a solução foi pensad
 
 ### Jornada macro do sistema
 
-<div align="center">
-  <img src="assets/readme/workflow.svg" alt="Fluxo macro do sistema" width="100%" />
-</div>
+```text
+Cliente -> Cadastro/Login -> Pedido de Aluguel -> Analise do Agente
+        -> Aprovacao/Reprovacao -> Contrato -> Atualizacao da Propriedade
+```
 
 ### Visão arquitetural
 
