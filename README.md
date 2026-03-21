@@ -114,7 +114,8 @@ Atualmente, o repositório já possui a base de configuração do projeto e os a
 | Diagrama de Casos de Uso | `Concluído` |
 | Diagrama de Classes | `Concluído` |
 | Diagrama de Pacotes | `Concluído` |
-| CRUD de Cliente | `Pendente` |
+| Entidade Cliente + Repository + Service | `Concluído` |
+| CRUD web de Cliente | `Pendente` |
 
 <a id="identidade-visual"></a>
 ## Identidade visual
@@ -493,25 +494,27 @@ Como sistema, quero transferir a propriedade de um automóvel para refletir as c
 .
 |-- assets/
 |   `-- readme/
-|       |-- banner.svg
-|       |-- palette.svg
-|       `-- workflow.svg
 |-- Diagrams/
 |   |-- CasoDeUso.drawio
-|   |-- CasoDeUso.drawio.png
 |   |-- DiagramaDeClasses.drawio
-|   |-- DiagramaDeClasses.drawio.png
-|   |-- DiagramaDePacote.drawio
-|   `-- DiagramaDePacote.drawio.png
+|   `-- DiagramaDePacote.drawio
+|-- gradle/
+|   `-- wrapper/
 |-- src/
 |   `-- main/
 |       |-- java/
 |       |   `-- sistemaaluguelcarros/
-|       |       `-- Application.java
-|       `-- resources/
+|       |       |-- Application.java
+|       |       |-- domain/          # Entidades JPA
+|       |       |   `-- Cliente.java
+|       |       |-- repository/     # Repositórios Micronaut Data
+|       |       |   `-- ClienteRepository.java
+|       |       └── service/         # Regras de negócio
+|       |           `-- ClienteService.java
+|       └── resources/
 |           `-- application.yml
-|-- gradle/
 |-- .env.example
+|-- .gitignore
 |-- build.gradle
 |-- gradle.properties
 |-- gradlew
