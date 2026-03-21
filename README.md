@@ -16,8 +16,8 @@
   <img src="https://img.shields.io/badge/Gradle-8.x-02303A?style=for-the-badge&logo=gradle&logoColor=white" alt="Gradle" />
   <img src="https://img.shields.io/badge/Micronaut-4.x-1B1F23?style=for-the-badge&logo=micronaut&logoColor=white" alt="Micronaut" />
   <img src="https://img.shields.io/badge/Thymeleaf-Views-005F0F?style=for-the-badge" alt="Thymeleaf" />
-  <img src="https://img.shields.io/badge/H2-Database-0B6E99?style=for-the-badge" alt="H2 Database" />
-  <img src="https://img.shields.io/badge/Status-Em%20Modelagem-F59E0B?style=for-the-badge" alt="Status do projeto" />
+  <img src="https://img.shields.io/badge/Azure%20SQL-SQL%20Server-0B6E99?style=for-the-badge" alt="Azure SQL Server" />
+  <img src="https://img.shields.io/badge/Status-Base%20Inicial%20Implementada-F59E0B?style=for-the-badge" alt="Status do projeto" />
 </p>
 
 <p>
@@ -39,9 +39,9 @@
 |---|---|
 | **Contexto** | Projeto acadêmico para modelagem e implementação incremental de um sistema de aluguel de carros |
 | **Arquitetura alvo** | Aplicação web em `Java` com padrão `MVC` |
-| **Stack principal** | `Micronaut`, `Thymeleaf`, `JPA/Hibernate`, `H2`, `Gradle` |
+| **Stack principal** | `Micronaut`, `Thymeleaf`, `JPA/Hibernate`, `Azure SQL Server`, `Gradle` |
 | **Foco funcional** | Clientes, pedidos, análise financeira, contratos e propriedade do automóvel |
-| **Situação atual** | Estrutura do projeto e documentação/modelagem prontas; implementação funcional ainda em construção |
+| **Situação atual** | Modelagem concluída e incremento 1 implementado com estrutura `src`, classe principal e configuração de banco |
 
 ## Sumário
 
@@ -91,12 +91,15 @@ Atualmente, o repositório já possui a base de configuração do projeto e os a
 - configuração inicial com `Gradle`;
 - definição de aplicação `Java` com `Micronaut`;
 - dependências para camada web, persistência e views server-side;
+- estrutura inicial em `src/main/java` e `src/main/resources`;
+- classe principal da aplicação;
+- configuração de datasource para `Azure SQL Server` por variáveis de ambiente;
 - diagramas UML em `Diagrams/`;
 - wrappers do Gradle para execução e build.
 
 > **Importante**
 >
-> Neste momento, o projeto ainda não possui a pasta `src/` com a implementação da aplicação. Portanto, este README documenta o estado atual da modelagem, da arquitetura planejada e dos requisitos levantados até agora.
+> O projeto já possui a base técnica inicial para começar a implementação incremental. Neste momento, a aplicação compila, a estrutura principal está pronta e o próximo passo natural é iniciar o domínio de `Cliente` e seu CRUD.
 
 ### Entregáveis já produzidos
 
@@ -105,10 +108,13 @@ Atualmente, o repositório já possui a base de configuração do projeto e os a
 | Estrutura inicial do projeto | `Concluído` |
 | Configuração com `Gradle` | `Concluído` |
 | Base com `Micronaut` | `Concluído` |
+| Estrutura `src/` | `Concluído` |
+| Classe principal `Application` | `Concluído` |
+| Configuração com Azure SQL Server | `Concluído` |
 | Diagrama de Casos de Uso | `Concluído` |
 | Diagrama de Classes | `Concluído` |
 | Diagrama de Pacotes | `Concluído` |
-| Implementação em `src/` | `Pendente` |
+| CRUD de Cliente | `Pendente` |
 
 <a id="identidade-visual"></a>
 ## Identidade visual
@@ -138,7 +144,7 @@ A identidade visual do projeto foi construída para transmitir:
 | `Micronaut` | Base da aplicação web |
 | `Micronaut Data + Hibernate/JPA` | Persistência e acesso a dados |
 | `Thymeleaf` | Renderização de páginas no servidor |
-| `H2 Database` | Banco de dados para ambiente local |
+| `Azure SQL Server` | Banco de dados principal do projeto |
 | `JUnit 5` | Testes automatizados |
 
 <a id="arquitetura-proposta"></a>
@@ -176,7 +182,7 @@ Cliente / Agente
  Repositórios JPA
        |
        v
-   Banco H2
+ Azure SQL Server
 ```
 
 ### Subsistemas identificados no enunciado
@@ -194,7 +200,7 @@ O documento da atividade divide o sistema em dois grandes subsistemas:
 | `Controllers` | Recebimento das requisições e controle do fluxo MVC |
 | `Services` | Aplicação das regras de negócio |
 | `Repositories` | Persistência com `JPA/Hibernate` |
-| `Database` | Armazenamento local com `H2` |
+| `Database` | Persistência em `Azure SQL Server` |
 
 <a id="diagramas-do-projeto"></a>
 ## Diagramas do projeto
@@ -497,7 +503,15 @@ Como sistema, quero transferir a propriedade de um automóvel para refletir as c
 |   |-- DiagramaDeClasses.drawio.png
 |   |-- DiagramaDePacote.drawio
 |   `-- DiagramaDePacote.drawio.png
+|-- src/
+|   `-- main/
+|       |-- java/
+|       |   `-- sistemaaluguelcarros/
+|       |       `-- Application.java
+|       `-- resources/
+|           `-- application.yml
 |-- gradle/
+|-- .env.example
 |-- build.gradle
 |-- gradle.properties
 |-- gradlew
@@ -513,10 +527,24 @@ Como sistema, quero transferir a propriedade de um automóvel para refletir as c
 
 - `Java 17`
 - `Git` opcional para versionamento e clonagem
+- acesso ao `Azure SQL Server`
 
 ### Comandos
 
+Antes de executar, configure as variáveis de ambiente com base no arquivo `.env.example`.
+
 No Windows:
+
+```powershell
+$env:DB_HOST="servidor-principal.database.windows.net"
+$env:DB_PORT="1433"
+$env:DB_NAME="SistemaAluguelCarros"
+$env:DB_USER="principal"
+$env:DB_PASSWORD="sua-senha-real"
+$env:DB_SCHEMA="dbo"
+```
+
+Depois execute:
 
 ```powershell
 .\gradlew.bat run
@@ -537,28 +565,29 @@ java -version
 
 > **Observação**
 >
-> A configuração de build já está preparada, mas a implementação da aplicação ainda não foi adicionada em `src/`. Portanto, a execução completa do sistema depende da criação do código-fonte.
+> O incremento 1 já foi concluído: a aplicação possui estrutura inicial, classe principal e configuração de banco por variáveis de ambiente. Os próximos incrementos focam em `Cliente`, autenticação e fluxo de pedidos.
 
 <a id="roadmap-sugerido"></a>
 ## Roadmap sugerido
 
 Com base no laboratório e no estado atual do repositório, os próximos passos mais naturais são:
 
-1. criar a estrutura `src/main/java` e `src/main/resources`;
-2. implementar o CRUD de cliente;
-3. adicionar autenticação e login;
-4. implementar o fluxo de pedido de aluguel;
-5. persistir entidades com `JPA` e `H2`;
-6. criar views com `Thymeleaf`;
-7. revisar os diagramas conforme a implementação evoluir.
+1. implementar a entidade `Cliente`;
+2. criar repositório e service de `Cliente`;
+3. implementar o CRUD web de cliente;
+4. adicionar autenticação e login;
+5. implementar o fluxo de pedido de aluguel;
+6. persistir entidades com `JPA` e `Azure SQL Server`;
+7. criar views com `Thymeleaf`;
+8. revisar os diagramas conforme a implementação evoluir.
 
 ### Próximos marcos esperados
 
 | Sprint | Entrega esperada |
 |---|---|
 | `Sprint 01` | Modelagem UML e histórias de usuário |
-| `Sprint 02` | Revisão dos diagramas e CRUD de cliente |
-| `Sprint 03` | Protótipo funcional com criação e consulta de pedidos |
+| `Sprint 02` | Revisão dos diagramas, diagrama de componentes e CRUD de cliente |
+| `Sprint 03` | Diagrama de implantação e protótipo com criação e consulta de pedidos |
 
 <a id="referencias"></a>
 ## Referências
