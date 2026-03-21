@@ -17,7 +17,7 @@
   <img src="https://img.shields.io/badge/Micronaut-4.x-1B1F23?style=for-the-badge&logo=micronaut&logoColor=white" alt="Micronaut" />
   <img src="https://img.shields.io/badge/Thymeleaf-Views-005F0F?style=for-the-badge" alt="Thymeleaf" />
   <img src="https://img.shields.io/badge/Azure%20SQL-SQL%20Server-0B6E99?style=for-the-badge" alt="Azure SQL Server" />
-  <img src="https://img.shields.io/badge/Status-Base%20Inicial%20Implementada-F59E0B?style=for-the-badge" alt="Status do projeto" />
+  <img src="https://img.shields.io/badge/Status-CRUD%20de%20Cliente%20Implementado-F59E0B?style=for-the-badge" alt="Status do projeto" />
 </p>
 
 <p>
@@ -41,7 +41,7 @@
 | **Arquitetura alvo** | Aplicação web em `Java` com padrão `MVC` |
 | **Stack principal** | `Micronaut`, `Thymeleaf`, `JPA/Hibernate`, `Azure SQL Server`, `Gradle` |
 | **Foco funcional** | Clientes, pedidos, análise financeira, contratos e propriedade do automóvel |
-| **Situação atual** | Modelagem concluída e incremento 1 implementado com estrutura `src`, classe principal e configuração de banco |
+| **Situação atual** | Modelagem concluída, base técnica pronta e CRUD web de `Cliente` implementado |
 
 ## Sumário
 
@@ -99,11 +99,30 @@ Atualmente, o repositório já possui a base de configuração do projeto e os a
 
 > **Importante**
 >
-> O projeto já possui a base técnica inicial para começar a implementação incremental. Neste momento, a aplicação compila, a estrutura principal está pronta e o próximo passo natural é iniciar o domínio de `Cliente` e seu CRUD.
+> O projeto já possui a base técnica inicial, o domínio de `Cliente` e o CRUD web funcional de clientes. Neste momento, o próximo passo natural é avançar para autenticação/login ou iniciar o fluxo de `PedidoAluguel`.
 
-### Entregáveis já produzidos
+### Entregáveis já produzidos e plano incremental
 
-| Entregável | Situação |
+| Incremento | Objetivo | Sprint | Status |
+|---|---|---|---|
+| `0` | Modelagem inicial: casos de uso, histórias, classes, pacotes e README | `Sprint 01` | `Concluído` |
+| `1` | Base técnica: `Micronaut`, `Gradle`, `Application`, `src/`, `application.yml`, Azure SQL | `Sprint 02` | `Concluído` |
+| `2` | Domínio e persistência de `Cliente` | `Sprint 02` | `Concluído` |
+| `3` | CRUD web de `Cliente` com `Controller` + `Thymeleaf` | `Sprint 02` | `Concluído` |
+| `4` | Autenticação e login de cliente | `Sprint 02/03` | `Próximo` |
+| `5` | Domínio e persistência de `PedidoAluguel` | `Sprint 03` | `Pendente` |
+| `6` | Criação de pedido pelo cliente | `Sprint 03` | `Pendente` |
+| `7` | Consulta de pedidos e visualização de status | `Sprint 03` | `Pendente` |
+| `8` | Modificação e cancelamento de pedido | `Sprint 03` | `Pendente` |
+| `9` | Análise de pedido por agente | `Sprint 03` | `Pendente` |
+| `10` | Aprovação, reprovação e geração de contrato | `Sprint 03` | `Pendente` |
+| `11` | Gestão de rendimentos e empregadores | `Sprint 03` | `Pendente` |
+| `12` | Automóveis e transferência de propriedade | `Sprint 03` | `Pendente` |
+| `13` | Revisão final, componentes, implantação, polimento e entrega | `Sprint 03` | `Pendente` |
+
+### Entregas concretas já implementadas
+
+| Entrega | Situação |
 |---|---|
 | Estrutura inicial do projeto | `Concluído` |
 | Configuração com `Gradle` | `Concluído` |
@@ -114,8 +133,14 @@ Atualmente, o repositório já possui a base de configuração do projeto e os a
 | Diagrama de Casos de Uso | `Concluído` |
 | Diagrama de Classes | `Concluído` |
 | Diagrama de Pacotes | `Concluído` |
-| Entidade Cliente + Repository + Service | `Concluído` |
-| CRUD web de Cliente | `Pendente` |
+| Entidade `Cliente` | `Concluído` |
+| `ClienteRepository` | `Concluído` |
+| `ClienteService` | `Concluído` |
+| Testes de `ClienteService` | `Concluído` |
+| `HomeController` | `Concluído` |
+| `ClienteController` | `Concluído` |
+| Tela de listagem de clientes | `Concluído` |
+| Tela de cadastro e edição de clientes | `Concluído` |
 
 <a id="identidade-visual"></a>
 ## Identidade visual
@@ -152,6 +177,17 @@ A identidade visual do projeto foi construída para transmitir:
 ## Arquitetura proposta
 
 Pelo enunciado e pela configuração presente no projeto, a solução foi pensada como uma aplicação web em `Java`, seguindo o padrão `MVC`, com separação entre apresentação, regras de negócio e persistência.
+
+### Estado atual da implementação
+
+Atualmente a aplicação já possui:
+
+- camada `domain` com `Cliente`;
+- camada `repository` com `ClienteRepository`;
+- camada `service` com `ClienteService`;
+- camada `controller` com rotas web iniciais;
+- views `Thymeleaf` para listagem, cadastro e edição de clientes;
+- integração preparada com `Azure SQL Server`.
 
 ### Jornada macro do sistema
 
@@ -202,6 +238,18 @@ O documento da atividade divide o sistema em dois grandes subsistemas:
 | `Services` | Aplicação das regras de negócio |
 | `Repositories` | Persistência com `JPA/Hibernate` |
 | `Database` | Persistência em `Azure SQL Server` |
+
+### Fluxo já implementado
+
+No momento, o fluxo funcional disponível no sistema é:
+
+```text
+/  -> redireciona para /clientes
+/clientes -> listagem de clientes
+/clientes/novo -> cadastro de cliente
+/clientes/{id}/editar -> edição de cliente
+/clientes/{id}/excluir -> exclusão de cliente
+```
 
 <a id="diagramas-do-projeto"></a>
 ## Diagramas do projeto
@@ -505,14 +553,27 @@ Como sistema, quero transferir a propriedade de um automóvel para refletir as c
 |       |-- java/
 |       |   `-- sistemaaluguelcarros/
 |       |       |-- Application.java
+|       |       |-- controller/      # Controllers MVC
+|       |       |   |-- ClienteController.java
+|       |       |   `-- HomeController.java
 |       |       |-- domain/          # Entidades JPA
 |       |       |   `-- Cliente.java
-|       |       |-- repository/     # Repositórios Micronaut Data
+|       |       |-- repository/      # Repositórios Micronaut Data
 |       |       |   `-- ClienteRepository.java
-|       |       └── service/         # Regras de negócio
+|       |       `-- service/         # Regras de negócio
 |       |           `-- ClienteService.java
-|       └── resources/
-|           `-- application.yml
+|       `-- resources/
+|           |-- application.yml
+|           `-- views/
+|               `-- clientes/
+|                   |-- formulario.html
+|                   `-- lista.html
+|-- src/
+|   `-- test/
+|       `-- java/
+|           `-- sistemaaluguelcarros/
+|               `-- service/
+|                   `-- ClienteServiceTest.java
 |-- .env.example
 |-- .gitignore
 |-- build.gradle
@@ -553,6 +614,12 @@ Depois execute:
 .\gradlew.bat run
 ```
 
+Depois acesse no navegador:
+
+```text
+http://localhost:8080/clientes
+```
+
 Para compilar e testar:
 
 ```powershell
@@ -568,21 +635,23 @@ java -version
 
 > **Observação**
 >
-> O incremento 1 já foi concluído: a aplicação possui estrutura inicial, classe principal e configuração de banco por variáveis de ambiente. Os próximos incrementos focam em `Cliente`, autenticação e fluxo de pedidos.
+> Os incrementos `1`, `2` e `3` já foram concluídos. A aplicação possui base técnica, persistência de `Cliente` e CRUD web inicial navegável. O próximo incremento recomendado é autenticação/login ou o início de `PedidoAluguel`.
 
 <a id="roadmap-sugerido"></a>
 ## Roadmap sugerido
 
 Com base no laboratório e no estado atual do repositório, os próximos passos mais naturais são:
 
-1. implementar a entidade `Cliente`;
-2. criar repositório e service de `Cliente`;
-3. implementar o CRUD web de cliente;
-4. adicionar autenticação e login;
-5. implementar o fluxo de pedido de aluguel;
-6. persistir entidades com `JPA` e `Azure SQL Server`;
-7. criar views com `Thymeleaf`;
-8. revisar os diagramas conforme a implementação evoluir.
+1. implementar autenticação e login;
+2. modelar `PedidoAluguel` e `StatusPedido`;
+3. permitir criação de pedido pelo cliente;
+4. implementar consulta de pedidos e status;
+5. implementar modificação e cancelamento de pedido;
+6. modelar rendimentos e empregadores;
+7. implementar análise por agente;
+8. aprovar/reprovar pedido e gerar contrato;
+9. modelar automóveis e transferência de propriedade;
+10. revisar os diagramas conforme a implementação evoluir.
 
 ### Próximos marcos esperados
 

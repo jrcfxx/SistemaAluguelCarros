@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clientes | Sistema de Aluguel de Carros</title>
+    <style>
+        :root {
+            color-scheme: light;
+            --bg: #f4f7fb;
+            --surface: #ffffff;
+            --surface-alt: #f8fafc;
+            --text: #0f172a;
+            --muted: #475569;
+            --border: #dbe3ee;
+            --primary: #1d4ed8;
+            --primary-dark: #153eae;
+            --danger: #dc2626;
+            --danger-dark: #b91c1c;
+            --success-bg: #dcfce7;
+            --success-text: #166534;
+            --error-bg: #fee2e2;
+            --error-text: #991b1b;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background: linear-gradient(180deg, #eef4ff 0%, var(--bg) 100%);
+            color: var(--text);
+        }
+
+        .container {
+            max-width: 1120px;
+            margin: 0 auto;
+            padding: 32px 20px 48px;
+        }
+
+        .hero {
+            background: linear-gradient(135deg, #0f172a 0%, #102e4a 55%, #1d4ed8 100%);
+            color: white;
+            border-radius: 24px;
+            padding: 32px;
+            box-shadow: 0 18px 40px rgba(15, 23, 42, 0.16);
+        }
+
+        .hero h1 {
+            margin: 0 0 10px;
+            font-size: 2rem;
+        }
+
+        .hero p {
+            margin: 0;
+            color: #dbeafe;
+            max-width: 720px;
+            line-height: 1.5;
+        }
+
+        .actions {
+            margin-top: 22px;
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            text-decoration: none;
+            border: none;
+            border-radius: 12px;
+            padding: 12px 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform 0.15s ease, opacity 0.15s ease, background 0.15s ease;
+        }
+
+        .button:hover {
+            transform: translateY(-1px);
+            opacity: 0.96;
+        }
+
+        .button-primary {
+            background: white;
+            color: var(--primary);
+        }
+
+        .button-secondary {
+            background: rgba(255, 255, 255, 0.14);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+
+        .panel {
+            margin-top: 24px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 24px;
+            box-shadow: 0 12px 30px rgba(15, 23, 42, 0.05);
+        }
+
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .panel-header h2 {
+            margin: 0;
+            font-size: 1.35rem;
+        }
+
+        .panel-header p {
+            margin: 6px 0 0;
+            color: var(--muted);
+        }
+
+        .alert {
+            margin-bottom: 18px;
+            border-radius: 14px;
+            padding: 14px 16px;
+            font-weight: 600;
+        }
+
+        .alert-success {
+            background: var(--success-bg);
+            color: var(--success-text);
+        }
+
+        .alert-error {
+            background: var(--error-bg);
+            color: var(--error-text);
+        }
+
+        .table-wrap {
+            overflow-x: auto;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--surface);
+        }
+
+        thead {
+            background: var(--surface-alt);
+        }
+
+        th, td {
+            padding: 14px 16px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+            vertical-align: middle;
+        }
+
+        th {
+            font-size: 0.92rem;
+        }
+
+        td {
+            color: #1e293b;
+        }
+
+        .muted {
+            color: var(--muted);
+        }
+
+        .row-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .link-button,
+        .danger-button {
+            border-radius: 10px;
+            padding: 9px 12px;
+            font-weight: 700;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+        }
+
+        .link-button {
+            background: #dbeafe;
+            color: #1d4ed8;
+        }
+
+        .danger-button {
+            background: #fee2e2;
+            color: var(--danger);
+        }
+
+        .danger-button:hover {
+            background: #fecaca;
+            color: var(--danger-dark);
+        }
+
+        .empty-state {
+            padding: 28px;
+            text-align: center;
+            color: var(--muted);
+        }
+    </style>
+</head>
+<body>
+<main class="container">
+    <section class="hero">
+        <h1>Clientes cadastrados</h1>
+        <div class="actions">
+            <a class="button button-primary" href="/clientes/novo">Novo cliente</a>
+            <a class="button button-secondary" href="/">Atualizar página</a>
+        </div>
+    </section>
+
+    <section class="panel">
+        <div th:if="${mensagem}" class="alert alert-success" th:text="${mensagem}"></div>
+        <div th:if="${erro}" class="alert alert-error" th:text="${erro}"></div>
+
+        <div class="panel-header">
+            <div>
+                <h2>Lista de clientes</h2>
+                <p>Gerencie os cadastros já existentes antes de avançar para login e pedidos.</p>
+            </div>
+            <a class="button button-primary" href="/clientes/novo">Cadastrar cliente</a>
+        </div>
+
+        <div class="table-wrap" th:if="${#lists.size(clientes) > 0}">
+            <table>
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nome</th>
+                    <th>CPF</th>
+                    <th>RG</th>
+                    <th>Endereço</th>
+                    <th>Profissão</th>
+                    <th>Ações</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="cliente : ${clientes}">
+                    <td th:text="${cliente.id}">1</td>
+                    <td th:text="${cliente.nome}">João</td>
+                    <td th:text="${cliente.cpf}">000.000.000-00</td>
+                    <td th:text="${cliente.rg != null and !#strings.isEmpty(cliente.rg) ? cliente.rg : '-'}">12.345.678-9</td>
+                    <td th:text="${cliente.endereco}">Rua A</td>
+                    <td th:text="${cliente.profissao != null and !#strings.isEmpty(cliente.profissao) ? cliente.profissao : '-'}">Engenheiro</td>
+                    <td>
+                        <div class="row-actions">
+                            <a class="link-button" th:href="@{'/clientes/' + ${cliente.id} + '/editar'}">Editar</a>
+                            <form th:action="@{'/clientes/' + ${cliente.id} + '/excluir'}" method="post" style="margin: 0;">
+                                <button class="danger-button" type="submit">Excluir</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="empty-state" th:if="${#lists.size(clientes) == 0}">
+            <strong>Nenhum cliente cadastrado ainda.</strong>
+            <p class="muted">Comece criando o primeiro cliente para continuar a implementação incremental do sistema.</p>
+        </div>
+    </section>
+</main>
+</body>
+</html>
