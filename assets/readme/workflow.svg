@@ -20,7 +20,7 @@
     <path d="M122 149C122 141.82 127.82 136 135 136C142.18 136 148 141.82 148 149V153H122V149Z" fill="#67E8F9"/>
     <text x="166" y="132" fill="white" font-family="Segoe UI, Arial, sans-serif" font-size="24" font-weight="700">Cliente</text>
     <text x="116" y="181" fill="#B9C7D8" font-family="Segoe UI, Arial, sans-serif" font-size="18">Cadastro, login e</text>
-    <text x="116" y="206" fill="#B9C7D8" font-family="Segoe UI, Arial, sans-serif" font-size="18">solicitação de aluguel</text>
+    <text x="116" y="206" fill="#B9C7D8" font-family="Segoe UI, Arial, sans-serif" font-size="18">solicitacao de aluguel</text>
   </g>
 
   <g>
@@ -30,8 +30,8 @@
     <path d="M394 131H407" stroke="#0F172A" stroke-width="2"/>
     <path d="M394 138H405" stroke="#0F172A" stroke-width="2"/>
     <text x="432" y="132" fill="white" font-family="Segoe UI, Arial, sans-serif" font-size="24" font-weight="700">Pedido</text>
-    <text x="382" y="181" fill="#B9C7D8" font-family="Segoe UI, Arial, sans-serif" font-size="18">Criação, consulta,</text>
-    <text x="382" y="206" fill="#B9C7D8" font-family="Segoe UI, Arial, sans-serif" font-size="18">modificação e cancelamento</text>
+    <text x="382" y="181" fill="#B9C7D8" font-family="Segoe UI, Arial, sans-serif" font-size="18">Criacao, consulta,</text>
+    <text x="382" y="206" fill="#B9C7D8" font-family="Segoe UI, Arial, sans-serif" font-size="18">modificacao e cancelamento</text>
   </g>
 
   <g>
@@ -39,8 +39,8 @@
     <circle cx="666" cy="136" r="20" fill="#16324B"/>
     <path d="M656 146L664 130L672 140L680 124" stroke="#4ADE80" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
     <text x="698" y="132" fill="white" font-family="Segoe UI, Arial, sans-serif" font-size="24" font-weight="700">Agente</text>
-    <text x="648" y="181" fill="#B9C7D8" font-family="Segoe UI, Arial, sans-serif" font-size="18">Análise financeira,</text>
-    <text x="648" y="206" fill="#B9C7D8" font-family="Segoe UI, Arial, sans-serif" font-size="18">aprovação ou reprovação</text>
+    <text x="648" y="181" fill="#B9C7D8" font-family="Segoe UI, Arial, sans-serif" font-size="18">Analise financeira,</text>
+    <text x="648" y="206" fill="#B9C7D8" font-family="Segoe UI, Arial, sans-serif" font-size="18">aprovacao ou reprovacao</text>
   </g>
 
   <g>
@@ -49,8 +49,8 @@
     <path d="M921 142H943V127H921V142Z" fill="#FCD34D"/>
     <path d="M925 127V121C925 117.686 927.686 115 931 115H933C936.314 115 939 117.686 939 121V127" stroke="#FCD34D" stroke-width="3"/>
     <text x="964" y="132" fill="white" font-family="Segoe UI, Arial, sans-serif" font-size="24" font-weight="700">Contrato</text>
-    <text x="914" y="181" fill="#B9C7D8" font-family="Segoe UI, Arial, sans-serif" font-size="18">Formalização do aluguel</text>
-    <text x="914" y="206" fill="#B9C7D8" font-family="Segoe UI, Arial, sans-serif" font-size="18">e vínculo do pedido</text>
+    <text x="914" y="181" fill="#B9C7D8" font-family="Segoe UI, Arial, sans-serif" font-size="18">Formalizacao do aluguel</text>
+    <text x="914" y="206" fill="#B9C7D8" font-family="Segoe UI, Arial, sans-serif" font-size="18">e vinculo do pedido</text>
   </g>
 
   <g>
@@ -58,8 +58,8 @@
     <circle cx="1198" cy="136" r="20" fill="#16324B"/>
     <path d="M1187 144C1187 136.82 1192.82 131 1200 131C1207.18 131 1213 136.82 1213 144V148H1187V144Z" fill="#FCA5A5"/>
     <circle cx="1200" cy="125" r="8" fill="#FCA5A5"/>
-    <text x="1230" y="132" fill="white" font-family="Segoe UI, Arial, sans-serif" font-size="24" font-weight="700">Veículo</text>
-    <text x="1180" y="181" fill="#B9C7D8" font-family="Segoe UI, Arial, sans-serif" font-size="18">Atualização da</text>
+    <text x="1230" y="132" fill="white" font-family="Segoe UI, Arial, sans-serif" font-size="24" font-weight="700">Veiculo</text>
+    <text x="1180" y="181" fill="#B9C7D8" font-family="Segoe UI, Arial, sans-serif" font-size="18">Atualizacao da</text>
     <text x="1180" y="206" fill="#B9C7D8" font-family="Segoe UI, Arial, sans-serif" font-size="18">propriedade</text>
   </g>
 </svg>

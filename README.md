@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="./assets/readme/banner.svg" alt="Banner do Sistema de Aluguel de Carros" width="100%" />
+<img src="assets/readme/banner.svg" alt="Banner do Sistema de Aluguel de Carros" width="100%" />
 
 # Sistema de Aluguel de Carros
 
@@ -23,12 +23,12 @@
 </p>
 
 <p>
-  <a href="#-sobre-o-projeto"><img src="https://img.shields.io/badge/Sobre-0F172A?style=flat-square" alt="Sobre" /></a>
-  <a href="#-identidade-visual"><img src="https://img.shields.io/badge/Identidade-102E4A?style=flat-square" alt="Identidade" /></a>
-  <a href="#-arquitetura-proposta"><img src="https://img.shields.io/badge/Arquitetura-153B59?style=flat-square" alt="Arquitetura" /></a>
-  <a href="#-diagramas-do-projeto"><img src="https://img.shields.io/badge/Diagramas-1D4ED8?style=flat-square" alt="Diagramas" /></a>
-  <a href="#-histórias-de-usuário"><img src="https://img.shields.io/badge/Histórias-0F766E?style=flat-square" alt="Histórias" /></a>
-  <a href="#-como-executar"><img src="https://img.shields.io/badge/Execução-B45309?style=flat-square" alt="Execução" /></a>
+  <a href="#sobre-o-projeto"><img src="https://img.shields.io/badge/Sobre-0F172A?style=flat-square" alt="Sobre" /></a>
+  <a href="#identidade-visual"><img src="https://img.shields.io/badge/Identidade-102E4A?style=flat-square" alt="Identidade" /></a>
+  <a href="#arquitetura-proposta"><img src="https://img.shields.io/badge/Arquitetura-153B59?style=flat-square" alt="Arquitetura" /></a>
+  <a href="#diagramas-do-projeto"><img src="https://img.shields.io/badge/Diagramas-1D4ED8?style=flat-square" alt="Diagramas" /></a>
+  <a href="#historias-de-usuario"><img src="https://img.shields.io/badge/Histórias-0F766E?style=flat-square" alt="Histórias" /></a>
+  <a href="#como-executar"><img src="https://img.shields.io/badge/Execução-B45309?style=flat-square" alt="Execução" /></a>
 </p>
 
 </div>
@@ -47,20 +47,21 @@
 
 ## Sumário
 
-- [Sobre o projeto](#-sobre-o-projeto)
-- [Objetivos do sistema](#-objetivos-do-sistema)
-- [Estado atual do repositório](#-estado-atual-do-repositório)
-- [Identidade visual](#-identidade-visual)
-- [Arquitetura proposta](#-arquitetura-proposta)
-- [Diagramas do projeto](#-diagramas-do-projeto)
-- [Modelo de domínio](#-modelo-de-domínio)
-- [Regras de negócio](#-regras-de-negócio)
-- [Histórias de usuário](#-histórias-de-usuário)
-- [Estrutura atual do projeto](#-estrutura-atual-do-projeto)
-- [Como executar](#-como-executar)
-- [Roadmap sugerido](#-roadmap-sugerido)
-- [Referências](#-referências)
+- [Sobre o projeto](#sobre-o-projeto)
+- [Objetivos do sistema](#objetivos-do-sistema)
+- [Estado atual do repositório](#estado-atual-do-repositorio)
+- [Identidade visual](#identidade-visual)
+- [Arquitetura proposta](#arquitetura-proposta)
+- [Diagramas do projeto](#diagramas-do-projeto)
+- [Modelo de domínio](#modelo-de-dominio)
+- [Regras de negócio](#regras-de-negocio)
+- [Histórias de usuário](#historias-de-usuario)
+- [Estrutura atual do projeto](#estrutura-atual-do-projeto)
+- [Como executar](#como-executar)
+- [Roadmap sugerido](#roadmap-sugerido)
+- [Referências](#referencias)
 
+<a id="sobre-o-projeto"></a>
 ## Sobre o projeto
 
 O sistema foi concebido para permitir que clientes realizem pedidos de aluguel de automóveis pela internet, enquanto agentes, como empresas e bancos, possam analisar a viabilidade financeira dessas solicitações.
@@ -71,6 +72,7 @@ Após a aprovação do pedido, o sistema deve possibilitar a geração de contra
 >
 > A proposta do projeto é reunir em uma única aplicação web os fluxos de **cadastro**, **autenticação**, **gestão de pedidos**, **análise financeira** e **formalização contratual**, mantendo alinhamento com a modelagem UML e com os requisitos acadêmicos definidos na disciplina.
 
+<a id="objetivos-do-sistema"></a>
 ## Objetivos do sistema
 
 De acordo com a especificação do laboratório, o sistema deve:
@@ -83,6 +85,7 @@ De acordo com a especificação do laboratório, o sistema deve:
 - registrar automóveis e refletir sua propriedade conforme o contrato;
 - atender a uma arquitetura `MVC` em `Java`.
 
+<a id="estado-atual-do-repositorio"></a>
 ## Estado atual do repositório
 
 Atualmente, o repositório já possui a base de configuração do projeto e os artefatos de modelagem, incluindo:
@@ -109,10 +112,11 @@ Atualmente, o repositório já possui a base de configuração do projeto e os a
 | Diagrama de Pacotes | `Concluído` |
 | Implementação em `src/` | `Pendente` |
 
+<a id="identidade-visual"></a>
 ## Identidade visual
 
 <div align="center">
-  <img src="./assets/readme/palette.svg" alt="Paleta visual do projeto" width="100%" />
+  <img src="assets/readme/palette.svg" alt="Paleta visual do projeto" width="100%" />
 </div>
 
 A identidade visual do projeto foi construída para transmitir:
@@ -134,6 +138,7 @@ A identidade visual do projeto foi construída para transmitir:
 | `H2 Database` | Banco de dados para ambiente local |
 | `JUnit 5` | Testes automatizados |
 
+<a id="arquitetura-proposta"></a>
 ## Arquitetura proposta
 
 Pelo enunciado e pela configuração presente no projeto, a solução foi pensada como uma aplicação web em `Java`, seguindo o padrão `MVC`, com separação entre apresentação, regras de negócio e persistência.
@@ -141,7 +146,7 @@ Pelo enunciado e pela configuração presente no projeto, a solução foi pensad
 ### Jornada macro do sistema
 
 <div align="center">
-  <img src="./assets/readme/workflow.svg" alt="Fluxo macro do sistema" width="100%" />
+  <img src="assets/readme/workflow.svg" alt="Fluxo macro do sistema" width="100%" />
 </div>
 
 ### Visão arquitetural
@@ -187,6 +192,7 @@ O documento da atividade divide o sistema em dois grandes subsistemas:
 | `Repositories` | Persistência com `JPA/Hibernate` |
 | `Database` | Armazenamento local com `H2` |
 
+<a id="diagramas-do-projeto"></a>
 ## Diagramas do projeto
 
 Os modelos UML presentes no repositório estão na pasta `Diagrams/`:
@@ -200,7 +206,7 @@ Esses arquivos também possuem versão em imagem e podem ser abertos no [diagram
 ### Diagrama de Casos de Uso
 
 <div align="center">
-  <img src="./Diagrams/CasoDeUso.drawio.png" alt="Diagrama de Casos de Uso do Sistema de Aluguel de Carros" width="92%" />
+  <img src="Diagrams/CasoDeUso.drawio.png" alt="Diagrama de Casos de Uso do Sistema de Aluguel de Carros" width="92%" />
   <p><em>Visão funcional dos atores e das principais interações do sistema.</em></p>
 </div>
 
@@ -216,18 +222,19 @@ O diagrama de casos de uso modela os principais atores e suas interações:
 ### Diagrama de Pacotes
 
 <div align="center">
-  <img src="./Diagrams/DiagramaDePacote.drawio.png" alt="Diagrama de Pacotes do Sistema de Aluguel de Carros" width="92%" />
+  <img src="Diagrams/DiagramaDePacote.drawio.png" alt="Diagrama de Pacotes do Sistema de Aluguel de Carros" width="92%" />
   <p><em>Organização lógica dos módulos e das dependências estruturais do projeto.</em></p>
 </div>
 
 Esse diagrama reforça a organização por responsabilidades e ajuda a alinhar a implementação futura com a arquitetura planejada.
 
+<a id="modelo-de-dominio"></a>
 ## Modelo de domínio
 
 ### Diagrama de Classes
 
 <div align="center">
-  <img src="./Diagrams/DiagramaDeClasses.drawio.png" alt="Diagrama de Classes do Sistema de Aluguel de Carros" width="92%" />
+  <img src="Diagrams/DiagramaDeClasses.drawio.png" alt="Diagrama de Classes do Sistema de Aluguel de Carros" width="92%" />
   <p><em>Estrutura conceitual das entidades, relacionamentos e responsabilidades do domínio.</em></p>
 </div>
 
@@ -245,6 +252,7 @@ Esse diagrama reforça a organização por responsabilidades e ajuda a alinhar a
 | `Banco` | Pode conceder crédito vinculado ao pedido |
 | `Empresa` | Participa da gestão do aluguel |
 
+<a id="regras-de-negocio"></a>
 ## Regras de negócio
 
 As principais regras de negócio levantadas até o momento são:
@@ -270,6 +278,7 @@ As principais regras de negócio levantadas até o momento são:
 | `Contrato condicionado` | O contrato só pode ser gerado após aprovação |
 | `Autenticação` | Apenas usuários autenticados podem criar pedidos |
 
+<a id="historias-de-usuario"></a>
 ## Histórias de usuário
 
 ### Resumo funcional
@@ -467,6 +476,7 @@ Como sistema, quero transferir a propriedade de um automóvel para refletir as c
 
 </details>
 
+<a id="estrutura-atual-do-projeto"></a>
 ## Estrutura atual do projeto
 
 ```text
@@ -492,6 +502,7 @@ Como sistema, quero transferir a propriedade de um automóvel para refletir as c
 `-- README.md
 ```
 
+<a id="como-executar"></a>
 ## Como executar
 
 ### Pré-requisitos
@@ -524,6 +535,7 @@ java -version
 >
 > A configuração de build já está preparada, mas a implementação da aplicação ainda não foi adicionada em `src/`. Portanto, a execução completa do sistema depende da criação do código-fonte.
 
+<a id="roadmap-sugerido"></a>
 ## Roadmap sugerido
 
 Com base no laboratório e no estado atual do repositório, os próximos passos mais naturais são:
@@ -544,6 +556,7 @@ Com base no laboratório e no estado atual do repositório, os próximos passos 
 | `Sprint 02` | Revisão dos diagramas e CRUD de cliente |
 | `Sprint 03` | Protótipo funcional com criação e consulta de pedidos |
 
+<a id="referencias"></a>
 ## Referências
 
 - Enunciado da atividade: `LABORATÓRIO 02 - Sistema de Aluguel de Carros.pdf`
