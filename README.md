@@ -3,10 +3,12 @@
 # Sistema de Aluguel de Carros
 
 <p>
-  Aplicação acadêmica desenvolvida para a disciplina de <strong>Laboratório de Desenvolvimento de Software</strong>,
-  com foco em <strong>cadastro de clientes</strong>, <strong>gestão de pedidos de aluguel</strong>,
-  <strong>análise financeira</strong>, <strong>geração de contratos</strong> e
-  <strong>transferência de propriedade de automóveis</strong>.
+  <strong>Projeto acadêmico</strong> da disciplina de <strong>Laboratório de Desenvolvimento de Software</strong>
+  voltado à modelagem e implementação de uma plataforma web para <strong>aluguel de automóveis</strong>.
+</p>
+
+<p>
+  Cadastro de clientes • Gestão de pedidos • Análise financeira • Contratos • Transferência de propriedade
 </p>
 
 <p>
@@ -15,12 +17,30 @@
   <img src="https://img.shields.io/badge/Micronaut-4.x-1B1F23?style=for-the-badge&logo=micronaut&logoColor=white" alt="Micronaut" />
   <img src="https://img.shields.io/badge/Thymeleaf-Views-005F0F?style=for-the-badge" alt="Thymeleaf" />
   <img src="https://img.shields.io/badge/H2-Database-0B6E99?style=for-the-badge" alt="H2 Database" />
-  <img src="https://img.shields.io/badge/Status-Em%20Modelagem%20e%20Implementação-F59E0B?style=for-the-badge" alt="Status do projeto" />
+  <img src="https://img.shields.io/badge/Status-Em%20Modelagem-F59E0B?style=for-the-badge" alt="Status do projeto" />
+</p>
+
+<p>
+  <a href="#sobre-o-projeto"><img src="https://img.shields.io/badge/Sobre-111827?style=flat-square" alt="Sobre" /></a>
+  <a href="#arquitetura-proposta"><img src="https://img.shields.io/badge/Arquitetura-1F2937?style=flat-square" alt="Arquitetura" /></a>
+  <a href="#diagramas-do-projeto"><img src="https://img.shields.io/badge/Diagramas-374151?style=flat-square" alt="Diagramas" /></a>
+  <a href="#histórias-de-usuário"><img src="https://img.shields.io/badge/Histórias-4B5563?style=flat-square" alt="Histórias" /></a>
+  <a href="#como-executar"><img src="https://img.shields.io/badge/Execução-6B7280?style=flat-square" alt="Execução" /></a>
 </p>
 
 </div>
 
 ---
+
+## Visão rápida
+
+| Item | Resumo |
+|---|---|
+| **Contexto** | Projeto acadêmico para modelagem e implementação incremental de um sistema de aluguel de carros |
+| **Arquitetura alvo** | Aplicação web em `Java` com padrão `MVC` |
+| **Stack principal** | `Micronaut`, `Thymeleaf`, `JPA/Hibernate`, `H2`, `Gradle` |
+| **Foco funcional** | Clientes, pedidos, análise financeira, contratos e propriedade do automóvel |
+| **Situação atual** | Estrutura do projeto e documentação/modelagem prontas; implementação funcional ainda em construção |
 
 ## Sumário
 
@@ -43,6 +63,10 @@
 O sistema foi concebido para permitir que clientes realizem pedidos de aluguel de automóveis pela internet, enquanto agentes, como empresas e bancos, possam analisar a viabilidade financeira dessas solicitações.
 
 Após a aprovação do pedido, o sistema deve possibilitar a geração de contrato e refletir a propriedade do automóvel conforme as regras definidas pelo tipo de contrato.
+
+> **Resumo executivo**
+>
+> A proposta do projeto é reunir em uma única aplicação web os fluxos de **cadastro**, **autenticação**, **gestão de pedidos**, **análise financeira** e **formalização contratual**, mantendo alinhamento com a modelagem UML e com os requisitos acadêmicos definidos na disciplina.
 
 ## Objetivos do sistema
 
@@ -70,6 +94,17 @@ Atualmente, o repositório já possui a base de configuração do projeto e os a
 >
 > Neste momento, o projeto ainda não possui a pasta `src/` com a implementação da aplicação. Portanto, este README documenta o estado atual da modelagem, da arquitetura planejada e dos requisitos levantados até agora.
 
+### Entregáveis já produzidos
+
+| Entregável | Situação |
+|---|---|
+| Estrutura inicial do projeto | `Concluído` |
+| Configuração com `Gradle` | `Concluído` |
+| Base com `Micronaut` | `Concluído` |
+| Diagrama de Casos de Uso | `Concluído` |
+| Diagrama de Classes | `Concluído` |
+| Implementação em `src/` | `Pendente` |
+
 ## Stack tecnológica
 
 | Tecnologia | Papel no projeto |
@@ -88,18 +123,31 @@ Pelo enunciado e pela configuração presente no projeto, a solução foi pensad
 
 ### Visão arquitetural
 
-O fluxo arquitetural esperado para o projeto é:
+```text
+Cliente / Agente
+       |
+       v
+ Interface Web
+       |
+       v
+ Controllers MVC
+       |
+       v
+ Serviços de Negócio
+       |
+       +--> Gestão de Clientes
+       +--> Gestão de Rendimentos
+       +--> Gestão de Pedidos
+       +--> Gestão de Contratos
+       |
+       v
+ Repositórios JPA
+       |
+       v
+   Banco H2
+```
 
-`Cliente/Agente -> Interface Web -> Controllers -> Services -> Repositories -> Banco de Dados`
-
-Além disso, a camada de serviços concentra as regras de negócio ligadas aos módulos de:
-
-- `Pedidos`
-- `Contratos`
-- `Clientes`
-- `Rendimentos`
-
-### Subsystems identificados no enunciado
+### Subsistemas identificados no enunciado
 
 O documento da atividade divide o sistema em dois grandes subsistemas:
 
@@ -116,10 +164,6 @@ O documento da atividade divide o sistema em dois grandes subsistemas:
 | `Repositories` | Persistência com `JPA/Hibernate` |
 | `Database` | Armazenamento local com `H2` |
 
-> **Observação**
->
-> Caso o preview local do editor não renderize diagramas `Mermaid`, a visualização costuma funcionar normalmente no GitHub. Os diagramas UML oficiais do projeto também estão disponíveis em `Diagrams/`.
-
 ## Diagramas do projeto
 
 Os modelos UML já presentes no repositório estão na pasta `Diagrams/`:
@@ -127,12 +171,13 @@ Os modelos UML já presentes no repositório estão na pasta `Diagrams/`:
 - `Diagrams/CasoDeUso.drawio`
 - `Diagrams/DiagramaDeClasses.drawio`
 
-Esses arquivos podem ser abertos no [diagrams.net](https://www.diagrams.net/) para edição e visualização completa.
+Esses arquivos também possuem versão em imagem e podem ser abertos no [diagrams.net](https://www.diagrams.net/) para edição.
 
 ### Diagrama de Casos de Uso
 
 <div align="center">
-  <img src="./Diagrams/CasoDeUso.drawio.png" alt="Diagrama de Casos de Uso do Sistema de Aluguel de Carros" width="100%" />
+  <img src="./Diagrams/CasoDeUso.drawio.png" alt="Diagrama de Casos de Uso do Sistema de Aluguel de Carros" width="92%" />
+  <p><em>Visão funcional dos atores e das principais interações do sistema.</em></p>
 </div>
 
 O diagrama de casos de uso modela os principais atores e suas interações:
@@ -144,26 +189,13 @@ O diagrama de casos de uso modela os principais atores e suas interações:
 | `Empresa` | especialização de `Agente` |
 | `Banco` | especialização de `Agente` |
 
-### Diagrama de Classes
-
-O diagrama de classes apresenta as entidades centrais do domínio e seus relacionamentos:
-
-- `Cliente`
-- `Rendimento`
-- `Empregador`
-- `Automóvel`
-- `PedidoAluguel`
-- `Contrato`
-- `Agente`
-- `Banco`
-- `Empresa`
-
 ## Modelo de domínio
 
 ### Diagrama de Classes
 
 <div align="center">
-  <img src="./Diagrams/DiagramaDeClasses.drawio.png" alt="Diagrama de Classes do Sistema de Aluguel de Carros" width="100%" />
+  <img src="./Diagrams/DiagramaDeClasses.drawio.png" alt="Diagrama de Classes do Sistema de Aluguel de Carros" width="92%" />
+  <p><em>Estrutura conceitual das entidades, relacionamentos e responsabilidades do domínio.</em></p>
 </div>
 
 ### Entidades principais
@@ -195,6 +227,16 @@ As principais regras de negócio levantadas até o momento são:
 - a propriedade do automóvel pode variar conforme o tipo de contrato;
 - o aluguel pode estar associado a contrato de crédito concedido por banco agente.
 
+### Restrições centrais do domínio
+
+| Regra | Descrição |
+|---|---|
+| `CPF único` | Não é permitido cadastrar dois clientes com o mesmo CPF |
+| `Máximo de rendimentos` | Cada cliente pode possuir até `3` rendimentos |
+| `Pedido pendente` | Apenas pedidos `PENDENTE` podem ser alterados ou cancelados |
+| `Contrato condicionado` | O contrato só pode ser gerado após aprovação |
+| `Autenticação` | Apenas usuários autenticados podem criar pedidos |
+
 
 ## Estrutura atual do projeto
 
@@ -202,7 +244,9 @@ As principais regras de negócio levantadas até o momento são:
 .
 |-- Diagrams/
 |   |-- CasoDeUso.drawio
-|   `-- DiagramaDeClasses.drawio
+|   |-- CasoDeUso.drawio.png
+|   |-- DiagramaDeClasses.drawio
+|   `-- DiagramaDeClasses.drawio.png
 |-- gradle/
 |-- build.gradle
 |-- gradle.properties
@@ -217,6 +261,7 @@ As principais regras de negócio levantadas até o momento são:
 ### Pré-requisitos
 
 - `Java 17`
+- `Git` opcional para versionamento e clonagem
 
 ### Comandos
 
@@ -231,6 +276,12 @@ Para compilar e testar:
 ```powershell
 .\gradlew.bat build
 .\gradlew.bat test
+```
+
+### Verificação do ambiente
+
+```powershell
+java -version
 ```
 
 > **Observação**
@@ -248,6 +299,14 @@ Com base no laboratório e no estado atual do repositório, os próximos passos 
 5. persistir entidades com `JPA` e `H2`;
 6. criar views com `Thymeleaf`;
 7. revisar os diagramas conforme a implementação evoluir.
+
+### Próximos marcos esperados
+
+| Sprint | Entrega esperada |
+|---|---|
+| `Sprint 01` | Modelagem UML e histórias de usuário |
+| `Sprint 02` | Revisão dos diagramas e CRUD de cliente |
+| `Sprint 03` | Protótipo funcional com criação e consulta de pedidos |
 
 ## Referências
 
