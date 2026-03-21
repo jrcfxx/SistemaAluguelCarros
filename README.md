@@ -1,122 +1,163 @@
+<div align="center">
+
 # Sistema de Aluguel de Carros
 
-Projeto academico da disciplina de Laboratorio de Desenvolvimento de Software para apoio a gestao de alugueis de automoveis, com foco em cadastro de clientes, criacao e analise de pedidos, geracao de contratos e transferencia de propriedade de automoveis.
+<p>
+  Aplicação acadêmica desenvolvida para a disciplina de <strong>Laboratório de Desenvolvimento de Software</strong>,
+  com foco em <strong>cadastro de clientes</strong>, <strong>gestão de pedidos de aluguel</strong>,
+  <strong>análise financeira</strong>, <strong>geração de contratos</strong> e
+  <strong>transferência de propriedade de automóveis</strong>.
+</p>
 
-## Visao Geral
+<p>
+  <img src="https://img.shields.io/badge/Java-17-red?style=for-the-badge&logo=openjdk&logoColor=white" alt="Java 17" />
+  <img src="https://img.shields.io/badge/Gradle-8.x-02303A?style=for-the-badge&logo=gradle&logoColor=white" alt="Gradle" />
+  <img src="https://img.shields.io/badge/Micronaut-4.x-1B1F23?style=for-the-badge&logo=micronaut&logoColor=white" alt="Micronaut" />
+  <img src="https://img.shields.io/badge/Thymeleaf-Views-005F0F?style=for-the-badge" alt="Thymeleaf" />
+  <img src="https://img.shields.io/badge/H2-Database-0B6E99?style=for-the-badge" alt="H2 Database" />
+  <img src="https://img.shields.io/badge/Status-Em%20Modelagem%20e%20Implementação-F59E0B?style=for-the-badge" alt="Status do projeto" />
+</p>
 
-O sistema foi proposto para permitir que clientes realizem pedidos de aluguel pela internet e que agentes, como empresas e bancos, analisem a viabilidade financeira desses pedidos. Quando aprovado, o pedido pode gerar um contrato e atualizar a propriedade do automovel conforme as regras do negocio.
+</div>
 
-De acordo com a especificacao do laboratorio, o sistema deve:
+---
 
-- permitir cadastro e autenticacao de clientes;
+## Sumário
+
+- [Sobre o projeto](#sobre-o-projeto)
+- [Objetivos do sistema](#objetivos-do-sistema)
+- [Estado atual do repositório](#estado-atual-do-repositório)
+- [Stack tecnológica](#stack-tecnológica)
+- [Arquitetura proposta](#arquitetura-proposta)
+- [Diagramas do projeto](#diagramas-do-projeto)
+- [Modelo de domínio](#modelo-de-domínio)
+- [Regras de negócio](#regras-de-negócio)
+- [Histórias de usuário](#histórias-de-usuário)
+- [Estrutura atual do projeto](#estrutura-atual-do-projeto)
+- [Como executar](#como-executar)
+- [Roadmap sugerido](#roadmap-sugerido)
+- [Referências](#referências)
+
+## Sobre o projeto
+
+O sistema foi concebido para permitir que clientes realizem pedidos de aluguel de automóveis pela internet, enquanto agentes, como empresas e bancos, possam analisar a viabilidade financeira dessas solicitações.
+
+Após a aprovação do pedido, o sistema deve possibilitar a geração de contrato e refletir a propriedade do automóvel conforme as regras definidas pelo tipo de contrato.
+
+## Objetivos do sistema
+
+De acordo com a especificação do laboratório, o sistema deve:
+
+- permitir cadastro e autenticação de clientes;
 - permitir criar, consultar, modificar e cancelar pedidos de aluguel;
 - permitir que agentes analisem, aprovem ou reprovem pedidos;
-- gerar contrato apos aprovacao;
-- armazenar rendimentos do cliente, limitados a 3 registros;
-- registrar automoveis e refletir sua propriedade conforme o contrato;
-- atender a uma arquitetura MVC em Java.
+- gerar contrato após a aprovação;
+- armazenar rendimentos do cliente, limitados a `3` registros;
+- registrar automóveis e refletir sua propriedade conforme o contrato;
+- atender a uma arquitetura `MVC` em `Java`.
 
-## Estado Atual do Repositorio
+## Estado atual do repositório
 
-No momento, o repositorio contem:
+Atualmente, o repositório já possui a base de configuração do projeto e os artefatos de modelagem, incluindo:
 
-- configuracao inicial com `Gradle`;
-- base de aplicacao Java com `Micronaut`;
-- dependencias para web MVC, persistencia e views server-side;
+- configuração inicial com `Gradle`;
+- definição de aplicação `Java` com `Micronaut`;
+- dependências para camada web, persistência e views server-side;
 - diagramas UML em `Diagrams/`;
-- wrappers do Gradle para execucao do projeto.
+- wrappers do Gradle para execução e build.
 
-No estado atual, ainda nao existe a pasta `src/` com a implementacao da aplicacao. Isso significa que a documentacao abaixo descreve o sistema modelado e a arquitetura planejada/estruturada ate agora, mas a implementacao funcional ainda esta em andamento.
+> **Importante**
+>
+> Neste momento, o projeto ainda não possui a pasta `src/` com a implementação da aplicação. Portanto, este README documenta o estado atual da modelagem, da arquitetura planejada e dos requisitos levantados até agora.
 
-## Stack Tecnologica
+## Stack tecnológica
 
-A configuracao atual do projeto indica o seguinte conjunto de tecnologias:
+| Tecnologia | Papel no projeto |
+|---|---|
+| `Java 17` | Linguagem principal da aplicação |
+| `Gradle` | Build, execução e gerenciamento de dependências |
+| `Micronaut` | Base da aplicação web |
+| `Micronaut Data + Hibernate/JPA` | Persistência e acesso a dados |
+| `Thymeleaf` | Renderização de páginas no servidor |
+| `H2 Database` | Banco de dados para ambiente local |
+| `JUnit 5` | Testes automatizados |
 
-- `Java 17`
-- `Gradle`
-- `Micronaut`
-- `Micronaut Data + Hibernate/JPA`
-- `Thymeleaf` para renderizacao de paginas web
-- `H2 Database` para banco de dados em tempo de execucao
-- `JUnit 5` para testes
+## Arquitetura proposta
 
-## Arquitetura Proposta
+Pelo enunciado e pela configuração presente no projeto, a solução foi pensada como uma aplicação web em `Java`, seguindo o padrão `MVC`, com separação entre apresentação, regras de negócio e persistência.
 
-Pelo enunciado e pela configuracao atual, a arquitetura prevista e uma aplicacao web em Java no estilo MVC, organizada em camadas de apresentacao, regras de negocio e persistencia.
-
-### Visao arquitetural
+### Visão arquitetural
 
 ```mermaid
 flowchart LR
-    C[Cliente] --> W[Interface Web]
-    A[Agente] --> W
-    W --> CTRL[Controllers MVC]
-    CTRL --> SVC[Servicos de negocio]
-    SVC --> DOM[Dominio]
-    SVC --> REP[Repositorios JPA]
-    REP --> DB[(Banco H2)]
-    SVC --> CTR[Modulo de contratos]
-    SVC --> PED[Modulo de pedidos]
+    Cliente[Cliente] --> Web[Interface Web]
+    Agente[Agente] --> Web
+    Web --> Controllers[Controllers MVC]
+    Controllers --> Services[Serviços de Negócio]
+    Services --> Dominio[Domínio]
+    Services --> Repositorios[Repositórios JPA]
+    Repositorios --> Banco[(H2 Database)]
+    Services --> Pedidos[Módulo de Pedidos]
+    Services --> Contratos[Módulo de Contratos]
 ```
 
 ### Subsystems identificados no enunciado
 
 O documento da atividade divide o sistema em dois grandes subsistemas:
 
-- `Gestao de pedidos e contratos`
-- `Construcao dinamica de paginas web`
+- `Gestão de pedidos e contratos`
+- `Construção dinâmica das páginas web`
 
-### Arquitetura de implementacao esperada
+### Arquitetura de implementação esperada
 
 ```mermaid
 flowchart TD
-    UI[Views Thymeleaf] --> Controller
-    Controller --> Service
-    Service --> Repository
-    Repository --> H2[(H2 Database)]
-    Service --> Domain[Entidades de dominio]
+    Views[Views Thymeleaf] --> Controller[Controllers]
+    Controller --> Service[Services]
+    Service --> Repository[Repositories]
+    Repository --> Database[(H2 Database)]
+    Service --> Domain[Entidades de Domínio]
 ```
 
-## Diagramas
+> **Observação**
+>
+> Caso o preview local do editor não renderize diagramas `Mermaid`, a visualização costuma funcionar normalmente no GitHub. Os diagramas UML oficiais do projeto também estão disponíveis em `Diagrams/`.
 
-Os modelos UML ja presentes no repositorio estao na pasta `Diagrams/`:
+## Diagramas do projeto
+
+Os modelos UML já presentes no repositório estão na pasta `Diagrams/`:
 
 - `Diagrams/CasoDeUso.drawio`
 - `Diagrams/DiagramaDeClasses.drawio`
 
+Esses arquivos podem ser abertos no [diagrams.net](https://www.diagrams.net/) para edição e visualização completa.
+
 ### Diagrama de Casos de Uso
 
-O diagrama de casos de uso modelado no projeto contempla os seguintes atores e interacoes:
+O diagrama de casos de uso modela os principais atores e suas interações:
 
-- `Cliente`
-  - cadastrar-se
-  - fazer login
-  - criar pedido de aluguel
-  - consultar pedido
-  - modificar pedido
-  - cancelar pedido
-- `Agente`
-  - analisar pedido
-  - aprovar pedido
-  - reprovar pedido
-  - modificar pedido
-- especializacoes de `Agente`
-  - `Empresa`
-  - `Banco`
+| Ator | Ações principais |
+|---|---|
+| `Cliente` | cadastrar-se, fazer login, criar pedido, consultar pedido, modificar pedido, cancelar pedido |
+| `Agente` | analisar pedido, aprovar pedido, reprovar pedido, modificar pedido |
+| `Empresa` | especialização de `Agente` |
+| `Banco` | especialização de `Agente` |
 
 ### Diagrama de Classes
 
-Com base no modelo UML criado, as principais entidades do dominio sao:
+O diagrama de classes apresenta as entidades centrais do domínio e seus relacionamentos:
 
 - `Cliente`
 - `Rendimento`
 - `Empregador`
-- `Automovel`
+- `Automóvel`
 - `PedidoAluguel`
 - `Contrato`
 - `Agente`
 - `Banco`
 - `Empresa`
+
+## Modelo de domínio
 
 Resumo visual da modelagem atual:
 
@@ -180,22 +221,37 @@ classDiagram
     Agente <|-- Empresa
 ```
 
-## Regras de Negocio Levantadas
+### Entidades principais
 
-As regras levantadas ate o momento a partir do enunciado e das historias de usuario sao:
+| Entidade | Responsabilidade |
+|---|---|
+| `Cliente` | Representa o usuário que solicita o aluguel |
+| `Rendimento` | Registra a capacidade financeira do cliente |
+| `Empregador` | Identifica a origem do rendimento |
+| `Automóvel` | Representa o veículo alugado no sistema |
+| `PedidoAluguel` | Controla a solicitação de aluguel e seu status |
+| `Contrato` | Formaliza a relação de aluguel após aprovação |
+| `Agente` | Analisa pedidos e decide pela aprovação ou reprovação |
+| `Banco` | Pode conceder crédito vinculado ao pedido |
+| `Empresa` | Participa da gestão do aluguel |
 
-- o sistema so pode ser utilizado apos cadastro previo;
-- o CPF do cliente deve ser unico;
-- o cliente pode possuir no maximo `3` rendimentos;
+## Regras de negócio
+
+As principais regras de negócio levantadas até o momento são:
+
+- o sistema só pode ser utilizado após cadastro prévio;
+- o `CPF` do cliente deve ser único;
+- o cliente pode possuir no máximo `3` rendimentos;
 - apenas clientes autenticados podem criar pedidos;
 - pedidos iniciam com status `PENDENTE`;
-- pedidos `PENDENTE` podem ser modificados e cancelados;
-- pedidos aprovados ou reprovados nao podem ser modificados;
-- contratos so podem ser gerados para pedidos `APROVADO`;
-- a propriedade do automovel pode variar conforme o tipo de contrato;
-- o aluguel pode estar associado a contrato de credito concedido por banco agente.
+- pedidos com status `PENDENTE` podem ser modificados e cancelados;
+- pedidos aprovados ou reprovados não podem ser modificados;
+- contratos só podem ser gerados para pedidos `APROVADO`;
+- a propriedade do automóvel pode variar conforme o tipo de contrato;
+- o aluguel pode estar associado a contrato de crédito concedido por banco agente.
 
-## Estrutura Atual do Projeto
+
+## Estrutura atual do projeto
 
 ```text
 .
@@ -211,9 +267,9 @@ As regras levantadas ate o momento a partir do enunciado e das historias de usua
 `-- README.md
 ```
 
-## Como Executar
+## Como executar
 
-### Pre-requisitos
+### Pré-requisitos
 
 - `Java 17`
 
@@ -225,28 +281,30 @@ No Windows:
 .\gradlew.bat run
 ```
 
-Para compilar/testar:
+Para compilar e testar:
 
 ```powershell
 .\gradlew.bat build
 .\gradlew.bat test
 ```
 
-> Observacao: a configuracao de build ja esta preparada, mas a implementacao da aplicacao ainda nao foi adicionada em `src/`. Portanto, a execucao completa do sistema depende da criacao do codigo-fonte.
+> **Observação**
+>
+> A configuração de build já está preparada, mas a implementação da aplicação ainda não foi adicionada em `src/`. Portanto, a execução completa do sistema depende da criação do código-fonte.
 
-## Roadmap Sugerido
+## Roadmap sugerido
 
-Com base no laboratorio e no estado atual do repositorio, os proximos passos mais naturais sao:
+Com base no laboratório e no estado atual do repositório, os próximos passos mais naturais são:
 
 1. criar a estrutura `src/main/java` e `src/main/resources`;
 2. implementar o CRUD de cliente;
-3. adicionar autenticacao/login;
-4. implementar fluxo de pedido de aluguel;
-5. persistir entidades com JPA/H2;
-6. criar views com Thymeleaf;
-7. revisar os diagramas conforme a implementacao evoluir.
+3. adicionar autenticação e login;
+4. implementar o fluxo de pedido de aluguel;
+5. persistir entidades com `JPA` e `H2`;
+6. criar views com `Thymeleaf`;
+7. revisar os diagramas conforme a implementação evoluir.
 
-## Referencias
+## Referências
 
 - Enunciado da atividade: `LABORATÓRIO 02 - Sistema de Aluguel de Carros.pdf`
 - Diagramas UML: `Diagrams/CasoDeUso.drawio` e `Diagrams/DiagramaDeClasses.drawio`
