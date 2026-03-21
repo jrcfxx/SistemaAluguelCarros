@@ -2,8 +2,6 @@
 
 <img src="https://capsule-render.vercel.app/api?type=waving&height=240&color=0:07111F,35:102E4A,70:1D4ED8,100:F59E0B&text=Sistema%20de%20Aluguel%20de%20Carros&fontColor=ffffff&fontSize=42&fontAlignY=40&desc=Projeto%20acad%C3%AAmico%20de%20Laborat%C3%B3rio%20de%20Desenvolvimento%20de%20Software&descAlignY=60" alt="Banner do Sistema de Aluguel de Carros" width="100%" />
 
-# Sistema de Aluguel de Carros
-
 <p>
   <strong>Projeto acadêmico</strong> da disciplina de <strong>Laboratório de Desenvolvimento de Software</strong>
   para modelagem e implementação de uma plataforma web de <strong>aluguel de automóveis</strong>.
