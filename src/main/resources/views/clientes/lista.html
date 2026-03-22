@@ -63,9 +63,10 @@
                     <td>
                         <div class="row-actions">
                             <a class="link-button" th:href="@{'/clientes/' + ${cliente.id} + '/editar'}">Editar</a>
-                            <form th:action="@{'/clientes/' + ${cliente.id} + '/excluir'}" method="post" style="margin: 0;">
-                                <button class="danger-button" type="submit">Excluir</button>
-                            </form>
+                            <button type="button" class="danger-button"
+                                    data-modal-excluir
+                                    th:data-action="@{/clientes/{id}/excluir(id=${cliente.id})}"
+                                    th:data-nome="${cliente.nome}">Excluir</button>
                         </div>
                     </td>
                 </tr>
@@ -79,5 +80,9 @@
         </div>
     </section>
 </main>
+
+<div th:replace="~{components/modal-excluir :: modal(titulo='Excluir cliente')}"></div>
+
+<script src="/js/modal-excluir.js"></script>
 </body>
 </html>

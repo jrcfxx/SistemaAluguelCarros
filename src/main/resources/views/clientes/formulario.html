@@ -25,9 +25,9 @@
     </section>
 
     <section class="panel">
-        <div th:if="${erro}" class="alert" th:text="${erro}"></div>
+        <div th:if="${erro}" class="alert alert-error" th:text="${erro}"></div>
 
-        <form method="post" th:attr="action=${formAction}">
+        <form method="post" th:action="${formAction}" enctype="application/x-www-form-urlencoded">
             <div class="grid">
                 <div>
                     <label for="nome">Nome *</label>

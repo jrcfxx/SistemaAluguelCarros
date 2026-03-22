@@ -119,10 +119,14 @@ public class ClienteController {
         }
     }
 
-    @Post("/{id}/excluir")
-    public MutableHttpResponse<?> excluir(@PathVariable Long id) {
-        clienteService.excluir(id);
-        return redirectComMensagem("Cliente excluído com sucesso.");
+    @Post(value = "/{id}/excluir", consumes = MediaType.APPLICATION_FORM_URLENCODED)
+    public Object excluir(@PathVariable Long id) {
+        try {
+            clienteService.excluir(id);
+            return redirectComMensagem("Cliente excluído com sucesso.");
+        } catch (Exception ex) {
+            return redirectComErro("Não foi possível excluir o cliente. " + ex.getMessage());
+        }
     }
 
     private ModelAndView<Map<String, Object>> formularioModel(

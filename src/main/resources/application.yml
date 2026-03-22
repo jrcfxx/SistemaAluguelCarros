@@ -20,8 +20,6 @@ datasources:
     dialect: SQL_SERVER
     schema-generate: NONE
 
-# Desenvolvimento: hbm2ddl.auto=update cria/atualiza tabelas automaticamente.
-# Produção: defina DB_HBM2DDL_AUTO=none
 jpa:
   default:
     properties:

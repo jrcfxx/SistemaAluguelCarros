@@ -1,0 +1,16 @@
+<div th:fragment="modal(titulo)" xmlns:th="http://www.thymeleaf.org" id="modal-excluir" class="modal-overlay" hidden>
+    <div class="modal-backdrop modal-excluir-fechar"></div>
+    <div class="modal-card">
+        <h3 class="modal-title" th:text="${titulo}">Excluir</h3>
+        <p class="modal-text">
+            Tem certeza que deseja excluir <strong id="modal-excluir-nome"></strong>?
+            Esta ação não pode ser desfeita.
+        </p>
+        <div class="modal-actions">
+            <button type="button" class="button button-neutral modal-excluir-fechar">Cancelar</button>
+            <form id="form-excluir" method="post" enctype="application/x-www-form-urlencoded" style="margin: 0;">
+                <button type="submit" class="button danger-button">Confirmar exclusão</button>
+            </form>
+        </div>
+    </div>
+</div>
