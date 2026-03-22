@@ -4,221 +4,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Clientes | Sistema de Aluguel de Carros</title>
-    <style>
-        :root {
-            color-scheme: light;
-            --bg: #f4f7fb;
-            --surface: #ffffff;
-            --surface-alt: #f8fafc;
-            --text: #0f172a;
-            --muted: #475569;
-            --border: #dbe3ee;
-            --primary: #1d4ed8;
-            --primary-dark: #153eae;
-            --danger: #dc2626;
-            --danger-dark: #b91c1c;
-            --success-bg: #dcfce7;
-            --success-text: #166534;
-            --error-bg: #fee2e2;
-            --error-text: #991b1b;
-        }
-
-        * {
-            box-sizing: border-box;
-        }
-
-        body {
-            margin: 0;
-            font-family: Arial, Helvetica, sans-serif;
-            background: linear-gradient(180deg, #eef4ff 0%, var(--bg) 100%);
-            color: var(--text);
-        }
-
-        .container {
-            max-width: 1120px;
-            margin: 0 auto;
-            padding: 32px 20px 48px;
-        }
-
-        .hero {
-            background: linear-gradient(135deg, #0f172a 0%, #102e4a 55%, #1d4ed8 100%);
-            color: white;
-            border-radius: 24px;
-            padding: 32px;
-            box-shadow: 0 18px 40px rgba(15, 23, 42, 0.16);
-        }
-
-        .hero h1 {
-            margin: 0 0 10px;
-            font-size: 2rem;
-        }
-
-        .hero p {
-            margin: 0;
-            color: #dbeafe;
-            max-width: 720px;
-            line-height: 1.5;
-        }
-
-        .actions {
-            margin-top: 22px;
-            display: flex;
-            gap: 12px;
-            flex-wrap: wrap;
-        }
-
-        .button {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            text-decoration: none;
-            border: none;
-            border-radius: 12px;
-            padding: 12px 18px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: transform 0.15s ease, opacity 0.15s ease, background 0.15s ease;
-        }
-
-        .button:hover {
-            transform: translateY(-1px);
-            opacity: 0.96;
-        }
-
-        .button-primary {
-            background: white;
-            color: var(--primary);
-        }
-
-        .button-secondary {
-            background: rgba(255, 255, 255, 0.14);
-            color: white;
-            border: 1px solid rgba(255, 255, 255, 0.18);
-        }
-
-        .panel {
-            margin-top: 24px;
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 20px;
-            padding: 24px;
-            box-shadow: 0 12px 30px rgba(15, 23, 42, 0.05);
-        }
-
-        .panel-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 16px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-        }
-
-        .panel-header h2 {
-            margin: 0;
-            font-size: 1.35rem;
-        }
-
-        .panel-header p {
-            margin: 6px 0 0;
-            color: var(--muted);
-        }
-
-        .alert {
-            margin-bottom: 18px;
-            border-radius: 14px;
-            padding: 14px 16px;
-            font-weight: 600;
-        }
-
-        .alert-success {
-            background: var(--success-bg);
-            color: var(--success-text);
-        }
-
-        .alert-error {
-            background: var(--error-bg);
-            color: var(--error-text);
-        }
-
-        .table-wrap {
-            overflow-x: auto;
-            border: 1px solid var(--border);
-            border-radius: 16px;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            background: var(--surface);
-        }
-
-        thead {
-            background: var(--surface-alt);
-        }
-
-        th, td {
-            padding: 14px 16px;
-            text-align: left;
-            border-bottom: 1px solid var(--border);
-            vertical-align: middle;
-        }
-
-        th {
-            font-size: 0.92rem;
-        }
-
-        td {
-            color: #1e293b;
-        }
-
-        .muted {
-            color: var(--muted);
-        }
-
-        .row-actions {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
-
-        .link-button,
-        .danger-button {
-            border-radius: 10px;
-            padding: 9px 12px;
-            font-weight: 700;
-            text-decoration: none;
-            border: none;
-            cursor: pointer;
-        }
-
-        .link-button {
-            background: #dbeafe;
-            color: #1d4ed8;
-        }
-
-        .danger-button {
-            background: #fee2e2;
-            color: var(--danger);
-        }
-
-        .danger-button:hover {
-            background: #fecaca;
-            color: var(--danger-dark);
-        }
-
-        .empty-state {
-            padding: 28px;
-            text-align: center;
-            color: var(--muted);
-        }
-    </style>
+    <link rel="stylesheet" href="/css/app.css">
 </head>
 <body>
 <main class="container">
+    <div class="topbar">
+        <a class="brand-mark" href="/clientes">
+            <span class="brand-dot"></span>
+            <span>Sistema de Aluguel de Carros</span>
+        </a>
+    </div>
+
     <section class="hero">
+        <span class="eyebrow">CRUD de Cliente</span>
         <h1>Clientes cadastrados</h1>
+        <p>
+            Aqui você visualiza, edita e remove clientes já salvos.
+        </p>
         <div class="actions">
             <a class="button button-primary" href="/clientes/novo">Novo cliente</a>
             <a class="button button-secondary" href="/">Atualizar página</a>
@@ -232,9 +34,9 @@
         <div class="panel-header">
             <div>
                 <h2>Lista de clientes</h2>
-                <p>Gerencie os cadastros já existentes antes de avançar para login e pedidos.</p>
+                <p>Gerencie os cadastros já existentes antes de avançar para login, autenticação e pedidos.</p>
             </div>
-            <a class="button button-primary" href="/clientes/novo">Cadastrar cliente</a>
+            <a class="button button-primary-solid" href="/clientes/novo">Cadastrar cliente</a>
         </div>
 
         <div class="table-wrap" th:if="${#lists.size(clientes) > 0}">

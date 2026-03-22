@@ -4,160 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title th:text="${titulo} + ' | Sistema de Aluguel de Carros'">Cadastro de cliente</title>
-    <style>
-        :root {
-            color-scheme: light;
-            --bg: #f4f7fb;
-            --surface: #ffffff;
-            --text: #0f172a;
-            --muted: #475569;
-            --border: #dbe3ee;
-            --primary: #1d4ed8;
-            --primary-dark: #153eae;
-            --error-bg: #fee2e2;
-            --error-text: #991b1b;
-        }
-
-        * {
-            box-sizing: border-box;
-        }
-
-        body {
-            margin: 0;
-            font-family: Arial, Helvetica, sans-serif;
-            background: linear-gradient(180deg, #eef4ff 0%, var(--bg) 100%);
-            color: var(--text);
-        }
-
-        .container {
-            max-width: 860px;
-            margin: 0 auto;
-            padding: 32px 20px 48px;
-        }
-
-        .hero {
-            background: linear-gradient(135deg, #0f172a 0%, #102e4a 55%, #1d4ed8 100%);
-            color: white;
-            border-radius: 24px;
-            padding: 28px 30px;
-            box-shadow: 0 18px 40px rgba(15, 23, 42, 0.16);
-        }
-
-        .hero h1 {
-            margin: 0 0 10px;
-            font-size: 2rem;
-        }
-
-        .hero p {
-            margin: 0;
-            color: #dbeafe;
-            line-height: 1.5;
-        }
-
-        .panel {
-            margin-top: 24px;
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 20px;
-            padding: 26px;
-            box-shadow: 0 12px 30px rgba(15, 23, 42, 0.05);
-        }
-
-        .alert {
-            margin-bottom: 18px;
-            border-radius: 14px;
-            padding: 14px 16px;
-            font-weight: 700;
-            background: var(--error-bg);
-            color: var(--error-text);
-        }
-
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-            gap: 18px;
-        }
-
-        .field-full {
-            grid-column: 1 / -1;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 700;
-        }
-
-        input {
-            width: 100%;
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 12px 14px;
-            font-size: 1rem;
-            background: #fff;
-        }
-
-        input:focus {
-            outline: 2px solid rgba(29, 78, 216, 0.18);
-            border-color: var(--primary);
-        }
-
-        .hint {
-            margin-top: 6px;
-            color: var(--muted);
-            font-size: 0.92rem;
-        }
-
-        .actions {
-            display: flex;
-            gap: 12px;
-            justify-content: flex-end;
-            flex-wrap: wrap;
-            margin-top: 24px;
-        }
-
-        .button {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            text-decoration: none;
-            border: none;
-            border-radius: 12px;
-            padding: 12px 18px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: transform 0.15s ease, opacity 0.15s ease, background 0.15s ease;
-        }
-
-        .button:hover {
-            transform: translateY(-1px);
-            opacity: 0.96;
-        }
-
-        .button-primary {
-            background: var(--primary);
-            color: white;
-        }
-
-        .button-primary:hover {
-            background: var(--primary-dark);
-        }
-
-        .button-secondary {
-            background: #e2e8f0;
-            color: #1e293b;
-        }
-
-        @media (max-width: 720px) {
-            .grid {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="/css/app.css">
 </head>
 <body>
 <main class="container">
+    <div class="topbar">
+        <a class="brand-mark" href="/clientes">
+            <span class="brand-dot"></span>
+            <span>Sistema de Aluguel de Carros</span>
+        </a>
+    </div>
+
     <section class="hero">
+        <span class="eyebrow">• Cliente</span>
         <h1 th:text="${titulo}">Cadastrar cliente</h1>
         <p>
             Preencha os dados básicos do cliente.
@@ -198,8 +57,8 @@
             </div>
 
             <div class="actions">
-                <a class="button button-secondary" href="/clientes">Cancelar</a>
-                <button class="button button-primary" type="submit">Salvar cliente</button>
+                <a class="button button-neutral" href="/clientes">Cancelar</a>
+                <button class="button button-primary-solid" type="submit">Salvar cliente</button>
             </div>
         </form>
     </section>

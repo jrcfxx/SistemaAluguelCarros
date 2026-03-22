@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="https://capsule-render.vercel.app/api?type=waving&height=240&color=0:07111F,35:102E4A,70:1D4ED8,100:F59E0B&text=Sistema%20de%20Aluguel%20de%20Carros&fontColor=ffffff&fontSize=42&fontAlignY=40&desc=Projeto%20acad%C3%AAmico%20de%20Laborat%C3%B3rio%20de%20Desenvolvimento%20de%20Software&descAlignY=60" alt="Banner do Sistema de Aluguel de Carros" width="100%" />
+<img src="https://capsule-render.vercel.app/api?type=waving&height=240&color=0:07111F,32:102E4A,68:1D4ED8,100:4FD1C5&text=Sistema%20de%20Aluguel%20de%20Carros&fontColor=ffffff&fontSize=42&fontAlignY=40&desc=Projeto%20acad%C3%AAmico%20de%20Laborat%C3%B3rio%20de%20Desenvolvimento%20de%20Software&descAlignY=60" alt="Banner do Sistema de Aluguel de Carros" width="100%" />
 
 <p>
   <strong>Projeto acadêmico</strong> da disciplina de <strong>Laboratório de Desenvolvimento de Software</strong>
@@ -17,16 +17,16 @@
   <img src="https://img.shields.io/badge/Micronaut-4.x-1B1F23?style=for-the-badge&logo=micronaut&logoColor=white" alt="Micronaut" />
   <img src="https://img.shields.io/badge/Thymeleaf-Views-005F0F?style=for-the-badge" alt="Thymeleaf" />
   <img src="https://img.shields.io/badge/Azure%20SQL-SQL%20Server-0B6E99?style=for-the-badge" alt="Azure SQL Server" />
-  <img src="https://img.shields.io/badge/Status-CRUD%20de%20Cliente%20Implementado-F59E0B?style=for-the-badge" alt="Status do projeto" />
+  <img src="https://img.shields.io/badge/Status-CRUD%20de%20Cliente%20Implementado-4FD1C5?style=for-the-badge" alt="Status do projeto" />
 </p>
 
 <p>
-  <a href="#sobre-o-projeto"><img src="https://img.shields.io/badge/Sobre-0F172A?style=flat-square" alt="Sobre" /></a>
+  <a href="#sobre-o-projeto"><img src="https://img.shields.io/badge/Sobre-07111F?style=flat-square" alt="Sobre" /></a>
   <a href="#identidade-visual"><img src="https://img.shields.io/badge/Identidade-102E4A?style=flat-square" alt="Identidade" /></a>
-  <a href="#arquitetura-proposta"><img src="https://img.shields.io/badge/Arquitetura-153B59?style=flat-square" alt="Arquitetura" /></a>
-  <a href="#diagramas-do-projeto"><img src="https://img.shields.io/badge/Diagramas-1D4ED8?style=flat-square" alt="Diagramas" /></a>
+  <a href="#arquitetura-proposta"><img src="https://img.shields.io/badge/Arquitetura-1D4ED8?style=flat-square" alt="Arquitetura" /></a>
+  <a href="#diagramas-do-projeto"><img src="https://img.shields.io/badge/Diagramas-4FD1C5?style=flat-square" alt="Diagramas" /></a>
   <a href="#historias-de-usuario"><img src="https://img.shields.io/badge/Histórias-0F766E?style=flat-square" alt="Histórias" /></a>
-  <a href="#como-executar"><img src="https://img.shields.io/badge/Execução-B45309?style=flat-square" alt="Execução" /></a>
+  <a href="#como-executar"><img src="https://img.shields.io/badge/Execução-F59E0B?style=flat-square" alt="Execução" /></a>
 </p>
 
 </div>
@@ -147,10 +147,11 @@ Atualmente, o repositório já possui a base de configuração do projeto e os a
 
 <div align="center">
 
-<img src="https://img.shields.io/badge/Visual-Dark%20Tech%20Blue-07111F?style=for-the-badge" alt="Dark Tech Blue" />
-<img src="https://img.shields.io/badge/Accent-Electric%20Blue-1D4ED8?style=for-the-badge" alt="Electric Blue" />
-<img src="https://img.shields.io/badge/Highlight-Cyan-4FD1C5?style=for-the-badge" alt="Cyan" />
-<img src="https://img.shields.io/badge/Status-Amber-F59E0B?style=for-the-badge" alt="Amber" />
+<img src="https://img.shields.io/badge/Navy-07111F?style=for-the-badge" alt="Navy" />
+<img src="https://img.shields.io/badge/Slate-102E4A?style=for-the-badge" alt="Slate" />
+<img src="https://img.shields.io/badge/Blue-1D4ED8?style=for-the-badge" alt="Blue" />
+<img src="https://img.shields.io/badge/Cyan-4FD1C5?style=for-the-badge" alt="Cyan" />
+<img src="https://img.shields.io/badge/Amber-F59E0B?style=for-the-badge" alt="Amber" />
 
 </div>
 
@@ -158,8 +159,25 @@ A identidade visual do projeto foi construída para transmitir:
 
 - **tecnologia e confiabilidade**, com tons profundos de azul;
 - **mobilidade e fluxo**, com contrastes em ciano;
-- **decisão e status**, com acentos em dourado/laranja;
+- **destaque e ação**, com acentos em âmbar;
 - **clareza documental**, com composição limpa para GitHub e apresentação acadêmica.
+
+### Paleta oficial da interface
+
+| Papel visual | Cor | Uso principal |
+|---|---|---|
+| `Navy` | `#07111F` | base institucional e profundidade |
+| `Slate` | `#102E4A` | fundos escuros e contraste |
+| `Blue` | `#1D4ED8` | ação principal, links e botões |
+| `Cyan` | `#4FD1C5` | destaque visual e frescor da interface |
+| `Amber` | `#F59E0B` | atenção, progresso e acentos |
+
+### Onde a identidade já está aplicada
+
+- `README` com a mesma paleta da interface;
+- banner e badges alinhados ao tema do projeto;
+- telas de `Cliente` com visual moderno, clean e consistente;
+- tema compartilhado em `src/main/resources/public/css/app.css`.
 
 ## Stack tecnológica
 
@@ -187,6 +205,7 @@ Atualmente a aplicação já possui:
 - camada `service` com `ClienteService`;
 - camada `controller` com rotas web iniciais;
 - views `Thymeleaf` para listagem, cadastro e edição de clientes;
+- identidade visual compartilhada por CSS;
 - integração preparada com `Azure SQL Server`.
 
 ### Jornada macro do sistema
@@ -564,6 +583,9 @@ Como sistema, quero transferir a propriedade de um automóvel para refletir as c
 |       |           `-- ClienteService.java
 |       `-- resources/
 |           |-- application.yml
+|           |-- public/
+|           |   `-- css/
+|           |       `-- app.css
 |           `-- views/
 |               `-- clientes/
 |                   |-- formulario.html

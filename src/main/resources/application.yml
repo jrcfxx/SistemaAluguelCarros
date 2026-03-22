@@ -1,6 +1,12 @@
 micronaut:
   application:
     name: sistemaaluguelcarros
+  router:
+    static-resources:
+      default:
+        enabled: true
+        mapping: /**
+        paths: classpath:public
 
 server:
   port: ${SERVER_PORT:8080}
