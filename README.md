@@ -275,16 +275,16 @@ No momento, o fluxo funcional disponível no sistema é:
 
 Os modelos UML presentes no repositório estão na pasta `Diagrams/`:
 
-- `Diagrams/CasoDeUso.drawio`
-- `Diagrams/DiagramaDeClasses.drawio`
-- `Diagrams/DiagramaDePacote.drawio`
+- `Diagrams/modelagem casos de uso- lab projeto.png` — diagrama de casos de uso (modelagem do laboratório)
+- `Diagrams/modelagem pacote-lab projeto.png` — diagrama de pacotes (modelagem do laboratório)
+- `Diagrams/DiagramaDeClasses.drawio.png` — diagrama de classes (exportação em imagem)
 
-Esses arquivos também possuem versão em imagem e podem ser abertos no [diagrams.net](https://www.diagrams.net/) para edição.
+As figuras de casos de uso e de pacotes são as versões atualizadas entregues na disciplina. O diagrama de classes permanece disponível como imagem exportada; se existir o arquivo fonte `.drawio` correspondente, ele pode ser editado no [diagrams.net](https://www.diagrams.net/).
 
 ### Diagrama de Casos de Uso
 
 <div align="center">
-  <img src="Diagrams/CasoDeUso.drawio.png" alt="Diagrama de Casos de Uso do Sistema de Aluguel de Carros" width="92%" />
+  <img src="Diagrams/modelagem%20casos%20de%20uso-%20lab%20projeto.png" alt="Diagrama de Casos de Uso do Sistema de Aluguel de Carros" width="92%" />
   <p><em>Visão funcional dos atores e das principais interações do sistema.</em></p>
 </div>
 
@@ -300,7 +300,7 @@ O diagrama de casos de uso modela os principais atores e suas interações:
 ### Diagrama de Pacotes
 
 <div align="center">
-  <img src="Diagrams/DiagramaDePacote.drawio.png" alt="Diagrama de Pacotes do Sistema de Aluguel de Carros" width="92%" />
+  <img src="Diagrams/modelagem%20pacote-lab%20projeto.png" alt="Diagrama de Pacotes do Sistema de Aluguel de Carros" width="92%" />
   <p><em>Organização lógica dos módulos e das dependências estruturais do projeto.</em></p>
 </div>
 
@@ -562,9 +562,9 @@ Como sistema, quero transferir a propriedade de um automóvel para refletir as c
 |-- assets/
 |   `-- readme/
 |-- Diagrams/
-|   |-- CasoDeUso.drawio
-|   |-- DiagramaDeClasses.drawio
-|   `-- DiagramaDePacote.drawio
+|   |-- modelagem casos de uso- lab projeto.png
+|   |-- modelagem pacote-lab projeto.png
+|   `-- DiagramaDeClasses.drawio.png
 |-- gradle/
 |   `-- wrapper/
 |-- src/
@@ -687,4 +687,4 @@ Com base no laboratório e no estado atual do repositório, os próximos passos 
 ## Referências
 
 - Enunciado da atividade: `LABORATÓRIO 02 - Sistema de Aluguel de Carros.pdf`
-- Diagramas UML: `Diagrams/CasoDeUso.drawio`, `Diagrams/DiagramaDeClasses.drawio` e `Diagrams/DiagramaDePacote.drawio`
+- Diagramas UML: `Diagrams/modelagem casos de uso- lab projeto.png`, `Diagrams/modelagem pacote-lab projeto.png` e `Diagrams/DiagramaDeClasses.drawio.png`
