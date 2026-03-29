@@ -15,6 +15,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -80,12 +81,14 @@ class ClienteServiceTest {
             Cliente existente = novoCliente(1L, "João Silva", "123.456.789-00", null, "Rua Antiga", "Engenheiro");
 
             when(clienteRepository.findByCpf("123.456.789-00")).thenReturn(Optional.of(existente));
-            when(clienteRepository.save(any(Cliente.class))).thenReturn(cliente);
+            when(clienteRepository.existsById(1L)).thenReturn(true);
+            when(clienteRepository.update(any(Cliente.class))).thenReturn(cliente);
 
             Cliente resultado = clienteService.salvar(cliente);
 
             assertThat(resultado.getNome()).isEqualTo("João Atualizado");
-            verify(clienteRepository).save(cliente);
+            verify(clienteRepository).existsById(1L);
+            verify(clienteRepository).update(cliente);
         }
 
         @Test
@@ -100,7 +103,24 @@ class ClienteServiceTest {
                     .isInstanceOf(IllegalStateException.class)
                     .hasMessageContaining("CPF já cadastrado");
 
-            verify(clienteRepository, org.mockito.Mockito.never()).save(any());
+            verify(clienteRepository, never()).save(any());
+            verify(clienteRepository, never()).update(any());
+        }
+
+        @Test
+        @DisplayName("deve lançar exceção quando tenta atualizar cliente inexistente")
+        void deveLancarExcecaoQuandoAtualizarClienteInexistente() {
+            Cliente cliente = novoCliente(10L, "Julia", "123.123.123-12", null, "Rua A", "Dev");
+
+            when(clienteRepository.findByCpf("123.123.123-12")).thenReturn(Optional.empty());
+            when(clienteRepository.existsById(10L)).thenReturn(false);
+
+            assertThatThrownBy(() -> clienteService.salvar(cliente))
+                    .isInstanceOf(IllegalStateException.class)
+                    .hasMessage("Cliente não encontrado.");
+
+            verify(clienteRepository).existsById(10L);
+            verify(clienteRepository, never()).update(any());
         }
     }
 
@@ -169,8 +189,25 @@ class ClienteServiceTest {
         @Test
         @DisplayName("deve excluir por ID")
         void deveExcluirPorId() {
+            when(clienteRepository.existsById(1L)).thenReturn(true);
+
             clienteService.excluir(1L);
+
+            verify(clienteRepository).existsById(1L);
             verify(clienteRepository).deleteById(1L);
+        }
+
+        @Test
+        @DisplayName("deve lançar exceção quando tenta excluir cliente inexistente")
+        void deveLancarExcecaoQuandoExcluirClienteInexistente() {
+            when(clienteRepository.existsById(99L)).thenReturn(false);
+
+            assertThatThrownBy(() -> clienteService.excluir(99L))
+                    .isInstanceOf(IllegalStateException.class)
+                    .hasMessage("Cliente não encontrado.");
+
+            verify(clienteRepository).existsById(99L);
+            verify(clienteRepository, never()).deleteById(any());
         }
     }
 

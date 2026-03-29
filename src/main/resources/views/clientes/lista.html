@@ -63,10 +63,13 @@
                     <td>
                         <div class="row-actions">
                             <a class="link-button" th:href="@{'/clientes/' + ${cliente.id} + '/editar'}">Editar</a>
-                            <button type="button" class="danger-button"
+                            <button type="button"
+                                    class="danger-button"
                                     data-modal-excluir
                                     th:data-action="@{/clientes/{id}/excluir(id=${cliente.id})}"
-                                    th:data-nome="${cliente.nome}">Excluir</button>
+                                    th:data-nome="${cliente.nome}">
+                                Excluir
+                            </button>
                         </div>
                     </td>
                 </tr>

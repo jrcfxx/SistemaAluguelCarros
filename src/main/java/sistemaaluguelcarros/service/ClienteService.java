@@ -22,13 +22,18 @@ public class ClienteService {
             if (existente.isPresent()) {
                 throw new IllegalStateException("CPF já cadastrado: " + cliente.getCpf());
             }
-        } else {
-            Optional<Cliente> existente = clienteRepository.findByCpf(cliente.getCpf());
-            if (existente.isPresent() && !existente.get().getId().equals(cliente.getId())) {
-                throw new IllegalStateException("CPF já cadastrado: " + cliente.getCpf());
-            }
+            return clienteRepository.save(cliente);
         }
-        return clienteRepository.save(cliente);
+
+        Optional<Cliente> existente = clienteRepository.findByCpf(cliente.getCpf());
+        if (existente.isPresent() && !existente.get().getId().equals(cliente.getId())) {
+            throw new IllegalStateException("CPF já cadastrado: " + cliente.getCpf());
+        }
+        if (!clienteRepository.existsById(cliente.getId())) {
+            throw new IllegalStateException("Cliente não encontrado.");
+        }
+
+        return clienteRepository.update(cliente);
     }
 
     public Optional<Cliente> buscarPorId(Long id) {
@@ -44,6 +49,9 @@ public class ClienteService {
     }
 
     public void excluir(Long id) {
+        if (!clienteRepository.existsById(id)) {
+            throw new IllegalStateException("Cliente não encontrado.");
+        }
         clienteRepository.deleteById(id);
     }
 }
