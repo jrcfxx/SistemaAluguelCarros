@@ -133,6 +133,8 @@ Atualmente, o repositório já possui a base de configuração do projeto e os a
 | Diagrama de Casos de Uso | `Concluído` |
 | Diagrama de Classes | `Concluído` |
 | Diagrama de Pacotes | `Concluído` |
+| Diagrama de Componentes | `Concluído` |
+| Diagrama de Implantação | `Concluído` |
 | Entidade `Cliente` | `Concluído` |
 | `ClienteRepository` | `Concluído` |
 | `ClienteService` | `Concluído` |
@@ -314,8 +316,10 @@ Os modelos UML presentes no repositório estão na pasta `Diagrams/`:
 - `Diagrams/modelagem casos de uso- lab projeto.png` — diagrama de casos de uso (modelagem do laboratório)
 - `Diagrams/modelagem pacote-lab projeto.png` — diagrama de pacotes (modelagem do laboratório)
 - `Diagrams/DiagramaDeClasses.drawio.png` — diagrama de classes (exportação em imagem)
+- `Diagrams/DiagramaDeComponentes-Atualizado.png` — diagrama de componentes
+- `Diagrams/Diagrama de implantação.png` — diagrama de implantação
 
-As figuras de casos de uso e de pacotes são as versões atualizadas entregues na disciplina. O diagrama de classes permanece disponível como imagem exportada; se existir o arquivo fonte `.drawio` correspondente, ele pode ser editado no [diagrams.net](https://www.diagrams.net/).
+As figuras de casos de uso e de pacotes são as versões atualizadas entregues na disciplina. O diagrama de classes permanece disponível como imagem exportada; se existir o arquivo fonte `.drawio` correspondente, ele pode ser editado no [diagrams.net](https://www.diagrams.net/). Os diagramas de componentes e de implantação complementam a visão arquitetural e de infraestrutura exigida nas sprints finais.
 
 ### Diagrama de Casos de Uso
 
@@ -341,6 +345,24 @@ O diagrama de casos de uso modela os principais atores e suas interações:
 </div>
 
 Esse diagrama reforça a organização por responsabilidades e ajuda a alinhar a implementação futura com a arquitetura planejada.
+
+### Diagrama de Componentes
+
+<div align="center">
+  <img src="Diagrams/DiagramaDeComponentes-Atualizado.png" alt="Diagrama de Componentes do Sistema de Aluguel de Carros" width="92%" />
+  <p><em>Visão dos principais componentes do sistema e das dependências entre apresentação, negócio e persistência.</em></p>
+</div>
+
+O diagrama de componentes consolida a organização arquitetural da aplicação e mostra como os módulos colaboram para atender os fluxos de autenticação, cliente e pedidos.
+
+### Diagrama de Implantação
+
+<div align="center">
+  <img src="Diagrams/Diagrama%20de%20implanta%C3%A7%C3%A3o.png" alt="Diagrama de Implantação do Sistema de Aluguel de Carros" width="92%" />
+  <p><em>Distribuição da aplicação entre cliente web, servidor central e banco de dados.</em></p>
+</div>
+
+O diagrama de implantação representa a execução do sistema no contexto de rede descrito no enunciado, com clientes acessando a aplicação web e persistência centralizada no banco de dados.
 
 <a id="modelo-de-dominio"></a>
 ## Modelo de domínio
@@ -608,7 +630,9 @@ Como sistema, quero transferir a propriedade de um automóvel para refletir as c
 |-- Diagrams/
 |   |-- modelagem casos de uso- lab projeto.png
 |   |-- modelagem pacote-lab projeto.png
-|   `-- DiagramaDeClasses.drawio.png
+|   |-- DiagramaDeClasses.drawio.png
+|   |-- DiagramaDeComponentes-Atualizado.png
+|   `-- Diagrama de implantação.png
 |-- gradle/
 |   `-- wrapper/
 |-- src/
@@ -756,4 +780,4 @@ Com base no laboratório e no estado atual do repositório, os próximos passos 
 ## Referências
 
 - Enunciado da atividade: `LABORATÓRIO 02 - Sistema de Aluguel de Carros.pdf`
-- Diagramas UML: `Diagrams/modelagem casos de uso- lab projeto.png`, `Diagrams/modelagem pacote-lab projeto.png` e `Diagrams/DiagramaDeClasses.drawio.png`
+- Diagramas UML: `Diagrams/modelagem casos de uso- lab projeto.png`, `Diagrams/modelagem pacote-lab projeto.png`, `Diagrams/DiagramaDeClasses.drawio.png`, `Diagrams/DiagramaDeComponentes-Atualizado.png` e `Diagrams/Diagrama de implantação.png`
