@@ -17,7 +17,7 @@
   <img src="https://img.shields.io/badge/Micronaut-4.x-1B1F23?style=for-the-badge&logo=micronaut&logoColor=white" alt="Micronaut" />
   <img src="https://img.shields.io/badge/Thymeleaf-Views-005F0F?style=for-the-badge" alt="Thymeleaf" />
   <img src="https://img.shields.io/badge/Azure%20SQL-SQL%20Server-0B6E99?style=for-the-badge" alt="Azure SQL Server" />
-  <img src="https://img.shields.io/badge/Status-Login%20e%20CRUD%20de%20Cliente-4FD1C5?style=for-the-badge" alt="Status do projeto" />
+  <img src="https://img.shields.io/badge/Status-Autentica%C3%A7%C3%A3o%20e%20%C3%81rea%20do%20Cliente-4FD1C5?style=for-the-badge" alt="Status do projeto" />
 </p>
 
 <p>
@@ -41,7 +41,7 @@
 | **Arquitetura alvo** | Aplicação web em `Java` com padrão `MVC` |
 | **Stack principal** | `Micronaut`, `Thymeleaf`, `JPA/Hibernate`, `Azure SQL Server`, `Gradle` |
 | **Foco funcional** | Clientes, pedidos, análise financeira, contratos e propriedade do automóvel |
-| **Situação atual** | Modelagem concluída, base técnica pronta, autenticação implementada e CRUD web de `Cliente` funcional |
+| **Situação atual** | Modelagem concluída, base técnica pronta, autenticação implementada e área autenticada do `Cliente` funcional |
 
 ## Sumário
 
@@ -99,7 +99,7 @@ Atualmente, o repositório já possui a base de configuração do projeto e os a
 
 > **Importante**
 >
-> O projeto já possui base técnica, domínio de `Cliente`, autenticação por `CPF + senha`, sessão HTTP e CRUD web funcional de clientes. O próximo passo natural é iniciar o domínio e a persistência de `PedidoAluguel`.
+> O projeto já possui base técnica, domínio de `Cliente`, autenticação por `CPF + senha`, sessão HTTP e uma área autenticada onde o cliente pode visualizar, editar e excluir o próprio cadastro. O próximo passo natural é iniciar o domínio e a persistência de `PedidoAluguel`.
 
 ### Entregáveis já produzidos e plano incremental
 
@@ -108,8 +108,8 @@ Atualmente, o repositório já possui a base de configuração do projeto e os a
 | `0` | Modelagem inicial: casos de uso, histórias, classes, pacotes e README | `Sprint 01` | `Concluído` |
 | `1` | Base técnica: `Micronaut`, `Gradle`, `Application`, `src/`, `application.yml`, Azure SQL | `Sprint 02` | `Concluído` |
 | `2` | Domínio e persistência de `Cliente` | `Sprint 02` | `Concluído` |
-| `3` | CRUD web de `Cliente` com `Controller` + `Thymeleaf` | `Sprint 02` | `Concluído` |
-| `4` | Autenticação e login de cliente | `Sprint 02/03` | `Concluído` |
+| `3` | CRUD web inicial de `Cliente` com `Controller` + `Thymeleaf` | `Sprint 02` | `Concluído` |
+| `4` | Autenticação, sessão e área protegida do cliente | `Sprint 02/03` | `Concluído` |
 | `5` | Domínio e persistência de `PedidoAluguel` | `Sprint 03` | `Próximo` |
 | `6` | Criação de pedido pelo cliente | `Sprint 03` | `Pendente` |
 | `7` | Consulta de pedidos e visualização de status | `Sprint 03` | `Pendente` |
@@ -138,6 +138,8 @@ Atualmente, o repositório já possui a base de configuração do projeto e os a
 | `ClienteService` | `Concluído` |
 | Testes de `ClienteService` | `Concluído` |
 | `AuthService` | `Concluído` |
+| `SessionAuthService` | `Concluído` |
+| `PasswordHashService` | `Concluído` |
 | `AuthController` | `Concluído` |
 | Tela inicial pública | `Concluído` |
 | Tela de login | `Concluído` |
@@ -148,8 +150,11 @@ Atualmente, o repositório já possui a base de configuração do projeto e os a
 | Tela de listagem de clientes | `Concluído` |
 | Tela de cadastro e edição de clientes | `Concluído` |
 | Modal de confirmação de exclusão | `Concluído` |
+| Restrição para acesso apenas ao próprio cadastro | `Concluído` |
+| Normalização de CPF em cadastro, edição e login | `Concluído` |
 | Recursos estáticos (`/css` e `/js`) | `Concluído` |
 | Testes de `AuthService` | `Concluído` |
+| Testes de `SessionAuthService` | `Concluído` |
 
 <a id="identidade-visual"></a>
 ## Identidade visual
@@ -213,13 +218,13 @@ Atualmente a aplicação já possui:
 
 - camada `domain` com `Cliente`;
 - camada `auth` com chaves de sessão;
-- camada `config` com fábrica de `PasswordEncoder`;
 - camada `repository` com `ClienteRepository`;
-- camada `service` com `ClienteService` e `AuthService`;
+- camada `service` com `ClienteService`, `AuthService`, `SessionAuthService` e `PasswordHashService`;
 - camada `controller` com `HomeController`, `ClienteController` e `AuthController`;
 - views `Thymeleaf` para home, login, listagem, cadastro e edição de clientes;
 - autenticação por `CPF + senha` com `BCrypt`;
 - sessão HTTP para controle de acesso;
+- autorização para que o cliente acesse apenas o próprio cadastro;
 - recursos estáticos compartilhados por CSS e JavaScript;
 - modal de confirmação para exclusão;
 - integração preparada com `Azure SQL Server`.
@@ -284,9 +289,9 @@ No momento, o fluxo funcional disponível no sistema é:
 POST /login -> autenticação por CPF e senha
 POST /logout -> encerramento da sessão
 /clientes/novo -> cadastro público de cliente com senha
-/clientes -> listagem protegida por sessão
-/clientes/{id}/editar -> edição protegida
-/clientes/{id}/excluir -> exclusão protegida com modal de confirmação
+/clientes -> área protegida com os dados do cliente autenticado
+/clientes/{id}/editar -> edição protegida do próprio cadastro
+/clientes/{id}/excluir -> exclusão protegida do próprio cadastro com modal de confirmação
 ```
 
 <a id="diagramas-do-projeto"></a>
@@ -371,7 +376,9 @@ As principais regras de negócio levantadas até o momento são:
 |---|---|
 | `CPF único` | Não é permitido cadastrar dois clientes com o mesmo CPF |
 | `Senha com hash` | A senha do cliente é armazenada em `BCrypt`, nunca em texto puro |
-| `Acesso protegido` | Listagem, edição e exclusão de clientes exigem sessão autenticada |
+| `CPF normalizado` | O CPF é persistido e consultado de forma normalizada para evitar inconsistências |
+| `Acesso protegido` | A área de cliente exige sessão autenticada |
+| `Autorização por proprietário` | O cliente só pode visualizar, editar e excluir o próprio cadastro |
 | `Cadastro com senha` | Novos clientes devem se cadastrar com senha e confirmação |
 | `Exclusão confirmada` | A remoção de cliente exige confirmação explícita via modal |
 | `Máximo de rendimentos` | Cada cliente pode possuir até `3` rendimentos |
@@ -597,8 +604,6 @@ Como sistema, quero transferir a propriedade de um automóvel para refletir as c
 |       |       |-- Application.java
 |       |       |-- auth/
 |       |       |   `-- AuthSessionKeys.java
-|       |       |-- config/
-|       |       |   `-- PasswordEncoderFactory.java
 |       |       |-- controller/      # Controllers MVC
 |       |       |   |-- AuthController.java
 |       |       |   |-- ClienteController.java
@@ -609,7 +614,9 @@ Como sistema, quero transferir a propriedade de um automóvel para refletir as c
 |       |       |   `-- ClienteRepository.java
 |       |       `-- service/         # Regras de negócio
 |       |           |-- AuthService.java
-|       |           `-- ClienteService.java
+|       |           |-- ClienteService.java
+|       |           |-- PasswordHashService.java
+|       |           `-- SessionAuthService.java
 |       `-- resources/
 |           |-- application.yml
 |           |-- public/
@@ -632,7 +639,8 @@ Como sistema, quero transferir a propriedade de um automóvel para refletir as c
 |           `-- sistemaaluguelcarros/
 |               `-- service/
 |                   |-- AuthServiceTest.java
-|                   `-- ClienteServiceTest.java
+|                   |-- ClienteServiceTest.java
+|                   `-- SessionAuthServiceTest.java
 |-- .env.example
 |-- .gitignore
 |-- build.gradle
@@ -697,7 +705,7 @@ java -version
 
 > **Observação**
 >
-> Os incrementos `1`, `2`, `3` e `4` já foram concluídos. A aplicação possui base técnica, persistência de `Cliente`, autenticação com sessão e CRUD web navegável. O próximo incremento recomendado é iniciar o domínio de `PedidoAluguel`.
+> Os incrementos `1`, `2`, `3` e `4` já foram concluídos. A aplicação possui base técnica, persistência de `Cliente`, autenticação com sessão, autorização sobre o próprio cadastro e uma área web navegável para o cliente autenticado. O próximo incremento recomendado é iniciar o domínio de `PedidoAluguel`.
 
 <a id="roadmap-sugerido"></a>
 ## Roadmap sugerido
