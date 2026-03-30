@@ -12,12 +12,11 @@ import io.micronaut.http.annotation.QueryValue;
 import io.micronaut.http.uri.UriBuilder;
 import io.micronaut.session.Session;
 import io.micronaut.views.ModelAndView;
-import sistemaaluguelcarros.auth.AuthSessionKeys;
 import sistemaaluguelcarros.domain.Cliente;
 import sistemaaluguelcarros.service.ClienteService;
+import sistemaaluguelcarros.service.SessionAuthService;
 
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,11 +26,14 @@ import java.util.Optional;
 public class ClienteController {
 
     private static final URI LOGIN_URI = URI.create("/login");
+    private static final String MSG_ACESSO_NEGADO = "Você só pode acessar e alterar o seu próprio cadastro.";
 
     private final ClienteService clienteService;
+    private final SessionAuthService sessionAuthService;
 
-    public ClienteController(ClienteService clienteService) {
+    public ClienteController(ClienteService clienteService, SessionAuthService sessionAuthService) {
         this.clienteService = clienteService;
+        this.sessionAuthService = sessionAuthService;
     }
 
     @Get
@@ -40,15 +42,17 @@ public class ClienteController {
             @Nullable @QueryValue String mensagem,
             @Nullable @QueryValue String erro
     ) {
-        if (!isAuthenticated(session)) {
+        Optional<Cliente> clienteAutenticado = sessionAuthService.clienteAutenticado(session);
+        if (clienteAutenticado.isEmpty()) {
             return redirectLogin();
         }
 
         Map<String, Object> model = new LinkedHashMap<>();
-        model.put("clientes", toList(clienteService.listarTodos()));
+        model.put("clientes", List.of(clienteAutenticado.get()));
+        model.put("clienteAtual", clienteAutenticado.get());
         model.put("mensagem", mensagem);
         model.put("erro", erro);
-        model.put("clienteNome", nomeClienteLogado(session));
+        model.put("clienteNome", clienteAutenticado.get().getNome());
         return new ModelAndView<>("clientes/lista", model);
     }
 
@@ -66,8 +70,11 @@ public class ClienteController {
 
     @Get("/{id}/editar")
     public Object editar(@PathVariable Long id, @Nullable Session session) {
-        if (!isAuthenticated(session)) {
+        if (!sessionAuthService.isAutenticado(session)) {
             return redirectLogin();
+        }
+        if (!sessionAuthService.isClienteDaSessao(session, id)) {
+            return redirectComErro(MSG_ACESSO_NEGADO);
         }
         Optional<Cliente> cliente = clienteService.buscarPorId(id);
         if (cliente.isEmpty()) {
@@ -124,8 +131,11 @@ public class ClienteController {
             String endereco,
             @Nullable String profissao
     ) {
-        if (!isAuthenticated(session)) {
+        if (!sessionAuthService.isAutenticado(session)) {
             return redirectLogin();
+        }
+        if (!sessionAuthService.isClienteDaSessao(session, id)) {
+            return redirectComErro(MSG_ACESSO_NEGADO);
         }
 
         Optional<Cliente> clienteExistente = clienteService.buscarPorId(id);
@@ -155,13 +165,17 @@ public class ClienteController {
 
     @Post(value = "/{id}/excluir", consumes = MediaType.APPLICATION_FORM_URLENCODED)
     public Object excluir(@PathVariable Long id, @Nullable Session session) {
-        if (!isAuthenticated(session)) {
+        if (!sessionAuthService.isAutenticado(session)) {
             return redirectLogin();
+        }
+        if (!sessionAuthService.isClienteDaSessao(session, id)) {
+            return redirectComErro(MSG_ACESSO_NEGADO);
         }
         try {
             clienteService.excluir(id);
-            return redirectComMensagem("Cliente excluído com sucesso.");
-        } catch (Exception ex) {
+            sessionAuthService.limparSessao(session);
+            return redirectParaLoginComMensagem("Cliente excluído com sucesso.");
+        } catch (IllegalStateException ex) {
             return redirectComErro("Não foi possível excluir o cliente. " + ex.getMessage());
         }
     }
@@ -209,22 +223,6 @@ public class ClienteController {
         return HttpResponse.redirect(LOGIN_URI);
     }
 
-    private boolean isAuthenticated(@Nullable Session session) {
-        return session != null && session.get(AuthSessionKeys.CLIENTE_ID, Long.class).isPresent();
-    }
-
-    @Nullable
-    private String nomeClienteLogado(@Nullable Session session) {
-        if (session == null) {
-            return null;
-        }
-        Optional<Long> id = session.get(AuthSessionKeys.CLIENTE_ID, Long.class);
-        if (id.isEmpty()) {
-            return null;
-        }
-        return clienteService.buscarPorId(id.get()).map(Cliente::getNome).orElse(null);
-    }
-
     @Nullable
     private String validarCamposObrigatorios(Cliente cliente) {
         if (isBlank(cliente.getNome())) {
@@ -245,14 +243,6 @@ public class ClienteController {
 
     private String sanitize(String valor) {
         return valor == null ? "" : valor.trim();
-    }
-
-    private List<Cliente> toList(Iterable<Cliente> clientes) {
-        List<Cliente> lista = new ArrayList<>();
-        for (Cliente cliente : clientes) {
-            lista.add(cliente);
-        }
-        return lista;
     }
 
     @Nullable

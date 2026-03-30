@@ -23,12 +23,12 @@
 
     <section class="hero">
         <span class="eyebrow">CRUD de Cliente</span>
-        <h1>Clientes cadastrados</h1>
+        <h1>Meu cadastro</h1>
         <p>
-            Aqui você visualiza, edita e remove clientes já salvos.
+            Aqui você visualiza, edita e exclui apenas os dados da sua própria conta.
         </p>
         <div class="actions">
-            <a class="button button-primary" href="/clientes/novo">Novo cliente</a>
+            <a class="button button-primary" href="/">Tela inicial</a>
             <a class="button button-secondary" href="/">Atualizar página</a>
         </div>
     </section>
@@ -39,10 +39,10 @@
 
         <div class="panel-header">
             <div>
-                <h2>Lista de clientes</h2>
-                <p>Gerencie os cadastros já existentes antes de avançar para login, autenticação e pedidos.</p>
+                <h2>Dados da conta</h2>
+                <p>Revise seus dados cadastrais antes de avançar para os próximos módulos do sistema.</p>
             </div>
-            <a class="button button-primary-solid" href="/clientes/novo">Cadastrar cliente</a>
+            <a class="button button-primary-solid" th:href="@{'/clientes/' + ${clienteAtual.id} + '/editar'}">Editar meus dados</a>
         </div>
 
         <div class="table-wrap" th:if="${#lists.size(clientes) > 0}">

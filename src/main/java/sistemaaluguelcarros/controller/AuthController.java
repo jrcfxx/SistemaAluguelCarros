@@ -10,11 +10,10 @@ import io.micronaut.http.annotation.Post;
 import io.micronaut.http.annotation.QueryValue;
 import io.micronaut.http.uri.UriBuilder;
 import io.micronaut.session.Session;
-import io.micronaut.session.SessionStore;
 import io.micronaut.views.ModelAndView;
-import sistemaaluguelcarros.auth.AuthSessionKeys;
 import sistemaaluguelcarros.domain.Cliente;
 import sistemaaluguelcarros.service.AuthService;
+import sistemaaluguelcarros.service.SessionAuthService;
 
 import java.net.URI;
 import java.util.LinkedHashMap;
@@ -27,18 +26,25 @@ public class AuthController {
     private static final String MSG_LOGIN_INVALIDO = "CPF ou senha inválidos. Verifique os dados e tente novamente.";
 
     private final AuthService authService;
-    private final SessionStore<Session> sessionStore;
+    private final SessionAuthService sessionAuthService;
 
-    public AuthController(AuthService authService, SessionStore<Session> sessionStore) {
+    public AuthController(
+            AuthService authService,
+            SessionAuthService sessionAuthService
+    ) {
         this.authService = authService;
-        this.sessionStore = sessionStore;
+        this.sessionAuthService = sessionAuthService;
     }
 
     @Get("/login")
-    public ModelAndView<Map<String, Object>> loginForm(
+    public Object loginForm(
+            @Nullable Session session,
             @Nullable @QueryValue String erro,
             @Nullable @QueryValue String mensagem
     ) {
+        if (sessionAuthService.isAutenticado(session)) {
+            return HttpResponse.redirect(URI.create("/clientes"));
+        }
         Map<String, Object> model = new LinkedHashMap<>();
         model.put("erro", erro);
         model.put("mensagem", mensagem);
@@ -54,15 +60,13 @@ public class AuthController {
                     .build();
             return HttpResponse.redirect(uri);
         }
-        session.put(AuthSessionKeys.CLIENTE_ID, cliente.get().getId());
+        sessionAuthService.autenticar(session, cliente.get());
         return HttpResponse.redirect(URI.create("/clientes"));
     }
 
-    @Post("/logout")
+    @Post(value = "/logout", consumes = MediaType.APPLICATION_FORM_URLENCODED)
     public MutableHttpResponse<?> logout(@Nullable Session session) {
-        if (session != null) {
-            sessionStore.deleteSession(session.getId()).join();
-        }
+        sessionAuthService.limparSessao(session);
         return HttpResponse.redirect(URI.create("/login"));
     }
 }

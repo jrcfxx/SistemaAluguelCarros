@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import sistemaaluguelcarros.domain.Cliente;
 import sistemaaluguelcarros.repository.ClienteRepository;
 
@@ -28,13 +27,13 @@ class AuthServiceTest {
     private ClienteRepository clienteRepository;
 
     @Mock
-    private PasswordEncoder passwordEncoder;
+    private PasswordHashService passwordHashService;
 
     private AuthService authService;
 
     @BeforeEach
     void setUp() {
-        authService = new AuthService(clienteRepository, passwordEncoder);
+        authService = new AuthService(clienteRepository, passwordHashService);
     }
 
     @Nested
@@ -44,44 +43,53 @@ class AuthServiceTest {
         @Test
         @DisplayName("deve autenticar quando CPF e senha conferem")
         void deveAutenticarComSucesso() {
-            Cliente cliente = new Cliente("Ana", "123.456.789-00", null, "Rua A", null);
+            Cliente cliente = new Cliente("Ana", "12345678900", null, "Rua A", null);
             cliente.setId(1L);
             cliente.setSenhaHash(HASH);
 
-            when(clienteRepository.findByCpf("123.456.789-00")).thenReturn(Optional.of(cliente));
-            when(passwordEncoder.matches("minhasenha", HASH)).thenReturn(true);
+            when(clienteRepository.findByCpf("12345678900")).thenReturn(Optional.of(cliente));
+            when(passwordHashService.matches("minhasenha", HASH)).thenReturn(true);
 
             Optional<Cliente> resultado = authService.autenticar("123.456.789-00", "minhasenha");
 
             assertThat(resultado).isPresent();
             assertThat(resultado.get().getId()).isEqualTo(1L);
-            verify(passwordEncoder).matches("minhasenha", HASH);
+            verify(passwordHashService).matches("minhasenha", HASH);
         }
 
         @Test
         @DisplayName("deve retornar vazio quando senha não confere")
         void deveFalharQuandoSenhaInvalida() {
-            Cliente cliente = new Cliente("Ana", "123.456.789-00", null, "Rua A", null);
+            Cliente cliente = new Cliente("Ana", "12345678900", null, "Rua A", null);
             cliente.setSenhaHash(HASH);
 
-            when(clienteRepository.findByCpf("123.456.789-00")).thenReturn(Optional.of(cliente));
-            when(passwordEncoder.matches("errada", HASH)).thenReturn(false);
+            when(clienteRepository.findByCpf("12345678900")).thenReturn(Optional.of(cliente));
+            when(passwordHashService.matches("errada", HASH)).thenReturn(false);
 
             Optional<Cliente> resultado = authService.autenticar("123.456.789-00", "errada");
 
             assertThat(resultado).isEmpty();
-            verify(passwordEncoder).matches("errada", HASH);
+            verify(passwordHashService).matches("errada", HASH);
         }
 
         @Test
         @DisplayName("deve retornar vazio quando CPF não existe")
         void deveFalharQuandoCpfNaoExiste() {
-            when(clienteRepository.findByCpf("000.000.000-00")).thenReturn(Optional.empty());
+            when(clienteRepository.findByCpf("00000000000")).thenReturn(Optional.empty());
 
             Optional<Cliente> resultado = authService.autenticar("000.000.000-00", "qualquer");
 
             assertThat(resultado).isEmpty();
-            verifyNoInteractions(passwordEncoder);
+            verifyNoInteractions(passwordHashService);
+        }
+
+        @Test
+        @DisplayName("deve retornar vazio quando senha está em branco")
+        void deveFalharQuandoSenhaEstaEmBranco() {
+            Optional<Cliente> resultado = authService.autenticar("123.456.789-00", "   ");
+
+            assertThat(resultado).isEmpty();
+            verifyNoInteractions(clienteRepository, passwordHashService);
         }
     }
 }

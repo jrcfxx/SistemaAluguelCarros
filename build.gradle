@@ -26,7 +26,7 @@ dependencies {
     implementation("io.micronaut.data:micronaut-data-tx-hibernate")
     implementation("io.micronaut.sql:micronaut-hibernate-jpa")
     implementation("io.micronaut.sql:micronaut-jdbc-hikari")
-    implementation("io.micronaut.session:micronaut-session:4.8.0")
+    implementation("io.micronaut.session:micronaut-session")
     implementation("org.springframework.security:spring-security-crypto:6.3.4")
     runtimeOnly("com.microsoft.sqlserver:mssql-jdbc")
     compileOnly("org.graalvm.nativeimage:svm")

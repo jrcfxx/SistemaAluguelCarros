@@ -2,7 +2,6 @@ package sistemaaluguelcarros.service;
 
 import jakarta.inject.Singleton;
 import jakarta.validation.Valid;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import sistemaaluguelcarros.domain.Cliente;
 import sistemaaluguelcarros.repository.ClienteRepository;
 
@@ -12,13 +11,14 @@ import java.util.Optional;
 public class ClienteService {
 
     private static final int SENHA_MIN_LENGTH = 6;
+    private static final String SOMENTE_DIGITOS_REGEX = "\\D";
 
     private final ClienteRepository clienteRepository;
-    private final PasswordEncoder passwordEncoder;
+    private final PasswordHashService passwordHashService;
 
-    public ClienteService(ClienteRepository clienteRepository, PasswordEncoder passwordEncoder) {
+    public ClienteService(ClienteRepository clienteRepository, PasswordHashService passwordHashService) {
         this.clienteRepository = clienteRepository;
-        this.passwordEncoder = passwordEncoder;
+        this.passwordHashService = passwordHashService;
     }
 
     /**
@@ -28,6 +28,7 @@ public class ClienteService {
         if (cliente.getId() != null) {
             throw new IllegalStateException("Para atualizar um cliente existente, use salvar.");
         }
+        normalizarCpf(cliente);
         if (senhaPlana == null || senhaPlana.isBlank()) {
             throw new IllegalStateException("Senha é obrigatória.");
         }
@@ -43,7 +44,7 @@ public class ClienteService {
             throw new IllegalStateException("Este CPF já está cadastrado. Use outro CPF ou faça login.");
         }
 
-        cliente.setSenhaHash(passwordEncoder.encode(senhaPlana));
+        cliente.setSenhaHash(passwordHashService.hash(senhaPlana));
         return clienteRepository.save(cliente);
     }
 
@@ -54,6 +55,7 @@ public class ClienteService {
         if (cliente.getId() == null) {
             throw new IllegalStateException("Cadastro de novos clientes deve usar cadastrarComSenha.");
         }
+        normalizarCpf(cliente);
 
         Optional<Cliente> existente = clienteRepository.findByCpf(cliente.getCpf());
         if (existente.isPresent() && !existente.get().getId().equals(cliente.getId())) {
@@ -71,7 +73,7 @@ public class ClienteService {
     }
 
     public Optional<Cliente> buscarPorCpf(String cpf) {
-        return clienteRepository.findByCpf(cpf);
+        return clienteRepository.findByCpf(normalizarCpf(cpf));
     }
 
     public Iterable<Cliente> listarTodos() {
@@ -83,5 +85,13 @@ public class ClienteService {
             throw new IllegalStateException("Cliente não encontrado.");
         }
         clienteRepository.deleteById(id);
+    }
+
+    private void normalizarCpf(Cliente cliente) {
+        cliente.setCpf(normalizarCpf(cliente.getCpf()));
+    }
+
+    private String normalizarCpf(String cpf) {
+        return cpf == null ? "" : cpf.replaceAll(SOMENTE_DIGITOS_REGEX, "").trim();
     }
 }
