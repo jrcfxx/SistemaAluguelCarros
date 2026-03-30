@@ -38,6 +38,12 @@ public class Cliente {
     @Column(length = 100)
     private String profissao;
 
+    /**
+     * Hash BCrypt da senha (nunca texto puro).
+     */
+    @Column(name = "senha_hash", length = 255)
+    private String senhaHash;
+
     public Cliente() {
     }
 
@@ -95,5 +101,13 @@ public class Cliente {
 
     public void setProfissao(String profissao) {
         this.profissao = profissao;
+    }
+
+    public String getSenhaHash() {
+        return senhaHash;
+    }
+
+    public void setSenhaHash(String senhaHash) {
+        this.senhaHash = senhaHash;
     }
 }

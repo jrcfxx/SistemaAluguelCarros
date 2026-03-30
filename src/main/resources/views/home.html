@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Início | Sistema de Aluguel de Carros</title>
+    <link rel="stylesheet" href="/css/app.css">
+</head>
+<body>
+<main class="container">
+    <div class="topbar">
+        <a class="brand-mark" href="/">
+            <span class="brand-dot"></span>
+            <span>Sistema de Aluguel de Carros</span>
+        </a>
+    </div>
+
+    <section class="hero">
+        <span class="eyebrow">• Bem-vindo</span>
+        <h1>Gestão de aluguel de carros</h1>
+        <p>
+            Cadastre-se para utilizar o sistema. Após o cadastro, faça login com seu CPF e senha
+            para acessar a área de clientes.
+        </p>
+        <div class="hero-actions">
+            <a class="button button-primary" href="/clientes/novo" th:if="${!autenticado}">Criar conta</a>
+            <a class="button button-primary" href="/clientes" th:if="${autenticado}">Ir para clientes</a>
+            <a class="button button-secondary" href="/login" th:if="${!autenticado}">Entrar</a>
+        </div>
+    </section>
+</main>
+</body>
+</html>

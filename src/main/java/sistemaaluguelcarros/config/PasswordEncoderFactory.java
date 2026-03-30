@@ -1,0 +1,15 @@
+package sistemaaluguelcarros.config;
+
+import io.micronaut.context.annotation.Factory;
+import jakarta.inject.Singleton;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
+@Factory
+public class PasswordEncoderFactory {
+
+    @Singleton
+    PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+}

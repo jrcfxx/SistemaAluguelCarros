@@ -1,5 +1,6 @@
 package sistemaaluguelcarros.controller;
 
+import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.MutableHttpResponse;
@@ -9,8 +10,9 @@ import io.micronaut.http.annotation.PathVariable;
 import io.micronaut.http.annotation.Post;
 import io.micronaut.http.annotation.QueryValue;
 import io.micronaut.http.uri.UriBuilder;
+import io.micronaut.session.Session;
 import io.micronaut.views.ModelAndView;
-import jakarta.annotation.Nullable;
+import sistemaaluguelcarros.auth.AuthSessionKeys;
 import sistemaaluguelcarros.domain.Cliente;
 import sistemaaluguelcarros.service.ClienteService;
 
@@ -24,6 +26,8 @@ import java.util.Optional;
 @Controller("/clientes")
 public class ClienteController {
 
+    private static final URI LOGIN_URI = URI.create("/login");
+
     private final ClienteService clienteService;
 
     public ClienteController(ClienteService clienteService) {
@@ -31,29 +35,52 @@ public class ClienteController {
     }
 
     @Get
-    public ModelAndView<Map<String, Object>> listar(
+    public Object listar(
+            @Nullable Session session,
             @Nullable @QueryValue String mensagem,
             @Nullable @QueryValue String erro
     ) {
+        if (!isAuthenticated(session)) {
+            return redirectLogin();
+        }
+
         Map<String, Object> model = new LinkedHashMap<>();
         model.put("clientes", toList(clienteService.listarTodos()));
         model.put("mensagem", mensagem);
         model.put("erro", erro);
+        model.put("clienteNome", nomeClienteLogado(session));
         return new ModelAndView<>("clientes/lista", model);
     }
 
     @Get("/novo")
     public ModelAndView<Map<String, Object>> novo(@Nullable @QueryValue String erro) {
-        return formularioModel(new Cliente(), "Cadastrar cliente", "/clientes", erro);
+        return formularioModel(
+                new Cliente(),
+                "Cadastrar cliente",
+                "/clientes",
+                erro,
+                true,
+                "/login"
+        );
     }
 
     @Get("/{id}/editar")
-    public Object editar(@PathVariable Long id) {
+    public Object editar(@PathVariable Long id, @Nullable Session session) {
+        if (!isAuthenticated(session)) {
+            return redirectLogin();
+        }
         Optional<Cliente> cliente = clienteService.buscarPorId(id);
         if (cliente.isEmpty()) {
             return redirectComErro("Cliente não encontrado.");
         }
-        return formularioModel(cliente.get(), "Editar cliente", "/clientes/" + id + "/editar", null);
+        return formularioModel(
+                cliente.get(),
+                "Editar cliente",
+                "/clientes/" + id + "/editar",
+                null,
+                false,
+                "/clientes"
+        );
     }
 
     @Post(consumes = MediaType.APPLICATION_FORM_URLENCODED)
@@ -62,7 +89,9 @@ public class ClienteController {
             String cpf,
             @Nullable String rg,
             String endereco,
-            @Nullable String profissao
+            @Nullable String profissao,
+            @Nullable String senha,
+            @Nullable String confirmacaoSenha
     ) {
         Cliente cliente = new Cliente(
                 sanitize(nome),
@@ -74,26 +103,31 @@ public class ClienteController {
 
         String erroValidacao = validarCamposObrigatorios(cliente);
         if (erroValidacao != null) {
-            return formularioModel(cliente, "Cadastrar cliente", "/clientes", erroValidacao);
+            return formularioModel(cliente, "Cadastrar cliente", "/clientes", erroValidacao, true, "/login");
         }
 
         try {
-            clienteService.salvar(cliente);
-            return redirectComMensagem("Cliente cadastrado com sucesso.");
+            clienteService.cadastrarComSenha(cliente, senha, confirmacaoSenha);
+            return redirectParaLoginComMensagem("Cadastro realizado. Faça login com seu CPF e senha.");
         } catch (IllegalStateException ex) {
-            return formularioModel(cliente, "Cadastrar cliente", "/clientes", ex.getMessage());
+            return formularioModel(cliente, "Cadastrar cliente", "/clientes", ex.getMessage(), true, "/login");
         }
     }
 
     @Post(value = "/{id}/editar", consumes = MediaType.APPLICATION_FORM_URLENCODED)
     public Object atualizar(
             @PathVariable Long id,
+            @Nullable Session session,
             String nome,
             String cpf,
             @Nullable String rg,
             String endereco,
             @Nullable String profissao
     ) {
+        if (!isAuthenticated(session)) {
+            return redirectLogin();
+        }
+
         Optional<Cliente> clienteExistente = clienteService.buscarPorId(id);
         if (clienteExistente.isEmpty()) {
             return redirectComErro("Cliente não encontrado.");
@@ -108,19 +142,22 @@ public class ClienteController {
 
         String erroValidacao = validarCamposObrigatorios(cliente);
         if (erroValidacao != null) {
-            return formularioModel(cliente, "Editar cliente", "/clientes/" + id + "/editar", erroValidacao);
+            return formularioModel(cliente, "Editar cliente", "/clientes/" + id + "/editar", erroValidacao, false, "/clientes");
         }
 
         try {
             clienteService.salvar(cliente);
             return redirectComMensagem("Cliente atualizado com sucesso.");
         } catch (IllegalStateException ex) {
-            return formularioModel(cliente, "Editar cliente", "/clientes/" + id + "/editar", ex.getMessage());
+            return formularioModel(cliente, "Editar cliente", "/clientes/" + id + "/editar", ex.getMessage(), false, "/clientes");
         }
     }
 
     @Post(value = "/{id}/excluir", consumes = MediaType.APPLICATION_FORM_URLENCODED)
-    public Object excluir(@PathVariable Long id) {
+    public Object excluir(@PathVariable Long id, @Nullable Session session) {
+        if (!isAuthenticated(session)) {
+            return redirectLogin();
+        }
         try {
             clienteService.excluir(id);
             return redirectComMensagem("Cliente excluído com sucesso.");
@@ -133,13 +170,17 @@ public class ClienteController {
             Cliente cliente,
             String titulo,
             String action,
-            @Nullable String erro
+            @Nullable String erro,
+            boolean cadastroComSenha,
+            String cancelUrl
     ) {
         Map<String, Object> model = new LinkedHashMap<>();
         model.put("cliente", cliente);
         model.put("titulo", titulo);
         model.put("formAction", action);
         model.put("erro", erro);
+        model.put("cadastroComSenha", cadastroComSenha);
+        model.put("cancelUrl", cancelUrl);
         return new ModelAndView<>("clientes/formulario", model);
     }
 
@@ -155,6 +196,33 @@ public class ClienteController {
                 .queryParam("erro", erro)
                 .build();
         return HttpResponse.redirect(uri);
+    }
+
+    private MutableHttpResponse<?> redirectParaLoginComMensagem(String mensagem) {
+        URI uri = UriBuilder.of("/login")
+                .queryParam("mensagem", mensagem)
+                .build();
+        return HttpResponse.redirect(uri);
+    }
+
+    private MutableHttpResponse<?> redirectLogin() {
+        return HttpResponse.redirect(LOGIN_URI);
+    }
+
+    private boolean isAuthenticated(@Nullable Session session) {
+        return session != null && session.get(AuthSessionKeys.CLIENTE_ID, Long.class).isPresent();
+    }
+
+    @Nullable
+    private String nomeClienteLogado(@Nullable Session session) {
+        if (session == null) {
+            return null;
+        }
+        Optional<Long> id = session.get(AuthSessionKeys.CLIENTE_ID, Long.class);
+        if (id.isEmpty()) {
+            return null;
+        }
+        return clienteService.buscarPorId(id.get()).map(Cliente::getNome).orElse(null);
     }
 
     @Nullable

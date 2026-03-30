@@ -9,7 +9,7 @@
 <body>
 <main class="container">
     <div class="topbar">
-        <a class="brand-mark" href="/clientes">
+        <a class="brand-mark" href="/">
             <span class="brand-dot"></span>
             <span>Sistema de Aluguel de Carros</span>
         </a>
@@ -18,9 +18,12 @@
     <section class="hero">
         <span class="eyebrow">• Cliente</span>
         <h1 th:text="${titulo}">Cadastrar cliente</h1>
-        <p>
-            Preencha os dados básicos do cliente.
-            O sistema já bloqueia CPFs duplicados.
+        <p th:if="${cadastroComSenha}">
+            Preencha os dados e defina uma senha para acessar o sistema após o cadastro.
+            O CPF deve ser único.
+        </p>
+        <p th:if="${!cadastroComSenha}">
+            Atualize os dados do cliente. A senha não é alterada por esta tela.
         </p>
     </section>
 
@@ -54,11 +57,23 @@
                     <label for="endereco">Endereço *</label>
                     <input id="endereco" name="endereco" type="text" th:value="${cliente.endereco}" required>
                 </div>
+
+                <div class="field-full" th:if="${cadastroComSenha}">
+                    <label for="senha">Senha *</label>
+                    <input id="senha" name="senha" type="password" autocomplete="new-password" required>
+                    <div class="hint">Mínimo de 6 caracteres. Será armazenada com hash seguro.</div>
+                </div>
+
+                <div class="field-full" th:if="${cadastroComSenha}">
+                    <label for="confirmacaoSenha">Confirmar senha *</label>
+                    <input id="confirmacaoSenha" name="confirmacaoSenha" type="password" autocomplete="new-password" required>
+                </div>
             </div>
 
             <div class="actions">
-                <a class="button button-neutral" href="/clientes">Cancelar</a>
-                <button class="button button-primary-solid" type="submit">Salvar cliente</button>
+                <a class="button button-neutral" th:href="${cancelUrl}">Cancelar</a>
+                <button class="button button-primary-solid" type="submit" th:if="${cadastroComSenha}">Criar conta</button>
+                <button class="button button-primary-solid" type="submit" th:if="${!cadastroComSenha}">Salvar cliente</button>
             </div>
         </form>
     </section>

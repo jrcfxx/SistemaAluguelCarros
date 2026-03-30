@@ -9,10 +9,16 @@
 <body>
 <main class="container">
     <div class="topbar">
-        <a class="brand-mark" href="/clientes">
+        <a class="brand-mark" href="/">
             <span class="brand-dot"></span>
             <span>Sistema de Aluguel de Carros</span>
         </a>
+        <div class="topbar-actions">
+            <span class="user-chip" th:if="${clienteNome != null}" th:text="|Olá, ${clienteNome}|">Olá, usuário</span>
+            <form method="post" action="/logout" class="inline-form">
+                <button class="button button-neutral" type="submit">Sair</button>
+            </form>
+        </div>
     </div>
 
     <section class="hero">

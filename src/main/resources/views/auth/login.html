@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | Sistema de Aluguel de Carros</title>
+    <link rel="stylesheet" href="/css/app.css">
+</head>
+<body>
+<main class="container">
+    <div class="topbar">
+        <a class="brand-mark" href="/">
+            <span class="brand-dot"></span>
+            <span>Sistema de Aluguel de Carros</span>
+        </a>
+    </div>
+
+    <section class="hero">
+        <span class="eyebrow">• Acesso</span>
+        <h1>Login do cliente</h1>
+        <p>
+            Informe seu CPF e senha cadastrados. Em caso de dúvida, verifique os dados ou crie uma nova conta.
+        </p>
+    </section>
+
+    <section class="panel">
+        <div th:if="${mensagem}" class="alert alert-success" th:text="${mensagem}"></div>
+        <div th:if="${erro}" class="alert alert-error" th:text="${erro}"></div>
+
+        <form method="post" action="/login" enctype="application/x-www-form-urlencoded">
+            <div class="grid">
+                <div class="field-full">
+                    <label for="cpf">CPF</label>
+                    <input id="cpf" name="cpf" type="text" autocomplete="username" required>
+                </div>
+                <div class="field-full">
+                    <label for="senha">Senha</label>
+                    <input id="senha" name="senha" type="password" autocomplete="current-password" required>
+                </div>
+            </div>
+
+            <div class="actions">
+                <a class="button button-neutral" href="/">Início</a>
+                <a class="button button-neutral" href="/clientes/novo">Criar conta</a>
+                <button class="button button-primary-solid" type="submit">Entrar</button>
+            </div>
+        </form>
+    </section>
+</main>
+</body>
+</html>

@@ -408,6 +408,23 @@ input:focus {
     margin-bottom: 18px;
 }
 
+.topbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.user-chip {
+    font-weight: 700;
+    color: var(--brand-slate);
+    font-size: 0.95rem;
+}
+
+.inline-form {
+    margin: 0;
+}
+
 .brand-mark {
     display: inline-flex;
     align-items: center;

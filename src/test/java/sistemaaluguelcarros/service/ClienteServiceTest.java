@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import sistemaaluguelcarros.domain.Cliente;
 import sistemaaluguelcarros.repository.ClienteRepository;
 
@@ -23,14 +24,66 @@ import static org.mockito.Mockito.when;
 @DisplayName("ClienteService")
 class ClienteServiceTest {
 
+    private static final String HASH_EXEMPLO = "$2a$10$abcdefghijklmnopqrstuv";
+
     @Mock
     private ClienteRepository clienteRepository;
+
+    @Mock
+    private PasswordEncoder passwordEncoder;
 
     private ClienteService clienteService;
 
     @BeforeEach
     void setUp() {
-        clienteService = new ClienteService(clienteRepository);
+        clienteService = new ClienteService(clienteRepository, passwordEncoder);
+    }
+
+    @Nested
+    @DisplayName("cadastrarComSenha")
+    class CadastrarComSenha {
+
+        @Test
+        @DisplayName("deve persistir cliente novo com senha em hash")
+        void devePersistirComSenhaEmHash() {
+            Cliente cliente = novoCliente("João Silva", "123.456.789-00", "12.345.678-9",
+                    "Rua das Flores, 100", "Engenheiro");
+            Cliente clienteSalvo = novoCliente(1L, "João Silva", "123.456.789-00", "12.345.678-9",
+                    "Rua das Flores, 100", "Engenheiro");
+            clienteSalvo.setSenhaHash(HASH_EXEMPLO);
+
+            when(clienteRepository.findByCpf("123.456.789-00")).thenReturn(Optional.empty());
+            when(passwordEncoder.encode("secret12")).thenReturn(HASH_EXEMPLO);
+            when(clienteRepository.save(any(Cliente.class))).thenAnswer(inv -> {
+                Cliente c = inv.getArgument(0);
+                c.setId(1L);
+                return c;
+            });
+
+            Cliente resultado = clienteService.cadastrarComSenha(cliente, "secret12", "secret12");
+
+            assertThat(resultado.getId()).isEqualTo(1L);
+            assertThat(resultado.getSenhaHash()).isEqualTo(HASH_EXEMPLO);
+            verify(passwordEncoder).encode("secret12");
+            verify(clienteRepository).save(any(Cliente.class));
+        }
+
+        @Test
+        @DisplayName("deve rejeitar CPF duplicado com mensagem amigável")
+        void deveRejeitarCpfDuplicado() {
+            Cliente cliente = novoCliente("Maria Santos", "111.222.333-44", null, "Av. Brasil, 50", null);
+            Cliente existente = novoCliente(99L, "Outro Nome", "111.222.333-44", null, "Outro Endereço", null);
+
+            when(clienteRepository.findByCpf("111.222.333-44")).thenReturn(Optional.of(existente));
+
+            assertThatThrownBy(() -> clienteService.cadastrarComSenha(cliente, "secret12", "secret12"))
+                    .isInstanceOf(IllegalStateException.class)
+                    .hasMessageContaining("CPF");
+
+            verify(clienteRepository).findByCpf("111.222.333-44");
+            verify(clienteRepository, never()).save(any());
+            verify(passwordEncoder, never()).encode(any());
+        }
     }
 
     @Nested
@@ -38,40 +91,13 @@ class ClienteServiceTest {
     class Salvar {
 
         @Test
-        @DisplayName("deve salvar cliente novo com sucesso")
-        void deveSalvarClienteNovoComSucesso() {
-            Cliente cliente = novoCliente("João Silva", "123.456.789-00", "12.345.678-9",
-                    "Rua das Flores, 100", "Engenheiro");
-            Cliente clienteSalvo = novoCliente(1L, "João Silva", "123.456.789-00", "12.345.678-9",
-                    "Rua das Flores, 100", "Engenheiro");
-
-            when(clienteRepository.findByCpf("123.456.789-00")).thenReturn(Optional.empty());
-            when(clienteRepository.save(any(Cliente.class))).thenReturn(clienteSalvo);
-
-            Cliente resultado = clienteService.salvar(cliente);
-
-            assertThat(resultado.getId()).isEqualTo(1L);
-            assertThat(resultado.getNome()).isEqualTo("João Silva");
-            assertThat(resultado.getCpf()).isEqualTo("123.456.789-00");
-            verify(clienteRepository).findByCpf("123.456.789-00");
-            verify(clienteRepository).save(cliente);
-        }
-
-        @Test
-        @DisplayName("deve lançar exceção quando CPF já está cadastrado (cliente novo)")
-        void deveLancarExcecaoQuandoCpfDuplicadoParaClienteNovo() {
-            Cliente cliente = novoCliente("Maria Santos", "111.222.333-44", null, "Av. Brasil, 50", null);
-            Cliente existente = novoCliente(99L, "Outro Nome", "111.222.333-44", null, "Outro Endereço", null);
-
-            when(clienteRepository.findByCpf("111.222.333-44")).thenReturn(Optional.of(existente));
+        @DisplayName("deve lançar exceção se tentar salvar sem id (novo cliente)")
+        void deveExigirCadastrarComSenhaParaNovo() {
+            Cliente cliente = novoCliente("Novo", "000.000.000-00", null, "Rua", null);
 
             assertThatThrownBy(() -> clienteService.salvar(cliente))
                     .isInstanceOf(IllegalStateException.class)
-                    .hasMessageContaining("CPF já cadastrado")
-                    .hasMessageContaining("111.222.333-44");
-
-            verify(clienteRepository).findByCpf("111.222.333-44");
-            verify(clienteRepository, org.mockito.Mockito.never()).save(any());
+                    .hasMessageContaining("cadastrarComSenha");
         }
 
         @Test
@@ -79,6 +105,8 @@ class ClienteServiceTest {
         void devePermitirSalvarQuandoEditaMesmoCliente() {
             Cliente cliente = novoCliente(1L, "João Atualizado", "123.456.789-00", null, "Nova Rua, 200", "Arquiteto");
             Cliente existente = novoCliente(1L, "João Silva", "123.456.789-00", null, "Rua Antiga", "Engenheiro");
+            existente.setSenhaHash(HASH_EXEMPLO);
+            cliente.setSenhaHash(HASH_EXEMPLO);
 
             when(clienteRepository.findByCpf("123.456.789-00")).thenReturn(Optional.of(existente));
             when(clienteRepository.existsById(1L)).thenReturn(true);
