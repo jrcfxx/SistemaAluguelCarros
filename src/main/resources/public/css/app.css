@@ -387,7 +387,26 @@ input {
     transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
+textarea {
+    width: 100%;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 12px 14px;
+    font-size: 1rem;
+    font-family: inherit;
+    background: #fff;
+    color: var(--text);
+    resize: vertical;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
 input:focus {
+    outline: none;
+    border-color: var(--brand-blue);
+    box-shadow: 0 0 0 4px rgba(29, 78, 216, 0.12);
+}
+
+textarea:focus {
     outline: none;
     border-color: var(--brand-blue);
     box-shadow: 0 0 0 4px rgba(29, 78, 216, 0.12);
