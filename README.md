@@ -17,7 +17,7 @@
   <img src="https://img.shields.io/badge/Micronaut-4.x-1B1F23?style=for-the-badge&logo=micronaut&logoColor=white" alt="Micronaut" />
   <img src="https://img.shields.io/badge/Thymeleaf-Views-005F0F?style=for-the-badge" alt="Thymeleaf" />
   <img src="https://img.shields.io/badge/Azure%20SQL-SQL%20Server-0B6E99?style=for-the-badge" alt="Azure SQL Server" />
-  <img src="https://img.shields.io/badge/Status-Autentica%C3%A7%C3%A3o%20e%20%C3%81rea%20do%20Cliente-4FD1C5?style=for-the-badge" alt="Status do projeto" />
+  <img src="https://img.shields.io/badge/Status-Autentica%C3%A7%C3%A3o%20e%20Dom%C3%ADnio%20de%20Pedidos-4FD1C5?style=for-the-badge" alt="Status do projeto" />
 </p>
 
 <p>
@@ -41,7 +41,7 @@
 | **Arquitetura alvo** | Aplicação web em `Java` com padrão `MVC` |
 | **Stack principal** | `Micronaut`, `Thymeleaf`, `JPA/Hibernate`, `Azure SQL Server`, `Gradle` |
 | **Foco funcional** | Clientes, pedidos, análise financeira, contratos e propriedade do automóvel |
-| **Situação atual** | Modelagem concluída, base técnica pronta, autenticação implementada e área autenticada do `Cliente` funcional |
+| **Situação atual** | Modelagem concluída, base técnica pronta, autenticação implementada e domínio/persistência de `PedidoAluguel` adicionados |
 
 ## Sumário
 
@@ -99,7 +99,7 @@ Atualmente, o repositório já possui a base de configuração do projeto e os a
 
 > **Importante**
 >
-> O projeto já possui base técnica, domínio de `Cliente`, autenticação por `CPF + senha`, sessão HTTP e uma área autenticada onde o cliente pode visualizar, editar e excluir o próprio cadastro. O próximo passo natural é iniciar o domínio e a persistência de `PedidoAluguel`.
+> O projeto já possui base técnica, domínio de `Cliente`, autenticação por `CPF + senha`, sessão HTTP, área autenticada do cliente e o domínio inicial de `PedidoAluguel` persistido. O próximo passo natural é implementar a criação web de pedidos pelo cliente autenticado.
 
 ### Entregáveis já produzidos e plano incremental
 
@@ -110,8 +110,8 @@ Atualmente, o repositório já possui a base de configuração do projeto e os a
 | `2` | Domínio e persistência de `Cliente` | `Sprint 02` | `Concluído` |
 | `3` | CRUD web inicial de `Cliente` com `Controller` + `Thymeleaf` | `Sprint 02` | `Concluído` |
 | `4` | Autenticação, sessão e área protegida do cliente | `Sprint 02/03` | `Concluído` |
-| `5` | Domínio e persistência de `PedidoAluguel` | `Sprint 03` | `Próximo` |
-| `6` | Criação de pedido pelo cliente | `Sprint 03` | `Pendente` |
+| `5` | Domínio e persistência de `PedidoAluguel` | `Sprint 03` | `Concluído` |
+| `6` | Criação de pedido pelo cliente | `Sprint 03` | `Próximo` |
 | `7` | Consulta de pedidos e visualização de status | `Sprint 03` | `Pendente` |
 | `8` | Modificação e cancelamento de pedido | `Sprint 03` | `Pendente` |
 | `9` | Análise de pedido por agente | `Sprint 03` | `Pendente` |
@@ -140,6 +140,10 @@ Atualmente, o repositório já possui a base de configuração do projeto e os a
 | `AuthService` | `Concluído` |
 | `SessionAuthService` | `Concluído` |
 | `PasswordHashService` | `Concluído` |
+| `StatusPedido` | `Concluído` |
+| `PedidoAluguel` | `Concluído` |
+| `PedidoAluguelRepository` | `Concluído` |
+| `PedidoAluguelService` | `Concluído` |
 | `AuthController` | `Concluído` |
 | Tela inicial pública | `Concluído` |
 | Tela de login | `Concluído` |
@@ -155,6 +159,7 @@ Atualmente, o repositório já possui a base de configuração do projeto e os a
 | Recursos estáticos (`/css` e `/js`) | `Concluído` |
 | Testes de `AuthService` | `Concluído` |
 | Testes de `SessionAuthService` | `Concluído` |
+| Testes de `PedidoAluguelService` | `Concluído` |
 
 <a id="identidade-visual"></a>
 ## Identidade visual
@@ -216,15 +221,16 @@ Pelo enunciado e pela configuração presente no projeto, a solução foi pensad
 
 Atualmente a aplicação já possui:
 
-- camada `domain` com `Cliente`;
 - camada `auth` com chaves de sessão;
-- camada `repository` com `ClienteRepository`;
-- camada `service` com `ClienteService`, `AuthService`, `SessionAuthService` e `PasswordHashService`;
+- camada `domain` com `Cliente`, `PedidoAluguel` e `StatusPedido`;
+- camada `repository` com `ClienteRepository` e `PedidoAluguelRepository`;
+- camada `service` com `ClienteService`, `AuthService`, `SessionAuthService`, `PasswordHashService` e `PedidoAluguelService`;
 - camada `controller` com `HomeController`, `ClienteController` e `AuthController`;
 - views `Thymeleaf` para home, login, listagem, cadastro e edição de clientes;
 - autenticação por `CPF + senha` com `BCrypt`;
 - sessão HTTP para controle de acesso;
 - autorização para que o cliente acesse apenas o próprio cadastro;
+- domínio inicial de pedidos com status `PENDENTE`, `APROVADO`, `REPROVADO` e `CANCELADO`;
 - recursos estáticos compartilhados por CSS e JavaScript;
 - modal de confirmação para exclusão;
 - integração preparada com `Azure SQL Server`.
@@ -292,6 +298,7 @@ POST /logout -> encerramento da sessão
 /clientes -> área protegida com os dados do cliente autenticado
 /clientes/{id}/editar -> edição protegida do próprio cadastro
 /clientes/{id}/excluir -> exclusão protegida do próprio cadastro com modal de confirmação
+PedidoAluguel -> entidade persistente pronta para os próximos fluxos web
 ```
 
 <a id="diagramas-do-projeto"></a>
@@ -381,6 +388,7 @@ As principais regras de negócio levantadas até o momento são:
 | `Autorização por proprietário` | O cliente só pode visualizar, editar e excluir o próprio cadastro |
 | `Cadastro com senha` | Novos clientes devem se cadastrar com senha e confirmação |
 | `Exclusão confirmada` | A remoção de cliente exige confirmação explícita via modal |
+| `Pedido inicial` | Todo novo `PedidoAluguel` nasce com status `PENDENTE` |
 | `Máximo de rendimentos` | Cada cliente pode possuir até `3` rendimentos |
 | `Pedido pendente` | Apenas pedidos `PENDENTE` podem ser alterados ou cancelados |
 | `Contrato condicionado` | O contrato só pode ser gerado após aprovação |
@@ -609,12 +617,16 @@ Como sistema, quero transferir a propriedade de um automóvel para refletir as c
 |       |       |   |-- ClienteController.java
 |       |       |   `-- HomeController.java
 |       |       |-- domain/          # Entidades JPA
-|       |       |   `-- Cliente.java
+|       |       |   |-- Cliente.java
+|       |       |   |-- PedidoAluguel.java
+|       |       |   `-- StatusPedido.java
 |       |       |-- repository/      # Repositórios Micronaut Data
-|       |       |   `-- ClienteRepository.java
+|       |       |   |-- ClienteRepository.java
+|       |       |   `-- PedidoAluguelRepository.java
 |       |       `-- service/         # Regras de negócio
 |       |           |-- AuthService.java
 |       |           |-- ClienteService.java
+|       |           |-- PedidoAluguelService.java
 |       |           |-- PasswordHashService.java
 |       |           `-- SessionAuthService.java
 |       `-- resources/
@@ -640,6 +652,7 @@ Como sistema, quero transferir a propriedade de um automóvel para refletir as c
 |               `-- service/
 |                   |-- AuthServiceTest.java
 |                   |-- ClienteServiceTest.java
+|                   |-- PedidoAluguelServiceTest.java
 |                   `-- SessionAuthServiceTest.java
 |-- .env.example
 |-- .gitignore
@@ -705,23 +718,21 @@ java -version
 
 > **Observação**
 >
-> Os incrementos `1`, `2`, `3` e `4` já foram concluídos. A aplicação possui base técnica, persistência de `Cliente`, autenticação com sessão, autorização sobre o próprio cadastro e uma área web navegável para o cliente autenticado. O próximo incremento recomendado é iniciar o domínio de `PedidoAluguel`.
+> Os incrementos `1`, `2`, `3`, `4` e `5` já foram concluídos. A aplicação possui base técnica, persistência de `Cliente`, autenticação com sessão, autorização sobre o próprio cadastro e o domínio inicial de `PedidoAluguel`. O próximo incremento recomendado é implementar a criação web de pedidos pelo cliente autenticado.
 
 <a id="roadmap-sugerido"></a>
 ## Roadmap sugerido
 
 Com base no laboratório e no estado atual do repositório, os próximos passos mais naturais são:
 
-1. modelar `PedidoAluguel` e `StatusPedido`;
-2. implementar persistência de pedidos;
-3. permitir criação de pedido pelo cliente autenticado;
-4. implementar consulta de pedidos e visualização de status;
-5. implementar modificação e cancelamento de pedido;
-6. modelar rendimentos e empregadores;
-7. implementar análise por agente;
-8. aprovar/reprovar pedido e gerar contrato;
-9. modelar automóveis e transferência de propriedade;
-10. revisar os diagramas conforme a implementação evoluir.
+1. permitir criação de pedido pelo cliente autenticado;
+2. implementar consulta de pedidos e visualização de status;
+3. implementar modificação e cancelamento de pedido;
+4. modelar rendimentos e empregadores;
+5. implementar análise por agente;
+6. aprovar/reprovar pedido e gerar contrato;
+7. modelar automóveis e transferência de propriedade;
+8. revisar os diagramas conforme a implementação evoluir.
 
 ### Próximos marcos esperados
 
