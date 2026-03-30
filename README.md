@@ -340,7 +340,7 @@ O diagrama de casos de uso modela os principais atores e suas interações:
 ### Diagrama de Pacotes
 
 <div align="center">
-  <img src="Diagrams/modelagem%20pacote-lab%20projeto.png" alt="Diagrama de Pacotes do Sistema de Aluguel de Carros" width="92%" />
+  <img src="Diagrams/modelagem%20pacote-lab%20projeto.png" alt="Diagrama de Pacotes do Sistema de Aluguel de Carros" width="50%" />
   <p><em>Organização lógica dos módulos e das dependências estruturais do projeto.</em></p>
 </div>
 
