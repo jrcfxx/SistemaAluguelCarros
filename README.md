@@ -17,7 +17,7 @@
   <img src="https://img.shields.io/badge/Micronaut-4.x-1B1F23?style=for-the-badge&logo=micronaut&logoColor=white" alt="Micronaut" />
   <img src="https://img.shields.io/badge/Thymeleaf-Views-005F0F?style=for-the-badge" alt="Thymeleaf" />
   <img src="https://img.shields.io/badge/Azure%20SQL-SQL%20Server-0B6E99?style=for-the-badge" alt="Azure SQL Server" />
-  <img src="https://img.shields.io/badge/Status-CRUD%20de%20Cliente%20Implementado-4FD1C5?style=for-the-badge" alt="Status do projeto" />
+  <img src="https://img.shields.io/badge/Status-Login%20e%20CRUD%20de%20Cliente-4FD1C5?style=for-the-badge" alt="Status do projeto" />
 </p>
 
 <p>
@@ -41,7 +41,7 @@
 | **Arquitetura alvo** | Aplicação web em `Java` com padrão `MVC` |
 | **Stack principal** | `Micronaut`, `Thymeleaf`, `JPA/Hibernate`, `Azure SQL Server`, `Gradle` |
 | **Foco funcional** | Clientes, pedidos, análise financeira, contratos e propriedade do automóvel |
-| **Situação atual** | Modelagem concluída, base técnica pronta e CRUD web de `Cliente` implementado |
+| **Situação atual** | Modelagem concluída, base técnica pronta, autenticação implementada e CRUD web de `Cliente` funcional |
 
 ## Sumário
 
@@ -99,7 +99,7 @@ Atualmente, o repositório já possui a base de configuração do projeto e os a
 
 > **Importante**
 >
-> O projeto já possui a base técnica inicial, o domínio de `Cliente` e o CRUD web funcional de clientes. Neste momento, o próximo passo natural é avançar para autenticação/login ou iniciar o fluxo de `PedidoAluguel`.
+> O projeto já possui base técnica, domínio de `Cliente`, autenticação por `CPF + senha`, sessão HTTP e CRUD web funcional de clientes. O próximo passo natural é iniciar o domínio e a persistência de `PedidoAluguel`.
 
 ### Entregáveis já produzidos e plano incremental
 
@@ -109,8 +109,8 @@ Atualmente, o repositório já possui a base de configuração do projeto e os a
 | `1` | Base técnica: `Micronaut`, `Gradle`, `Application`, `src/`, `application.yml`, Azure SQL | `Sprint 02` | `Concluído` |
 | `2` | Domínio e persistência de `Cliente` | `Sprint 02` | `Concluído` |
 | `3` | CRUD web de `Cliente` com `Controller` + `Thymeleaf` | `Sprint 02` | `Concluído` |
-| `4` | Autenticação e login de cliente | `Sprint 02/03` | `Próximo` |
-| `5` | Domínio e persistência de `PedidoAluguel` | `Sprint 03` | `Pendente` |
+| `4` | Autenticação e login de cliente | `Sprint 02/03` | `Concluído` |
+| `5` | Domínio e persistência de `PedidoAluguel` | `Sprint 03` | `Próximo` |
 | `6` | Criação de pedido pelo cliente | `Sprint 03` | `Pendente` |
 | `7` | Consulta de pedidos e visualização de status | `Sprint 03` | `Pendente` |
 | `8` | Modificação e cancelamento de pedido | `Sprint 03` | `Pendente` |
@@ -137,10 +137,19 @@ Atualmente, o repositório já possui a base de configuração do projeto e os a
 | `ClienteRepository` | `Concluído` |
 | `ClienteService` | `Concluído` |
 | Testes de `ClienteService` | `Concluído` |
+| `AuthService` | `Concluído` |
+| `AuthController` | `Concluído` |
+| Tela inicial pública | `Concluído` |
+| Tela de login | `Concluído` |
+| Logout com sessão HTTP | `Concluído` |
+| Hash de senha com `BCrypt` | `Concluído` |
 | `HomeController` | `Concluído` |
 | `ClienteController` | `Concluído` |
 | Tela de listagem de clientes | `Concluído` |
 | Tela de cadastro e edição de clientes | `Concluído` |
+| Modal de confirmação de exclusão | `Concluído` |
+| Recursos estáticos (`/css` e `/js`) | `Concluído` |
+| Testes de `AuthService` | `Concluído` |
 
 <a id="identidade-visual"></a>
 ## Identidade visual
@@ -186,8 +195,10 @@ A identidade visual do projeto foi construída para transmitir:
 | `Java 17` | Linguagem principal da aplicação |
 | `Gradle` | Build, execução e gerenciamento de dependências |
 | `Micronaut` | Base da aplicação web |
+| `Micronaut Session` | Gerenciamento de sessão HTTP para login/logout |
 | `Micronaut Data + Hibernate/JPA` | Persistência e acesso a dados |
 | `Thymeleaf` | Renderização de páginas no servidor |
+| `Spring Security Crypto` | Geração e validação de hash `BCrypt` para senhas |
 | `Azure SQL Server` | Banco de dados principal do projeto |
 | `JUnit 5` | Testes automatizados |
 
@@ -201,11 +212,16 @@ Pelo enunciado e pela configuração presente no projeto, a solução foi pensad
 Atualmente a aplicação já possui:
 
 - camada `domain` com `Cliente`;
+- camada `auth` com chaves de sessão;
+- camada `config` com fábrica de `PasswordEncoder`;
 - camada `repository` com `ClienteRepository`;
-- camada `service` com `ClienteService`;
-- camada `controller` com rotas web iniciais;
-- views `Thymeleaf` para listagem, cadastro e edição de clientes;
-- identidade visual compartilhada por CSS;
+- camada `service` com `ClienteService` e `AuthService`;
+- camada `controller` com `HomeController`, `ClienteController` e `AuthController`;
+- views `Thymeleaf` para home, login, listagem, cadastro e edição de clientes;
+- autenticação por `CPF + senha` com `BCrypt`;
+- sessão HTTP para controle de acesso;
+- recursos estáticos compartilhados por CSS e JavaScript;
+- modal de confirmação para exclusão;
 - integração preparada com `Azure SQL Server`.
 
 ### Jornada macro do sistema
@@ -263,11 +279,14 @@ O documento da atividade divide o sistema em dois grandes subsistemas:
 No momento, o fluxo funcional disponível no sistema é:
 
 ```text
-/  -> redireciona para /clientes
-/clientes -> listagem de clientes
-/clientes/novo -> cadastro de cliente
-/clientes/{id}/editar -> edição de cliente
-/clientes/{id}/excluir -> exclusão de cliente
+/ -> página inicial pública
+/login -> tela de login
+POST /login -> autenticação por CPF e senha
+POST /logout -> encerramento da sessão
+/clientes/novo -> cadastro público de cliente com senha
+/clientes -> listagem protegida por sessão
+/clientes/{id}/editar -> edição protegida
+/clientes/{id}/excluir -> exclusão protegida com modal de confirmação
 ```
 
 <a id="diagramas-do-projeto"></a>
@@ -351,6 +370,10 @@ As principais regras de negócio levantadas até o momento são:
 | Regra | Descrição |
 |---|---|
 | `CPF único` | Não é permitido cadastrar dois clientes com o mesmo CPF |
+| `Senha com hash` | A senha do cliente é armazenada em `BCrypt`, nunca em texto puro |
+| `Acesso protegido` | Listagem, edição e exclusão de clientes exigem sessão autenticada |
+| `Cadastro com senha` | Novos clientes devem se cadastrar com senha e confirmação |
+| `Exclusão confirmada` | A remoção de cliente exige confirmação explícita via modal |
 | `Máximo de rendimentos` | Cada cliente pode possuir até `3` rendimentos |
 | `Pedido pendente` | Apenas pedidos `PENDENTE` podem ser alterados ou cancelados |
 | `Contrato condicionado` | O contrato só pode ser gerado após aprovação |
@@ -572,7 +595,12 @@ Como sistema, quero transferir a propriedade de um automóvel para refletir as c
 |       |-- java/
 |       |   `-- sistemaaluguelcarros/
 |       |       |-- Application.java
+|       |       |-- auth/
+|       |       |   `-- AuthSessionKeys.java
+|       |       |-- config/
+|       |       |   `-- PasswordEncoderFactory.java
 |       |       |-- controller/      # Controllers MVC
+|       |       |   |-- AuthController.java
 |       |       |   |-- ClienteController.java
 |       |       |   `-- HomeController.java
 |       |       |-- domain/          # Entidades JPA
@@ -580,21 +608,30 @@ Como sistema, quero transferir a propriedade de um automóvel para refletir as c
 |       |       |-- repository/      # Repositórios Micronaut Data
 |       |       |   `-- ClienteRepository.java
 |       |       `-- service/         # Regras de negócio
+|       |           |-- AuthService.java
 |       |           `-- ClienteService.java
 |       `-- resources/
 |           |-- application.yml
 |           |-- public/
-|           |   `-- css/
-|           |       `-- app.css
+|           |   |-- css/
+|           |   |   `-- app.css
+|           |   `-- js/
+|           |       `-- modal-excluir.js
 |           `-- views/
-|               `-- clientes/
-|                   |-- formulario.html
-|                   `-- lista.html
+|               |-- auth/
+|               |   `-- login.html
+|               |-- components/
+|               |   `-- modal-excluir.html
+|               |-- clientes/
+|               |   |-- formulario.html
+|               |   `-- lista.html
+|               `-- home.html
 |-- src/
 |   `-- test/
 |       `-- java/
 |           `-- sistemaaluguelcarros/
 |               `-- service/
+|                   |-- AuthServiceTest.java
 |                   `-- ClienteServiceTest.java
 |-- .env.example
 |-- .gitignore
@@ -614,10 +651,13 @@ Como sistema, quero transferir a propriedade de um automóvel para refletir as c
 - `Java 17`
 - `Git` opcional para versionamento e clonagem
 - acesso ao `Azure SQL Server`
+- banco configurado com o esquema esperado do projeto
 
 ### Comandos
 
 Antes de executar, configure as variáveis de ambiente com base no arquivo `.env.example`.
+O projeto também carrega automaticamente um arquivo `.env` local, se ele existir.
+Por padrão, `DB_HBM2DDL_AUTO=update`, então o Hibernate tenta ajustar a estrutura necessária no banco durante o desenvolvimento.
 
 No Windows:
 
@@ -639,7 +679,7 @@ Depois execute:
 Depois acesse no navegador:
 
 ```text
-http://localhost:8080/clientes
+http://localhost:8080/
 ```
 
 Para compilar e testar:
@@ -657,17 +697,17 @@ java -version
 
 > **Observação**
 >
-> Os incrementos `1`, `2` e `3` já foram concluídos. A aplicação possui base técnica, persistência de `Cliente` e CRUD web inicial navegável. O próximo incremento recomendado é autenticação/login ou o início de `PedidoAluguel`.
+> Os incrementos `1`, `2`, `3` e `4` já foram concluídos. A aplicação possui base técnica, persistência de `Cliente`, autenticação com sessão e CRUD web navegável. O próximo incremento recomendado é iniciar o domínio de `PedidoAluguel`.
 
 <a id="roadmap-sugerido"></a>
 ## Roadmap sugerido
 
 Com base no laboratório e no estado atual do repositório, os próximos passos mais naturais são:
 
-1. implementar autenticação e login;
-2. modelar `PedidoAluguel` e `StatusPedido`;
-3. permitir criação de pedido pelo cliente;
-4. implementar consulta de pedidos e status;
+1. modelar `PedidoAluguel` e `StatusPedido`;
+2. implementar persistência de pedidos;
+3. permitir criação de pedido pelo cliente autenticado;
+4. implementar consulta de pedidos e visualização de status;
 5. implementar modificação e cancelamento de pedido;
 6. modelar rendimentos e empregadores;
 7. implementar análise por agente;
