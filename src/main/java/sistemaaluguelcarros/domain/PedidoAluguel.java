@@ -32,6 +32,14 @@ public class PedidoAluguel {
     @JoinColumn(name = "cliente_id", nullable = false)
     private Cliente cliente;
 
+    /**
+     * Veículo solicitado. Mantido opcional no mapeamento para compatibilidade com pedidos antigos;
+     * novos pedidos exigem automóvel na camada de serviço.
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "automovel_id")
+    private Automovel automovel;
+
     @NotBlank(message = "Descrição da solicitação é obrigatória")
     @Column(name = "descricao_solicitacao", nullable = false, length = 1000)
     private String descricaoSolicitacao;
@@ -131,5 +139,13 @@ public class PedidoAluguel {
 
     public void setContrato(Contrato contrato) {
         this.contrato = contrato;
+    }
+
+    public Automovel getAutomovel() {
+        return automovel;
+    }
+
+    public void setAutomovel(Automovel automovel) {
+        this.automovel = automovel;
     }
 }

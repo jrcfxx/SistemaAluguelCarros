@@ -3,6 +3,7 @@ package sistemaaluguelcarros.validation;
 import sistemaaluguelcarros.domain.Cliente;
 
 import java.math.BigDecimal;
+import java.time.Year;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
@@ -23,12 +24,17 @@ public final class ValidationRules {
     public static final int MAX_RENDIMENTOS_POR_CLIENTE = 3;
     public static final int EMPREGADOR_NOME_MIN_LENGTH = 2;
     public static final int EMPREGADOR_NOME_MAX_LENGTH = 120;
+    public static final int MARCA_MODELO_MIN_LENGTH = 2;
+    public static final int MARCA_MODELO_MAX_LENGTH = 80;
+    public static final int PLACA_NORMALIZADA_LENGTH = 7;
 
     private static final String SOMENTE_DIGITOS_REGEX = "\\D";
     private static final Pattern NOME_PATTERN = Pattern.compile("^[A-Za-zÀ-ÿ]+(?:[ '\\-][A-Za-zÀ-ÿ]+)*$");
     private static final Pattern RG_PATTERN = Pattern.compile("^[0-9A-Za-z.\\-]{5,20}$");
     private static final Pattern PROFISSAO_PATTERN = Pattern.compile("^[A-Za-zÀ-ÿ]+(?:[A-Za-zÀ-ÿ '\\-/]*[A-Za-zÀ-ÿ]+)?$");
     private static final Pattern SENHA_PATTERN = Pattern.compile("^(?=.*[A-Za-z])(?=.*\\d).{6,60}$");
+    /** Placa Mercosul ou antiga, sem separadores (7 caracteres alfanuméricos). */
+    private static final Pattern PLACA_BR_PATTERN = Pattern.compile("^[A-Z0-9]{7}$");
 
     private ValidationRules() {
     }
@@ -131,6 +137,51 @@ public final class ValidationRules {
         }
         if (valor.compareTo(new BigDecimal("999999999999.99")) > 0) {
             return Optional.of("Valor acima do limite permitido.");
+        }
+        return Optional.empty();
+    }
+
+    /**
+     * Remove separadores e padroniza em maiúsculas (ex.: {@code abc-1d23} → {@code ABC1D23}).
+     */
+    public static String normalizarPlaca(String placaBruta) {
+        if (placaBruta == null) {
+            return "";
+        }
+        String limpa = placaBruta.replaceAll("[^A-Za-z0-9]", "").toUpperCase();
+        return limpa.length() > PLACA_NORMALIZADA_LENGTH ? limpa.substring(0, PLACA_NORMALIZADA_LENGTH) : limpa;
+    }
+
+    public static Optional<String> validarPlaca(String placaNormalizada) {
+        String p = safeTrim(placaNormalizada);
+        if (p.isEmpty()) {
+            return Optional.of("Placa é obrigatória.");
+        }
+        if (p.length() != PLACA_NORMALIZADA_LENGTH || !PLACA_BR_PATTERN.matcher(p).matches()) {
+            return Optional.of("Placa inválida. Informe 7 caracteres alfanuméricos (ex.: ABC1D23 ou ABC1234).");
+        }
+        return Optional.empty();
+    }
+
+    public static Optional<String> validarAnoVeiculo(Integer ano) {
+        if (ano == null) {
+            return Optional.of("Ano do veículo é obrigatório.");
+        }
+        int atual = Year.now().getValue();
+        if (ano < 1980 || ano > atual + 1) {
+            return Optional.of("Ano deve estar entre 1980 e " + (atual + 1) + ".");
+        }
+        return Optional.empty();
+    }
+
+    public static Optional<String> validarMarcaModeloAutomovel(String marca, String modelo) {
+        String m = safeTrim(marca);
+        String mo = safeTrim(modelo);
+        if (m.length() < MARCA_MODELO_MIN_LENGTH || m.length() > MARCA_MODELO_MAX_LENGTH) {
+            return Optional.of("A marca deve ter entre 2 e 80 caracteres.");
+        }
+        if (mo.length() < MARCA_MODELO_MIN_LENGTH || mo.length() > MARCA_MODELO_MAX_LENGTH) {
+            return Optional.of("O modelo deve ter entre 2 e 80 caracteres.");
         }
         return Optional.empty();
     }

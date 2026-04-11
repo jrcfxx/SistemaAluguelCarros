@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Frota | Sistema de Aluguel de Carros</title>
+    <link rel="stylesheet" href="/css/app.css">
+</head>
+<body>
+<main class="container">
+    <div class="topbar">
+        <a class="brand-mark" href="/">
+            <span class="brand-dot"></span>
+            <span>Sistema de Aluguel de Carros</span>
+        </a>
+        <div class="topbar-actions">
+            <span class="user-chip" th:text="|Agente: ${agenteNome}|">Agente</span>
+            <form method="post" action="/agente/logout" class="inline-form">
+                <button class="button button-neutral" type="submit">Sair</button>
+            </form>
+        </div>
+    </div>
+
+    <section class="hero">
+        <span class="eyebrow">• Frota</span>
+        <h1>Automóveis cadastrados</h1>
+        <p>
+            Cadastre veículos disponíveis para seleção nos pedidos de aluguel. A <strong>placa</strong> deve ser única.
+            A titularidade exibida reflete o estado atual após contratos (laboratório, sem histórico).
+        </p>
+        <div class="hero-actions">
+            <a class="button button-primary-solid" href="/agente/automoveis/novo">Novo automóvel</a>
+            <a class="button button-secondary" href="/agente/pedidos">Painel de pedidos</a>
+            <a class="button button-secondary" href="/">Início</a>
+        </div>
+    </section>
+
+    <section class="panel">
+        <div th:if="${mensagem}" class="alert alert-success" th:text="${mensagem}"></div>
+        <div th:if="${erro}" class="alert alert-error" th:text="${erro}"></div>
+
+        <div class="table-wrap" th:if="${#lists.size(automoveis) > 0}">
+            <table>
+                <thead>
+                <tr>
+                    <th>Placa</th>
+                    <th>Marca / modelo</th>
+                    <th>Ano</th>
+                    <th>Titular atual</th>
+                    <th>Ações</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="a : ${automoveis}">
+                    <td th:text="${a.placaNormalizada}">ABC1D23</td>
+                    <td th:text="|${a.marca} ${a.modelo}|">Marca</td>
+                    <td th:text="${a.ano}">2024</td>
+                    <td>
+                        <span th:text="${a.tipoProprietario.tituloAmigavel}">Locadora</span>
+                        <span class="muted" th:if="${a.tipoProprietario.name() == 'CLIENTE' and a.proprietarioCliente != null}"
+                              th:text="| — ${a.proprietarioCliente.nome}|"></span>
+                    </td>
+                    <td>
+                        <a class="link-button" th:href="@{'/agente/automoveis/' + ${a.id} + '/editar'}">Editar</a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="empty-state" th:if="${#lists.size(automoveis) == 0}">
+            <strong>Nenhum automóvel cadastrado.</strong>
+            <p class="muted">Inclua ao menos um veículo para os clientes poderem montar pedidos.</p>
+            <div class="actions">
+                <a class="button button-primary-solid" href="/agente/automoveis/novo">Cadastrar primeiro automóvel</a>
+            </div>
+        </div>
+    </section>
+</main>
+</body>
+</html>

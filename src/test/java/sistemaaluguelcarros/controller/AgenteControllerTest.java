@@ -27,6 +27,9 @@ import java.util.Map;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import sistemaaluguelcarros.domain.TipoContrato;
+
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -143,12 +146,12 @@ class AgenteControllerTest {
         PedidoAluguel pedido = novoPedido(5L, 1L, "Descrição longa o suficiente para o pedido.", StatusPedido.APROVADO);
 
         when(agenteSessionService.agenteAutenticado(session)).thenReturn(Optional.of(agente));
-        when(pedidoAluguelService.aprovarPedido(5L)).thenReturn(pedido);
+        when(pedidoAluguelService.aprovarPedido(5L, TipoContrato.LOCACAO_SIMPLES)).thenReturn(pedido);
 
-        Object resposta = agenteController.aprovarPedido(5L, session);
+        Object resposta = agenteController.aprovarPedido(5L, session, null);
 
         assertThat(resposta).isInstanceOf(MutableHttpResponse.class);
-        verify(pedidoAluguelService).aprovarPedido(5L);
+        verify(pedidoAluguelService).aprovarPedido(5L, TipoContrato.LOCACAO_SIMPLES);
     }
 
     @Test
@@ -156,10 +159,10 @@ class AgenteControllerTest {
     void deveRedirecionarAoAprovarSemAgente() {
         when(agenteSessionService.agenteAutenticado(session)).thenReturn(Optional.empty());
 
-        Object resposta = agenteController.aprovarPedido(1L, session);
+        Object resposta = agenteController.aprovarPedido(1L, session, null);
 
         assertThat(resposta).isInstanceOf(HttpResponse.class);
-        verify(pedidoAluguelService, never()).aprovarPedido(anyLong());
+        verify(pedidoAluguelService, never()).aprovarPedido(anyLong(), any(TipoContrato.class));
     }
 
     @Test

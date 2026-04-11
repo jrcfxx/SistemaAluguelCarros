@@ -51,6 +51,7 @@
                 <thead>
                 <tr>
                     <th>ID</th>
+                    <th>Veículo</th>
                     <th>Solicitação</th>
                     <th>Status</th>
                     <th>Data de solicitação</th>
@@ -61,6 +62,11 @@
                 <tbody>
                 <tr th:each="pedido : ${pedidos}">
                     <td th:text="${pedido.id}">1</td>
+                    <td>
+                        <span th:if="${pedido.automovel != null}"
+                              th:text="|${pedido.automovel.marca} ${pedido.automovel.modelo} (${pedido.automovel.placaNormalizada})|">Veículo</span>
+                        <span class="muted" th:if="${pedido.automovel == null}">—</span>
+                    </td>
                     <td th:text="${pedido.descricaoSolicitacao}">Descrição</td>
                     <td>
                         <span class="status-badge"

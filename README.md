@@ -41,7 +41,7 @@
 | **Arquitetura alvo** | Aplicação web em `Java` com padrão `MVC` |
 | **Stack principal** | `Micronaut`, `Thymeleaf`, `JPA/Hibernate`, `Azure SQL Server`, `Gradle` |
 | **Foco funcional** | Clientes, pedidos, análise financeira, contratos e propriedade do automóvel |
-| **Situação atual** | Base funcional com cliente, agente, pedidos, rendimentos vinculados ao cliente (até 3), aprovação/reprovação pelo agente, geração e visualização de contrato (acadêmica) e validações de formulário no cliente e no servidor |
+| **Situação atual** | Base funcional com cliente, agente, pedidos com veículo selecionado, frota de automóveis (CRUD do agente), **tipo de contrato** na aprovação, **transferência de titularidade** do automóvel conforme o contrato, rendimentos (até 3), contratos e validações no cliente e no servidor |
 
 ## Sumário
 
@@ -99,7 +99,7 @@ Atualmente, o repositório já possui a base de configuração do projeto e os a
 
 > **Importante**
 >
-> O projeto já possui base técnica, domínio de `Cliente`, `Empregador` e `Rendimento` (até três por cliente), autenticação por `CPF + senha`, sessão HTTP, área autenticada do cliente, criação de `PedidoAluguel`, listagem com status, edição/cancelamento de pedidos `PENDENTE`, área protegida de agente, aprovação e reprovação de pedidos `PENDENTE`, entidade `Contrato` vinculada ao pedido aprovado e telas de visualização para agente e cliente. O próximo passo natural é modelar automóveis e transferência de propriedade.
+> O projeto já possui base técnica, domínio de `Cliente`, `Empregador` e `Rendimento` (até três por cliente), autenticação por `CPF + senha`, sessão HTTP, área autenticada do cliente, criação de `PedidoAluguel` **com automóvel vinculado**, listagem com status, edição/cancelamento de pedidos `PENDENTE`, área protegida de agente, aprovação e reprovação de pedidos `PENDENTE`, entidade `Contrato` com **tipo de contrato** e geração na aprovação, **transferência da titularidade do veículo** conforme o tipo, telas de frota para o agente e visualização de contrato para agente e cliente. O próximo passo natural é o incremento de revisão final e entrega.
 
 ### Entregáveis já produzidos e plano incremental
 
@@ -117,8 +117,8 @@ Atualmente, o repositório já possui a base de configuração do projeto e os a
 | `9` | Análise de pedido por agente | `Sprint 03` | `Concluído` |
 | `10` | Aprovação, reprovação e geração de contrato | `Sprint 03` | `Concluído` |
 | `11` | Gestão de rendimentos e empregadores | `Sprint 03` | `Concluído` |
-| `12` | Automóveis e transferência de propriedade | `Sprint 03` | `Próximo` |
-| `13` | Revisão final, componentes, implantação, polimento e entrega | `Sprint 03` | `Pendente` |
+| `12` | Automóveis e transferência de propriedade | `Sprint 03` | `Concluído` |
+| `13` | Revisão final, componentes, implantação, polimento e entrega | `Sprint 03` | `Próximo` |
 
 ### Entregas concretas já implementadas
 
@@ -192,6 +192,10 @@ Atualmente, o repositório já possui a base de configuração do projeto e os a
 | `RendimentoController` e tela de gestão de rendimentos | `Concluído` |
 | Visualização de rendimentos na análise do pedido (agente) | `Concluído` |
 | Testes de `RendimentoService` | `Concluído` |
+| Entidade `Automovel`, enums `TipoContrato` e `TipoProprietarioVeiculo` | `Concluído` |
+| `AutomovelRepository`, `AutomovelService`, `PropriedadeVeiculoService` | `Concluído` |
+| `AutomovelController` (frota do agente) e fluxo pedido + veículo | `Concluído` |
+| Testes de `PropriedadeVeiculoService` e ajustes nos testes existentes | `Concluído` |
 
 <a id="identidade-visual"></a>
 ## Identidade visual
@@ -351,14 +355,19 @@ POST /clientes/{id}/rendimentos/{rid}/excluir -> remoção de um rendimento
 /agente/pedidos/{id} -> detalhe do pedido para análise
 /pedidos -> listagem protegida dos pedidos do cliente autenticado
 /pedidos/novo -> formulário protegido para criação de pedido
-POST /pedidos -> criação de `PedidoAluguel` com status inicial `PENDENTE`
+POST /pedidos -> criação de `PedidoAluguel` com status inicial `PENDENTE` e automóvel selecionado
 /pedidos/{id}/editar -> formulário protegido para edição (somente pedido `PENDENTE` do cliente)
 POST /pedidos/{id}/editar -> atualização da descrição (somente `PENDENTE`)
 POST /pedidos/{id}/cancelar -> cancelamento com status `CANCELADO` (somente `PENDENTE`)
 /pedidos/{id}/contrato -> visualização do contrato do próprio pedido aprovado (cliente autenticado)
-POST /agente/pedidos/{id}/aprovar -> aprovação pelo agente (gera contrato)
+POST /agente/pedidos/{id}/aprovar -> aprovação pelo agente (gera contrato com tipo e atualiza titularidade do veículo)
 POST /agente/pedidos/{id}/reprovar -> reprovação pelo agente (sem contrato)
 /agente/contratos/{id} -> visualização do contrato pelo agente autenticado
+/agente/automoveis -> listagem da frota (agente autenticado)
+/agente/automoveis/novo -> formulário de cadastro de automóvel
+POST /agente/automoveis -> inclusão de automóvel (placa única)
+/agente/automoveis/{id}/editar -> edição de dados do automóvel
+POST /agente/automoveis/{id}/editar -> atualização do automóvel
 ```
 
 <a id="diagramas-do-projeto"></a>
@@ -482,6 +491,11 @@ As principais regras de negócio levantadas até o momento são:
 | `Decisão do agente` | Apenas o agente autenticado aprova ou reprova; só pedidos `PENDENTE` são elegíveis |
 | `Leitura do contrato` | O cliente só acessa contrato do próprio pedido aprovado; o agente consulta contratos no painel |
 | `Autenticação` | Apenas usuários autenticados podem criar pedidos |
+| `Pedido com veículo` | Novo pedido exige seleção de um automóvel cadastrado na frota |
+| `Placa única` | Não é permitido cadastrar dois automóveis com a mesma placa normalizada |
+| `Tipo de contrato` | Na aprovação, o agente define o tipo; o contrato armazena o tipo escolhido |
+| `Titularidade do veículo` | Após gerar o contrato, o sistema atualiza `tipo` e (se aplicável) `cliente` titular do automóvel — **sem histórico** de transferências, apenas estado atual |
+| `Regra por tipo` | `LOCACAO_SIMPLES` → titular **locadora**; `LOCACAO_COM_OPCAO_COMPRA` → titular **cliente** locatário; `CREDITO_BANCARIO` → titular **banco** (representação acadêmica) |
 
 <a id="historias-de-usuario"></a>
 ## Histórias de usuário
@@ -707,32 +721,40 @@ Como sistema, quero transferir a propriedade de um automóvel para refletir as c
 |       |       |-- controller/      # Controllers MVC
 |       |       |   |-- AgenteController.java
 |       |       |   |-- AuthController.java
+|       |       |   |-- AutomovelController.java
 |       |       |   |-- ClienteController.java
 |       |       |   |-- HomeController.java
 |       |       |   |-- PedidoController.java
 |       |       |   `-- RendimentoController.java
 |       |       |-- domain/          # Entidades JPA
+|       |       |   |-- Automovel.java
 |       |       |   |-- Cliente.java
 |       |       |   |-- Contrato.java
 |       |       |   |-- Empregador.java
 |       |       |   |-- PedidoAluguel.java
 |       |       |   |-- Rendimento.java
-|       |       |   `-- StatusPedido.java
+|       |       |   |-- StatusPedido.java
+|       |       |   |-- TipoContrato.java
+|       |       |   `-- TipoProprietarioVeiculo.java
 |       |       |-- repository/      # Repositórios Micronaut Data
+|       |       |   |-- AutomovelRepository.java
 |       |       |   |-- ClienteRepository.java
 |       |       |   |-- ContratoRepository.java
 |       |       |   |-- PedidoAluguelRepository.java
 |       |       |   `-- RendimentoRepository.java
 |       |       |-- service/         # Regras de negócio
-|       |           |-- AgenteAuthService.java
-|       |           |-- AgenteSessionService.java
-|       |           |-- AuthService.java
-|       |           |-- ClienteService.java
-|       |           |-- ContratoService.java
-|       |           |-- PedidoAluguelService.java
-|       |           |-- PasswordHashService.java
-|       |           |-- RendimentoService.java
-|       |           `-- SessionAuthService.java
+|       |       |   |-- AgenteAuthService.java
+|       |       |   |-- AgenteSessionService.java
+|       |       |   |-- AuthService.java
+|       |       |   |-- AutomovelService.java
+|       |       |   |-- ClienteService.java
+|       |       |   |-- ContratoService.java
+|       |       |   |-- PedidoAluguelService.java
+|       |       |   |-- PasswordHashService.java
+|       |       |   |-- PropriedadeVeiculoService.java
+|       |       |   |-- RendimentoService.java
+|       |       |   |-- SessionAuthService.java
+|       |       |   `-- TipoContratoResolver.java
 |       |       `-- validation/
 |       |           `-- ValidationRules.java
 |       `-- resources/
@@ -745,6 +767,9 @@ Como sistema, quero transferir a propriedade de um automóvel para refletir as c
 |           |       `-- modal-excluir.js
 |           `-- views/
 |               |-- agente/
+|               |   |-- automoveis/
+|               |   |   |-- formulario.html
+|               |   |   `-- lista.html
 |               |   |-- login.html
 |               |   `-- pedidos/
 |               |       |-- detalhe.html
@@ -778,6 +803,7 @@ Como sistema, quero transferir a propriedade de um automóvel para refletir as c
 |                   |-- ClienteServiceTest.java
 |                   |-- ContratoServiceTest.java
 |                   |-- PedidoAluguelServiceTest.java
+|                   |-- PropriedadeVeiculoServiceTest.java
 |                   |-- RendimentoServiceTest.java
 |                   `-- SessionAuthServiceTest.java
 |-- .env.example
@@ -848,15 +874,15 @@ java -version
 
 > **Observação**
 >
-> Os incrementos `1` a `11` já foram concluídos. A aplicação possui base técnica, persistência de `Cliente`, `Empregador` e `Rendimento` (máximo de três rendimentos por cliente), autenticação com sessão, autorização sobre o próprio cadastro, domínio de `PedidoAluguel` e `Contrato`, criação e listagem de pedidos, edição/cancelamento de pedidos pendentes, área de agente com aprovação/reprovação e geração de contrato na aprovação, visualização de contrato para cliente e agente e listagem de rendimentos na tela de análise do pedido. O próximo incremento recomendado é automóveis e transferência de propriedade.
+> Os incrementos `1` a `12` já foram concluídos. A aplicação possui base técnica, persistência de `Cliente`, `Empregador` e `Rendimento` (máximo de três rendimentos por cliente), `Automovel` com placa única, autenticação com sessão, autorização sobre o próprio cadastro, domínio de `PedidoAluguel` e `Contrato` (com tipo de contrato), criação de pedidos com seleção de veículo, edição/cancelamento de pedidos pendentes, área de agente com frota, aprovação/reprovação e geração de contrato na aprovação com atualização da titularidade do veículo, visualização de contrato para cliente e agente e listagem de rendimentos na tela de análise do pedido. O próximo incremento recomendado é revisão final e entrega.
 
 <a id="roadmap-sugerido"></a>
 ## Roadmap sugerido
 
 Com base no laboratório e no estado atual do repositório, os próximos passos mais naturais são:
 
-1. modelar automóveis e transferência de propriedade;
-2. revisar integração entre contratos, veículos e análise do agente;
+1. revisar integração entre contratos, veículos e análise do agente;
+2. polimento e revisão final para entrega;
 3. revisar os diagramas conforme a implementação evoluir.
 
 ### Próximos marcos esperados

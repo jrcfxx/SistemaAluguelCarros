@@ -41,6 +41,7 @@
             <a class="button button-secondary" th:href="@{/clientes/{cid}/rendimentos(cid=${clienteId})}" th:if="${autenticado}">Meus rendimentos</a>
             <a class="button button-secondary" href="/login" th:if="${!autenticado}">Entrar</a>
             <a class="button button-secondary" href="/agente/pedidos" th:if="${agenteAutenticado}">Painel do agente</a>
+            <a class="button button-secondary" href="/agente/automoveis" th:if="${agenteAutenticado}">Frota (automóveis)</a>
             <a class="button button-secondary" href="/agente/login" th:if="${!agenteAutenticado}">Área do agente</a>
         </div>
     </section>

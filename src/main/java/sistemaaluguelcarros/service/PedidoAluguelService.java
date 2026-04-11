@@ -2,10 +2,13 @@ package sistemaaluguelcarros.service;
 
 import jakarta.inject.Singleton;
 import jakarta.transaction.Transactional;
+import sistemaaluguelcarros.domain.Automovel;
 import sistemaaluguelcarros.domain.Cliente;
 import sistemaaluguelcarros.domain.Contrato;
 import sistemaaluguelcarros.domain.PedidoAluguel;
 import sistemaaluguelcarros.domain.StatusPedido;
+import sistemaaluguelcarros.domain.TipoContrato;
+import sistemaaluguelcarros.repository.AutomovelRepository;
 import sistemaaluguelcarros.repository.PedidoAluguelRepository;
 import sistemaaluguelcarros.validation.ValidationRules;
 
@@ -19,20 +22,28 @@ public class PedidoAluguelService {
     private final PedidoAluguelRepository pedidoAluguelRepository;
     private final ClienteService clienteService;
     private final ContratoService contratoService;
+    private final AutomovelRepository automovelRepository;
 
     public PedidoAluguelService(
             PedidoAluguelRepository pedidoAluguelRepository,
             ClienteService clienteService,
-            ContratoService contratoService
+            ContratoService contratoService,
+            AutomovelRepository automovelRepository
     ) {
         this.pedidoAluguelRepository = pedidoAluguelRepository;
         this.clienteService = clienteService;
         this.contratoService = contratoService;
+        this.automovelRepository = automovelRepository;
     }
 
-    public PedidoAluguel criarPedido(Long clienteId, String descricaoSolicitacao) {
+    public PedidoAluguel criarPedido(Long clienteId, Long automovelId, String descricaoSolicitacao) {
         Cliente cliente = clienteService.buscarPorId(clienteId)
                 .orElseThrow(() -> new IllegalStateException("Cliente não encontrado."));
+        if (automovelId == null) {
+            throw new IllegalStateException("Selecione o automóvel desejado no pedido.");
+        }
+        Automovel automovel = automovelRepository.findById(automovelId)
+                .orElseThrow(() -> new IllegalStateException("Automóvel não encontrado."));
 
         String descricaoNormalizada = normalizarDescricao(descricaoSolicitacao);
         ValidationRules.validarDescricaoPedido(descricaoNormalizada).ifPresent(mensagem -> {
@@ -41,6 +52,7 @@ public class PedidoAluguelService {
 
         LocalDateTime agora = LocalDateTime.now();
         PedidoAluguel pedido = new PedidoAluguel(cliente, descricaoNormalizada);
+        pedido.setAutomovel(automovel);
         pedido.setStatus(StatusPedido.PENDENTE);
         pedido.setDataSolicitacao(agora);
         pedido.setUltimaAtualizacao(agora);
@@ -115,7 +127,7 @@ public class PedidoAluguelService {
      * Aprova o pedido (fluxo do agente), gera contrato e atualiza o status. Somente {@link StatusPedido#PENDENTE}.
      */
     @Transactional
-    public PedidoAluguel aprovarPedido(Long pedidoId) {
+    public PedidoAluguel aprovarPedido(Long pedidoId, TipoContrato tipoContrato) {
         PedidoAluguel pedido = pedidoAluguelRepository.buscarDetalhePorId(pedidoId)
                 .orElseThrow(() -> new IllegalStateException("Pedido não encontrado."));
 
@@ -124,10 +136,16 @@ public class PedidoAluguelService {
                     "Apenas pedidos PENDENTES podem ser aprovados. Status atual: " + pedido.getStatus() + "."
             );
         }
+        if (pedido.getAutomovel() == null) {
+            throw new IllegalStateException(
+                    "Pedido sem automóvel vinculado. Inclua um veículo no pedido antes de aprovar."
+            );
+        }
 
         pedido.setStatus(StatusPedido.APROVADO);
         PedidoAluguel atualizado = pedidoAluguelRepository.update(pedido);
-        Contrato contrato = contratoService.criarContratoParaPedidoAprovado(atualizado);
+        TipoContrato tipo = tipoContrato != null ? tipoContrato : TipoContrato.LOCACAO_SIMPLES;
+        Contrato contrato = contratoService.criarContratoParaPedidoAprovado(atualizado, tipo);
         atualizado.setContrato(contrato);
         return atualizado;
     }

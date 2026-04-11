@@ -16,6 +16,7 @@ import sistemaaluguelcarros.domain.Cliente;
 import sistemaaluguelcarros.domain.Contrato;
 import sistemaaluguelcarros.domain.PedidoAluguel;
 import sistemaaluguelcarros.domain.StatusPedido;
+import sistemaaluguelcarros.service.AutomovelService;
 import sistemaaluguelcarros.service.ContratoService;
 import sistemaaluguelcarros.service.PedidoAluguelService;
 import sistemaaluguelcarros.service.SessionAuthService;
@@ -35,15 +36,18 @@ public class PedidoController {
     private final PedidoAluguelService pedidoAluguelService;
     private final SessionAuthService sessionAuthService;
     private final ContratoService contratoService;
+    private final AutomovelService automovelService;
 
     public PedidoController(
             PedidoAluguelService pedidoAluguelService,
             SessionAuthService sessionAuthService,
-            ContratoService contratoService
+            ContratoService contratoService,
+            AutomovelService automovelService
     ) {
         this.pedidoAluguelService = pedidoAluguelService;
         this.sessionAuthService = sessionAuthService;
         this.contratoService = contratoService;
+        this.automovelService = automovelService;
     }
 
     @Get
@@ -79,12 +83,13 @@ public class PedidoController {
             return redirectLogin();
         }
 
-        return formularioCriacao(clienteAutenticado.get(), "", mensagem, erro);
+        return formularioCriacao(clienteAutenticado.get(), null, "", mensagem, erro);
     }
 
     @Post(consumes = MediaType.APPLICATION_FORM_URLENCODED)
     public Object criar(
             @Nullable Session session,
+            @Nullable Long automovelId,
             String descricaoSolicitacao
     ) {
         Optional<Cliente> clienteAutenticado = sessionAuthService.clienteAutenticado(session);
@@ -95,13 +100,14 @@ public class PedidoController {
         try {
             PedidoAluguel pedido = pedidoAluguelService.criarPedido(
                     clienteAutenticado.get().getId(),
+                    automovelId,
                     descricaoSolicitacao
             );
             return redirectListaComMensagemPost(
                     "Pedido criado com sucesso. Status inicial: " + pedido.getStatus() + "."
             );
         } catch (IllegalStateException ex) {
-            return formularioCriacao(clienteAutenticado.get(), descricaoSolicitacao, null, ex.getMessage());
+            return formularioCriacao(clienteAutenticado.get(), automovelId, descricaoSolicitacao, null, ex.getMessage());
         }
     }
 
@@ -219,6 +225,7 @@ public class PedidoController {
 
     private ModelAndView<Map<String, Object>> formularioCriacao(
             Cliente cliente,
+            @Nullable Long automovelIdSelecionado,
             String descricaoSolicitacao,
             @Nullable String mensagem,
             @Nullable String erro
@@ -227,6 +234,8 @@ public class PedidoController {
         model.put("clienteNome", cliente.getNome());
         model.put("clienteCpf", cliente.getCpf());
         model.put("descricaoSolicitacao", descricaoSolicitacao);
+        model.put("automoveis", automovelService.listarParaSelecaoPedido());
+        model.put("automovelIdSelecionado", automovelIdSelecionado);
         model.put("mensagem", mensagem);
         model.put("erro", erro);
         model.put("modoEdicao", false);

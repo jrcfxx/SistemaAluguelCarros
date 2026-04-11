@@ -529,6 +529,18 @@ textarea:focus {
     color: var(--text);
 }
 
+.field-inline {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-right: 0.75rem;
+}
+
+.field-inline select {
+    min-width: 280px;
+    max-width: 100%;
+}
+
 @media (max-width: 720px) {
     .grid {
         grid-template-columns: 1fr;

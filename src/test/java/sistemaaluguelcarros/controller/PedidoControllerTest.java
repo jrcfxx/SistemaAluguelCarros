@@ -14,10 +14,12 @@ import sistemaaluguelcarros.domain.Cliente;
 import sistemaaluguelcarros.domain.PedidoAluguel;
 import sistemaaluguelcarros.domain.Contrato;
 import sistemaaluguelcarros.domain.StatusPedido;
+import sistemaaluguelcarros.service.AutomovelService;
 import sistemaaluguelcarros.service.ContratoService;
 import sistemaaluguelcarros.service.PedidoAluguelService;
 import sistemaaluguelcarros.service.SessionAuthService;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -25,6 +27,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -43,13 +46,17 @@ class PedidoControllerTest {
     private ContratoService contratoService;
 
     @Mock
+    private AutomovelService automovelService;
+
+    @Mock
     private Session session;
 
     private PedidoController pedidoController;
 
     @BeforeEach
     void setUp() {
-        pedidoController = new PedidoController(pedidoAluguelService, sessionAuthService, contratoService);
+        pedidoController = new PedidoController(pedidoAluguelService, sessionAuthService, contratoService, automovelService);
+        lenient().when(automovelService.listarParaSelecaoPedido()).thenReturn(Collections.emptyList());
     }
 
     @Test
@@ -118,12 +125,12 @@ class PedidoControllerTest {
         pedido.setStatus(StatusPedido.PENDENTE);
 
         when(sessionAuthService.clienteAutenticado(session)).thenReturn(Optional.of(cliente));
-        when(pedidoAluguelService.criarPedido(1L, "Uso urbano")).thenReturn(pedido);
+        when(pedidoAluguelService.criarPedido(1L, 9L, "Uso urbano")).thenReturn(pedido);
 
-        Object resposta = pedidoController.criar(session, "Uso urbano");
+        Object resposta = pedidoController.criar(session, 9L, "Uso urbano");
 
         assertThat(resposta).isInstanceOf(MutableHttpResponse.class);
-        verify(pedidoAluguelService).criarPedido(1L, "Uso urbano");
+        verify(pedidoAluguelService).criarPedido(1L, 9L, "Uso urbano");
     }
 
     @Test

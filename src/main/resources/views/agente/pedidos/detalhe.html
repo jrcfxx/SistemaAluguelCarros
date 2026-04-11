@@ -71,11 +71,28 @@
                 <label>Descrição da solicitação</label>
                 <textarea rows="6" readonly th:text="${pedido.descricaoSolicitacao}">Descrição</textarea>
             </div>
+
+            <div class="field-full" th:if="${pedido.automovel != null}">
+                <label>Automóvel solicitado</label>
+                <input type="text" readonly
+                       th:value="|${pedido.automovel.marca} ${pedido.automovel.modelo} (${pedido.automovel.ano}) • placa ${pedido.automovel.placaNormalizada}|">
+            </div>
+            <div class="field-full muted" th:if="${pedido.automovel == null}">
+                <strong>Atenção:</strong> este pedido não possui automóvel vinculado (registro antigo). Aprove apenas após corrigir os dados ou recadastrar o pedido.
+            </div>
         </div>
 
         <div class="actions" th:if="${pedido.status.name() == 'PENDENTE'}">
             <form th:action="@{'/agente/pedidos/' + ${pedido.id} + '/aprovar'}" method="post" class="inline-form"
                   onsubmit="return confirm('Aprovar este pedido e gerar o contrato?');">
+                <div class="field-inline">
+                    <label for="tipoContrato">Tipo de contrato</label>
+                    <select id="tipoContrato" name="tipoContrato">
+                        <option value="LOCACAO_SIMPLES">Locação simples (frota da locadora)</option>
+                        <option value="LOCACAO_COM_OPCAO_COMPRA">Locação com opção de compra (titularidade → cliente)</option>
+                        <option value="CREDITO_BANCARIO">Crédito bancário (titularidade → banco)</option>
+                    </select>
+                </div>
                 <button type="submit" class="button button-primary-solid">Aprovar pedido</button>
             </form>
             <form th:action="@{'/agente/pedidos/' + ${pedido.id} + '/reprovar'}" method="post" class="inline-form"
@@ -93,7 +110,8 @@
             </div>
             <a class="button button-primary-solid" th:href="@{'/agente/contratos/' + ${pedido.contrato.id}}">Ver contrato</a>
         </div>
-        <p class="muted" th:text="|Número: ${pedido.contrato.numeroContrato} • Gerado em ${#temporals.format(pedido.contrato.dataGeracao, 'dd/MM/yyyy HH:mm')}|">
+        <p class="muted"
+           th:text="|Número: ${pedido.contrato.numeroContrato} • Tipo: ${pedido.contrato.tipoContrato.tituloAmigavel} • Gerado em ${#temporals.format(pedido.contrato.dataGeracao, 'dd/MM/yyyy HH:mm')}|">
             Contrato
         </p>
     </section>

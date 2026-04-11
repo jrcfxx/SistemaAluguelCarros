@@ -22,6 +22,7 @@ import sistemaaluguelcarros.service.ContratoService;
 import sistemaaluguelcarros.service.PedidoAluguelService;
 import sistemaaluguelcarros.service.RendimentoService;
 import sistemaaluguelcarros.service.SessionAuthService;
+import sistemaaluguelcarros.service.TipoContratoResolver;
 
 import java.net.URI;
 import java.util.LinkedHashMap;
@@ -152,12 +153,16 @@ public class AgenteController {
     }
 
     @Post(value = "/pedidos/{id}/aprovar", consumes = MediaType.APPLICATION_FORM_URLENCODED)
-    public Object aprovarPedido(@PathVariable Long id, @Nullable Session session) {
+    public Object aprovarPedido(
+            @PathVariable Long id,
+            @Nullable Session session,
+            @Nullable String tipoContrato
+    ) {
         if (agenteSessionService.agenteAutenticado(session).isEmpty()) {
             return HttpResponse.redirect(URI.create("/agente/login"));
         }
         try {
-            pedidoAluguelService.aprovarPedido(id);
+            pedidoAluguelService.aprovarPedido(id, TipoContratoResolver.resolver(tipoContrato));
             URI uri = UriBuilder.of("/agente/pedidos/" + id)
                     .queryParam("mensagem", "Pedido aprovado e contrato gerado com sucesso.")
                     .build();

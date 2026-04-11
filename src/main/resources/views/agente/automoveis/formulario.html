@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${modoEdicao} ? 'Editar automóvel' : 'Novo automóvel'">Automóvel</title>
+    <link rel="stylesheet" href="/css/app.css">
+</head>
+<body>
+<main class="container">
+    <div class="topbar">
+        <a class="brand-mark" href="/">
+            <span class="brand-dot"></span>
+            <span>Sistema de Aluguel de Carros</span>
+        </a>
+        <div class="topbar-actions">
+            <span class="user-chip" th:text="|Agente: ${agenteNome}|">Agente</span>
+            <form method="post" action="/agente/logout" class="inline-form">
+                <button class="button button-neutral" type="submit">Sair</button>
+            </form>
+        </div>
+    </div>
+
+    <section class="hero">
+        <span class="eyebrow" th:text="${modoEdicao} ? '• Editar frota' : '• Frota'">• Frota</span>
+        <h1 th:text="${modoEdicao} ? 'Editar automóvel' : 'Novo automóvel'">Automóvel</h1>
+        <p>
+            Informe a placa (7 caracteres alfanuméricos, com ou sem hífen), marca, modelo e ano.
+            Novos veículos iniciam como titularidade da <strong>locadora</strong>.
+        </p>
+        <div class="hero-actions">
+            <a class="button button-primary" href="/agente/automoveis">Voltar à lista</a>
+        </div>
+    </section>
+
+    <section class="panel">
+        <div th:if="${erro}" class="alert alert-error" th:text="${erro}"></div>
+
+        <form method="post" th:action="${formAction}" enctype="application/x-www-form-urlencoded">
+            <div class="grid">
+                <div>
+                    <label for="placa">Placa *</label>
+                    <input id="placa" name="placa" type="text" maxlength="12" required
+                           th:value="${placa}"
+                           placeholder="ABC1D23 ou ABC-1234">
+                </div>
+                <div>
+                    <label for="ano">Ano *</label>
+                    <input id="ano" name="ano" type="number" min="1980" max="2100" required
+                           th:value="${ano}">
+                </div>
+                <div class="field-full">
+                    <label for="marca">Marca *</label>
+                    <input id="marca" name="marca" type="text" maxlength="80" required th:value="${marca}">
+                </div>
+                <div class="field-full">
+                    <label for="modelo">Modelo *</label>
+                    <input id="modelo" name="modelo" type="text" maxlength="80" required th:value="${modelo}">
+                </div>
+            </div>
+            <div class="actions">
+                <a class="button button-neutral" href="/agente/automoveis">Cancelar</a>
+                <button class="button button-primary-solid" type="submit" th:text="${modoEdicao} ? 'Salvar' : 'Cadastrar'">Enviar</button>
+            </div>
+        </form>
+    </section>
+</main>
+</body>
+</html>

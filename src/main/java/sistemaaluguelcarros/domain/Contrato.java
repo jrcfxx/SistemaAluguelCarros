@@ -2,6 +2,8 @@ package sistemaaluguelcarros.domain;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -42,17 +44,29 @@ public class Contrato {
     @Column(name = "termos", nullable = false)
     private String termos;
 
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    @Column(name = "tipo_contrato", nullable = false, length = 40)
+    private TipoContrato tipoContrato = TipoContrato.LOCACAO_SIMPLES;
+
     @Column(name = "ativo", nullable = false)
     private boolean ativo = true;
 
     public Contrato() {
     }
 
-    public Contrato(PedidoAluguel pedido, String numeroContrato, String termos, LocalDateTime dataGeracao) {
+    public Contrato(
+            PedidoAluguel pedido,
+            String numeroContrato,
+            String termos,
+            LocalDateTime dataGeracao,
+            TipoContrato tipoContrato
+    ) {
         this.pedido = pedido;
         this.numeroContrato = numeroContrato;
         this.termos = termos;
         this.dataGeracao = dataGeracao;
+        this.tipoContrato = tipoContrato != null ? tipoContrato : TipoContrato.LOCACAO_SIMPLES;
     }
 
     @PrePersist
@@ -108,5 +122,13 @@ public class Contrato {
 
     public void setAtivo(boolean ativo) {
         this.ativo = ativo;
+    }
+
+    public TipoContrato getTipoContrato() {
+        return tipoContrato;
+    }
+
+    public void setTipoContrato(TipoContrato tipoContrato) {
+        this.tipoContrato = tipoContrato;
     }
 }

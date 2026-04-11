@@ -231,25 +231,26 @@ class ClienteServiceTest {
         @Test
         @DisplayName("deve excluir por ID")
         void deveExcluirPorId() {
-            when(clienteRepository.existsById(1L)).thenReturn(true);
+            Cliente cliente = novoCliente(1L, "Carlos", "52998224725", null, "Rua W, 200", null);
+            when(clienteRepository.findById(1L)).thenReturn(Optional.of(cliente));
 
             clienteService.excluir(1L);
 
-            verify(clienteRepository).existsById(1L);
-            verify(clienteRepository).deleteById(1L);
+            verify(clienteRepository).findById(1L);
+            verify(clienteRepository).delete(cliente);
         }
 
         @Test
         @DisplayName("deve lançar exceção quando tenta excluir cliente inexistente")
         void deveLancarExcecaoQuandoExcluirClienteInexistente() {
-            when(clienteRepository.existsById(99L)).thenReturn(false);
+            when(clienteRepository.findById(99L)).thenReturn(Optional.empty());
 
             assertThatThrownBy(() -> clienteService.excluir(99L))
                     .isInstanceOf(IllegalStateException.class)
                     .hasMessage("Cliente não encontrado.");
 
-            verify(clienteRepository).existsById(99L);
-            verify(clienteRepository, never()).deleteById(any());
+            verify(clienteRepository).findById(99L);
+            verify(clienteRepository, never()).delete(any());
         }
     }
 
