@@ -5,6 +5,7 @@ import sistemaaluguelcarros.domain.Cliente;
 import sistemaaluguelcarros.domain.PedidoAluguel;
 import sistemaaluguelcarros.domain.StatusPedido;
 import sistemaaluguelcarros.repository.PedidoAluguelRepository;
+import sistemaaluguelcarros.validation.ValidationRules;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -29,9 +30,9 @@ public class PedidoAluguelService {
                 .orElseThrow(() -> new IllegalStateException("Cliente não encontrado."));
 
         String descricaoNormalizada = normalizarDescricao(descricaoSolicitacao);
-        if (descricaoNormalizada.isEmpty()) {
-            throw new IllegalStateException("Descrição da solicitação é obrigatória.");
-        }
+        ValidationRules.validarDescricaoPedido(descricaoNormalizada).ifPresent(mensagem -> {
+            throw new IllegalStateException(mensagem);
+        });
 
         LocalDateTime agora = LocalDateTime.now();
         PedidoAluguel pedido = new PedidoAluguel(cliente, descricaoNormalizada);
@@ -44,6 +45,18 @@ public class PedidoAluguelService {
 
     public Optional<PedidoAluguel> buscarPorId(Long id) {
         return pedidoAluguelRepository.findById(id);
+    }
+
+    public List<PedidoAluguel> listarParaAnalise() {
+        return pedidoAluguelRepository.listarParaAnalise();
+    }
+
+    public long contarPorStatus(StatusPedido status) {
+        return pedidoAluguelRepository.countByStatus(status);
+    }
+
+    public Optional<PedidoAluguel> buscarDetalheParaAnalise(Long id) {
+        return pedidoAluguelRepository.buscarDetalhePorId(id);
     }
 
     public Optional<PedidoAluguel> buscarPorIdECliente(Long id, Long clienteId) {
@@ -68,9 +81,9 @@ public class PedidoAluguelService {
         }
 
         String descricaoNormalizada = normalizarDescricao(descricaoSolicitacao);
-        if (descricaoNormalizada.isEmpty()) {
-            throw new IllegalStateException("Descrição da solicitação é obrigatória.");
-        }
+        ValidationRules.validarDescricaoPedido(descricaoNormalizada).ifPresent(mensagem -> {
+            throw new IllegalStateException(mensagem);
+        });
 
         pedido.setDescricaoSolicitacao(descricaoNormalizada);
         return pedidoAluguelRepository.update(pedido);

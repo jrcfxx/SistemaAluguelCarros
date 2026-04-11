@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel do agente | Sistema de Aluguel de Carros</title>
+    <link rel="stylesheet" href="/css/app.css">
+</head>
+<body>
+<main class="container">
+    <div class="topbar">
+        <a class="brand-mark" href="/">
+            <span class="brand-dot"></span>
+            <span>Sistema de Aluguel de Carros</span>
+        </a>
+        <div class="topbar-actions">
+            <span class="user-chip" th:text="|Agente: ${agenteNome}|">Agente</span>
+            <form method="post" action="/agente/logout" class="inline-form">
+                <button class="button button-neutral" type="submit">Sair</button>
+            </form>
+        </div>
+    </div>
+
+    <section class="hero">
+        <span class="eyebrow">• Análise de pedidos</span>
+        <h1>Painel do agente</h1>
+        <p>
+            Consulte todos os pedidos cadastrados, priorize os pendentes e abra os detalhes para análise.
+            A decisão de aprovar ou reprovar ficará para o próximo incremento.
+        </p>
+        <div class="hero-stats">
+            <span class="stat-chip" th:text="|Total: ${totalPedidos}|">Total: 0</span>
+            <span class="stat-chip" th:text="|Pendentes: ${pendentes}|">Pendentes: 0</span>
+            <span class="stat-chip" th:text="|Aprovados: ${aprovados}|">Aprovados: 0</span>
+            <span class="stat-chip" th:text="|Reprovados: ${reprovados}|">Reprovados: 0</span>
+            <span class="stat-chip" th:text="|Cancelados: ${cancelados}|">Cancelados: 0</span>
+        </div>
+    </section>
+
+    <section class="panel">
+        <div th:if="${mensagem}" class="alert alert-success" th:text="${mensagem}"></div>
+        <div th:if="${erro}" class="alert alert-error" th:text="${erro}"></div>
+
+        <div class="panel-header">
+            <div>
+                <h2>Fila de pedidos</h2>
+                <p>Pedidos disponíveis para consulta do agente.</p>
+            </div>
+        </div>
+
+        <div class="table-wrap" th:if="${#lists.size(pedidos) > 0}">
+            <table>
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Cliente</th>
+                    <th>CPF</th>
+                    <th>Solicitação</th>
+                    <th>Status</th>
+                    <th>Solicitado em</th>
+                    <th>Ação</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="pedido : ${pedidos}">
+                    <td th:text="${pedido.id}">1</td>
+                    <td th:text="${pedido.cliente.nome}">Cliente</td>
+                    <td th:text="${pedido.cliente.cpf}">00000000000</td>
+                    <td th:text="${pedido.descricaoSolicitacao}">Descrição</td>
+                    <td>
+                        <span class="status-badge"
+                              th:classappend="${pedido.status.name() == 'PENDENTE'} ? ' status-pendente' :
+                                              (${pedido.status.name() == 'APROVADO'} ? ' status-aprovado' :
+                                              (${pedido.status.name() == 'REPROVADO'} ? ' status-reprovado' : ' status-cancelado'))"
+                              th:text="${pedido.status}">
+                            PENDENTE
+                        </span>
+                    </td>
+                    <td th:text="${#temporals.format(pedido.dataSolicitacao, 'dd/MM/yyyy HH:mm')}">21/03/2026 10:00</td>
+                    <td>
+                        <a class="link-button" th:href="@{'/agente/pedidos/' + ${pedido.id}}">Analisar</a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="empty-state" th:if="${#lists.size(pedidos) == 0}">
+            <strong>Nenhum pedido foi registrado até o momento.</strong>
+            <p class="muted">Quando houver novas solicitações, elas aparecerão aqui para análise.</p>
+        </div>
+    </section>
+</main>
+</body>
+</html>

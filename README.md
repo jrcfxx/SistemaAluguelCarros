@@ -41,7 +41,7 @@
 | **Arquitetura alvo** | Aplicação web em `Java` com padrão `MVC` |
 | **Stack principal** | `Micronaut`, `Thymeleaf`, `JPA/Hibernate`, `Azure SQL Server`, `Gradle` |
 | **Foco funcional** | Clientes, pedidos, análise financeira, contratos e propriedade do automóvel |
-| **Situação atual** | Modelagem concluída, base técnica pronta, autenticação implementada, consulta de pedidos com status e modificação/cancelamento de pedidos pendentes pelo cliente |
+| **Situação atual** | Modelagem concluída, base técnica pronta, autenticação implementada, consulta de pedidos com status, modificação/cancelamento de pedidos pendentes pelo cliente e validações de formulário/client-side/backend aplicadas |
 
 ## Sumário
 
@@ -99,7 +99,7 @@ Atualmente, o repositório já possui a base de configuração do projeto e os a
 
 > **Importante**
 >
-> O projeto já possui base técnica, domínio de `Cliente`, autenticação por `CPF + senha`, sessão HTTP, área autenticada do cliente, criação de `PedidoAluguel`, listagem com status e edição/cancelamento de pedidos `PENDENTE` pelo próprio cliente. O próximo passo natural é a análise de pedido por agente.
+> O projeto já possui base técnica, domínio de `Cliente`, autenticação por `CPF + senha`, sessão HTTP, área autenticada do cliente, criação de `PedidoAluguel`, listagem com status, edição/cancelamento de pedidos `PENDENTE` e agora também uma área protegida de agente para análise dos pedidos. O próximo passo natural é permitir aprovação, reprovação e geração de contrato.
 
 ### Entregáveis já produzidos e plano incremental
 
@@ -114,8 +114,8 @@ Atualmente, o repositório já possui a base de configuração do projeto e os a
 | `6` | Criação de pedido pelo cliente | `Sprint 03` | `Concluído` |
 | `7` | Consulta de pedidos e visualização de status | `Sprint 03` | `Concluído` |
 | `8` | Modificação e cancelamento de pedido | `Sprint 03` | `Concluído` |
-| `9` | Análise de pedido por agente | `Sprint 03` | `Próximo` |
-| `10` | Aprovação, reprovação e geração de contrato | `Sprint 03` | `Pendente` |
+| `9` | Análise de pedido por agente | `Sprint 03` | `Concluído` |
+| `10` | Aprovação, reprovação e geração de contrato | `Sprint 03` | `Próximo` |
 | `11` | Gestão de rendimentos e empregadores | `Sprint 03` | `Pendente` |
 | `12` | Automóveis e transferência de propriedade | `Sprint 03` | `Pendente` |
 | `13` | Revisão final, componentes, implantação, polimento e entrega | `Sprint 03` | `Pendente` |
@@ -147,9 +147,14 @@ Atualmente, o repositório já possui a base de configuração do projeto e os a
 | `PedidoAluguelRepository` | `Concluído` |
 | `PedidoAluguelService` | `Concluído` |
 | `PedidoController` | `Concluído` |
+| `AgenteAuthService` | `Concluído` |
+| `AgenteSessionService` | `Concluído` |
+| `AgenteController` | `Concluído` |
 | `AuthController` | `Concluído` |
+| `ValidationRules` | `Concluído` |
 | Tela inicial pública | `Concluído` |
 | Tela de login | `Concluído` |
+| Tela de login do agente | `Concluído` |
 | Logout com sessão HTTP | `Concluído` |
 | Hash de senha com `BCrypt` | `Concluído` |
 | `HomeController` | `Concluído` |
@@ -160,10 +165,19 @@ Atualmente, o repositório já possui a base de configuração do projeto e os a
 | Tela de listagem de pedidos | `Concluído` |
 | Visualização de status dos pedidos | `Concluído` |
 | Edição e cancelamento de pedidos (status `PENDENTE`) | `Concluído` |
+| Painel do agente para análise de pedidos | `Concluído` |
+| Detalhamento do pedido para o agente | `Concluído` |
 | Modal de confirmação de exclusão | `Concluído` |
 | Restrição para acesso apenas ao próprio cadastro | `Concluído` |
+| Sessões separadas para cliente e agente | `Concluído` |
 | Normalização de CPF em cadastro, edição e login | `Concluído` |
+| Validação client-side com bloqueio de envio | `Concluído` |
+| Máscara e validação de CPF nos formulários | `Concluído` |
+| Regras de senha, profissão, RG, endereço e descrição de pedido | `Concluído` |
 | Recursos estáticos (`/css` e `/js`) | `Concluído` |
+| Testes de `AgenteAuthService` | `Concluído` |
+| Testes de `AgenteSessionService` | `Concluído` |
+| Testes de `AgenteController` | `Concluído` |
 | Testes de `AuthService` | `Concluído` |
 | Testes de `SessionAuthService` | `Concluído` |
 | Testes de `PedidoAluguelService` | `Concluído` |
@@ -229,12 +243,13 @@ Pelo enunciado e pela configuração presente no projeto, a solução foi pensad
 
 Atualmente a aplicação já possui:
 
-- camada `auth` com chaves de sessão;
+- camada `auth` com chaves de sessão e `AgenteSessao`;
 - camada `domain` com `Cliente`, `PedidoAluguel` e `StatusPedido`;
 - camada `repository` com `ClienteRepository` e `PedidoAluguelRepository`;
-- camada `service` com `ClienteService`, `AuthService`, `SessionAuthService`, `PasswordHashService` e `PedidoAluguelService`;
-- camada `controller` com `HomeController`, `ClienteController`, `AuthController` e `PedidoController`;
-- views `Thymeleaf` para home, login, cliente, criação e listagem de pedidos;
+- camada `service` com `ClienteService`, `AuthService`, `SessionAuthService`, `PasswordHashService`, `PedidoAluguelService`, `AgenteAuthService` e `AgenteSessionService`;
+- camada `validation` com regras centralizadas de cliente, CPF, senha e pedido;
+- camada `controller` com `HomeController`, `ClienteController`, `AuthController`, `PedidoController` e `AgenteController`;
+- views `Thymeleaf` para home, login de cliente, login de agente, cliente, pedidos do cliente e análise do agente;
 - autenticação por `CPF + senha` com `BCrypt`;
 - sessão HTTP para controle de acesso;
 - autorização para que o cliente acesse apenas o próprio cadastro;
@@ -242,6 +257,10 @@ Atualmente a aplicação já possui:
 - formulário web para criação de pedidos pelo cliente autenticado;
 - listagem web de pedidos do cliente autenticado com visualização de status;
 - edição da descrição e cancelamento de pedidos `PENDENTE` pelo próprio cliente;
+- área protegida de agente com listagem completa de pedidos para análise;
+- tela de detalhamento de pedido com dados do cliente para o agente;
+- validação client-side com máscara de `CPF`, confirmação de senha e bloqueio de envio inválido;
+- validação server-side para `CPF`, nome, endereço, profissão, senha e descrição de pedido;
 - recursos estáticos compartilhados por CSS e JavaScript;
 - modal de confirmação para exclusão;
 - integração preparada com `Azure SQL Server`.
@@ -305,10 +324,15 @@ No momento, o fluxo funcional disponível no sistema é:
 /login -> tela de login
 POST /login -> autenticação por CPF e senha
 POST /logout -> encerramento da sessão
+/agente/login -> tela de login do agente
+POST /agente/login -> autenticação do agente por credenciais configuradas
+POST /agente/logout -> encerramento da sessão do agente
 /clientes/novo -> cadastro público de cliente com senha
 /clientes -> área protegida com os dados do cliente autenticado
 /clientes/{id}/editar -> edição protegida do próprio cadastro
 /clientes/{id}/excluir -> exclusão protegida do próprio cadastro com modal de confirmação
+/agente/pedidos -> painel protegido do agente para análise
+/agente/pedidos/{id} -> detalhe do pedido para análise
 /pedidos -> listagem protegida dos pedidos do cliente autenticado
 /pedidos/novo -> formulário protegido para criação de pedido
 POST /pedidos -> criação de `PedidoAluguel` com status inicial `PENDENTE`
@@ -404,6 +428,7 @@ As principais regras de negócio levantadas até o momento são:
 
 - o sistema só pode ser utilizado após cadastro prévio;
 - o `CPF` do cliente deve ser único;
+- o `CPF` deve obedecer a formato e dígitos verificadores válidos;
 - o cliente pode possuir no máximo `3` rendimentos;
 - apenas clientes autenticados podem criar pedidos;
 - pedidos iniciam com status `PENDENTE`;
@@ -420,9 +445,12 @@ As principais regras de negócio levantadas até o momento são:
 | `CPF único` | Não é permitido cadastrar dois clientes com o mesmo CPF |
 | `Senha com hash` | A senha do cliente é armazenada em `BCrypt`, nunca em texto puro |
 | `CPF normalizado` | O CPF é persistido e consultado de forma normalizada para evitar inconsistências |
+| `CPF válido` | O sistema só aceita CPF com 11 dígitos válidos e formato de formulário compatível |
 | `Acesso protegido` | A área de cliente exige sessão autenticada |
 | `Autorização por proprietário` | O cliente só pode visualizar, editar e excluir o próprio cadastro |
 | `Cadastro com senha` | Novos clientes devem se cadastrar com senha e confirmação |
+| `Senha forte mínima` | A senha deve ter entre `6` e `60` caracteres, com pelo menos uma letra e um número |
+| `Validação de campos` | Nome, RG, profissão, endereço e descrição do pedido precisam respeitar regras mínimas antes do envio |
 | `Exclusão confirmada` | A remoção de cliente exige confirmação explícita via modal |
 | `Pedido inicial` | Todo novo `PedidoAluguel` nasce com status `PENDENTE` |
 | `Pedido autenticado` | Apenas o cliente autenticado pode registrar o próprio pedido |
@@ -651,8 +679,10 @@ Como sistema, quero transferir a propriedade de um automóvel para refletir as c
 |       |   `-- sistemaaluguelcarros/
 |       |       |-- Application.java
 |       |       |-- auth/
+|       |       |   |-- AgenteSessao.java
 |       |       |   `-- AuthSessionKeys.java
 |       |       |-- controller/      # Controllers MVC
+|       |       |   |-- AgenteController.java
 |       |       |   |-- AuthController.java
 |       |       |   |-- ClienteController.java
 |       |       |   |-- HomeController.java
@@ -664,20 +694,30 @@ Como sistema, quero transferir a propriedade de um automóvel para refletir as c
 |       |       |-- repository/      # Repositórios Micronaut Data
 |       |       |   |-- ClienteRepository.java
 |       |       |   `-- PedidoAluguelRepository.java
-|       |       `-- service/         # Regras de negócio
+|       |       |-- service/         # Regras de negócio
+|       |           |-- AgenteAuthService.java
+|       |           |-- AgenteSessionService.java
 |       |           |-- AuthService.java
 |       |           |-- ClienteService.java
 |       |           |-- PedidoAluguelService.java
 |       |           |-- PasswordHashService.java
 |       |           `-- SessionAuthService.java
+|       |       `-- validation/
+|       |           `-- ValidationRules.java
 |       `-- resources/
 |           |-- application.yml
 |           |-- public/
 |           |   |-- css/
 |           |   |   `-- app.css
 |           |   `-- js/
+|           |       |-- form-validations.js
 |           |       `-- modal-excluir.js
 |           `-- views/
+|               |-- agente/
+|               |   |-- login.html
+|               |   `-- pedidos/
+|               |       |-- detalhe.html
+|               |       `-- lista.html
 |               |-- auth/
 |               |   `-- login.html
 |               |-- components/
@@ -694,8 +734,11 @@ Como sistema, quero transferir a propriedade de um automóvel para refletir as c
 |       `-- java/
 |           `-- sistemaaluguelcarros/
 |               |-- controller/
+|               |   |-- AgenteControllerTest.java
 |               |   `-- PedidoControllerTest.java
 |               `-- service/
+|                   |-- AgenteAuthServiceTest.java
+|                   |-- AgenteSessionServiceTest.java
 |                   |-- AuthServiceTest.java
 |                   |-- ClienteServiceTest.java
 |                   |-- PedidoAluguelServiceTest.java
@@ -725,6 +768,7 @@ Como sistema, quero transferir a propriedade de um automóvel para refletir as c
 Antes de executar, configure as variáveis de ambiente com base no arquivo `.env.example`.
 O projeto também carrega automaticamente um arquivo `.env` local, se ele existir.
 Por padrão, `DB_HBM2DDL_AUTO=update`, então o Hibernate tenta ajustar a estrutura necessária no banco durante o desenvolvimento.
+As credenciais do agente também podem ser configuradas por variáveis de ambiente (`AGENT_USERNAME`, `AGENT_PASSWORD` e `AGENT_DISPLAY_NAME`).
 
 No Windows:
 
@@ -735,6 +779,9 @@ $env:DB_NAME="SistemaAluguelCarros"
 $env:DB_USER="principal"
 $env:DB_PASSWORD="sua-senha-real"
 $env:DB_SCHEMA="dbo"
+$env:AGENT_USERNAME="agente"
+$env:AGENT_PASSWORD="agente123"
+$env:AGENT_DISPLAY_NAME="Agente Financeiro"
 ```
 
 Depois execute:
@@ -764,18 +811,17 @@ java -version
 
 > **Observação**
 >
-> Os incrementos `1` a `8` já foram concluídos. A aplicação possui base técnica, persistência de `Cliente`, autenticação com sessão, autorização sobre o próprio cadastro, domínio de `PedidoAluguel`, criação e listagem de pedidos, edição/cancelamento de pedidos pendentes e visualização de status. O próximo incremento recomendado é a análise de pedido por agente.
+> Os incrementos `1` a `9` já foram concluídos. A aplicação possui base técnica, persistência de `Cliente`, autenticação com sessão, autorização sobre o próprio cadastro, domínio de `PedidoAluguel`, criação e listagem de pedidos, edição/cancelamento de pedidos pendentes, visualização de status e área de agente para análise. O próximo incremento recomendado é aprovação, reprovação e geração de contrato.
 
 <a id="roadmap-sugerido"></a>
 ## Roadmap sugerido
 
 Com base no laboratório e no estado atual do repositório, os próximos passos mais naturais são:
 
-1. implementar análise por agente;
+1. aprovar/reprovar pedido e gerar contrato;
 2. modelar rendimentos e empregadores;
-3. aprovar/reprovar pedido e gerar contrato;
-4. modelar automóveis e transferência de propriedade;
-5. revisar os diagramas conforme a implementação evoluir.
+3. modelar automóveis e transferência de propriedade;
+4. revisar os diagramas conforme a implementação evoluir.
 
 ### Próximos marcos esperados
 

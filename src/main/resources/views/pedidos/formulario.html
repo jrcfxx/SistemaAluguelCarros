@@ -50,7 +50,7 @@
             </div>
         </div>
 
-        <form method="post" th:action="${formAction}" enctype="application/x-www-form-urlencoded">
+        <form method="post" th:action="${formAction}" enctype="application/x-www-form-urlencoded" data-validate-form>
             <div class="grid">
                 <div class="field-full">
                     <label for="descricaoSolicitacao">Descrição da solicitação *</label>
@@ -58,10 +58,12 @@
                               name="descricaoSolicitacao"
                               rows="6"
                               required
+                              minlength="15"
+                              maxlength="1000"
                               placeholder="Ex.: preciso de um veículo compacto para deslocamento urbano durante 7 dias."
                               th:text="${descricaoSolicitacao}"></textarea>
-                    <div class="hint" th:if="${!modoEdicao}">O pedido nasce com status `PENDENTE` até análise.</div>
-                    <div class="hint" th:if="${modoEdicao}">Somente pedidos `PENDENTE` podem ser editados.</div>
+                    <div class="hint" th:if="${!modoEdicao}">Descreva a necessidade com 15 a 1000 caracteres. O pedido nasce com status `PENDENTE` até análise.</div>
+                    <div class="hint" th:if="${modoEdicao}">Use de 15 a 1000 caracteres. Somente pedidos `PENDENTE` podem ser editados.</div>
                 </div>
             </div>
 

@@ -1,0 +1,135 @@
+package sistemaaluguelcarros.controller;
+
+import io.micronaut.core.annotation.Nullable;
+import io.micronaut.http.HttpResponse;
+import io.micronaut.http.MediaType;
+import io.micronaut.http.MutableHttpResponse;
+import io.micronaut.http.annotation.Controller;
+import io.micronaut.http.annotation.Get;
+import io.micronaut.http.annotation.PathVariable;
+import io.micronaut.http.annotation.Post;
+import io.micronaut.http.annotation.QueryValue;
+import io.micronaut.http.uri.UriBuilder;
+import io.micronaut.session.Session;
+import io.micronaut.views.ModelAndView;
+import sistemaaluguelcarros.auth.AgenteSessao;
+import sistemaaluguelcarros.domain.PedidoAluguel;
+import sistemaaluguelcarros.domain.StatusPedido;
+import sistemaaluguelcarros.service.AgenteAuthService;
+import sistemaaluguelcarros.service.AgenteSessionService;
+import sistemaaluguelcarros.service.PedidoAluguelService;
+import sistemaaluguelcarros.service.SessionAuthService;
+
+import java.net.URI;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
+@Controller("/agente")
+public class AgenteController {
+
+    private static final String MSG_LOGIN_INVALIDO = "Usuário ou senha do agente inválidos.";
+
+    private final AgenteAuthService agenteAuthService;
+    private final AgenteSessionService agenteSessionService;
+    private final SessionAuthService sessionAuthService;
+    private final PedidoAluguelService pedidoAluguelService;
+
+    public AgenteController(
+            AgenteAuthService agenteAuthService,
+            AgenteSessionService agenteSessionService,
+            SessionAuthService sessionAuthService,
+            PedidoAluguelService pedidoAluguelService
+    ) {
+        this.agenteAuthService = agenteAuthService;
+        this.agenteSessionService = agenteSessionService;
+        this.sessionAuthService = sessionAuthService;
+        this.pedidoAluguelService = pedidoAluguelService;
+    }
+
+    @Get("/login")
+    public Object loginForm(
+            @Nullable Session session,
+            @Nullable @QueryValue String erro,
+            @Nullable @QueryValue String mensagem
+    ) {
+        if (agenteSessionService.isAutenticado(session)) {
+            return HttpResponse.redirect(URI.create("/agente/pedidos"));
+        }
+
+        Map<String, Object> model = new LinkedHashMap<>();
+        model.put("erro", erro);
+        model.put("mensagem", mensagem);
+        return new ModelAndView<>("agente/login", model);
+    }
+
+    @Post(value = "/login", consumes = MediaType.APPLICATION_FORM_URLENCODED)
+    public Object login(String username, String senha, Session session) {
+        Optional<AgenteSessao> agente = agenteAuthService.autenticar(username, senha);
+        if (agente.isEmpty()) {
+            URI uri = UriBuilder.of("/agente/login")
+                    .queryParam("erro", MSG_LOGIN_INVALIDO)
+                    .build();
+            return HttpResponse.seeOther(uri);
+        }
+
+        sessionAuthService.limparSessao(session);
+        agenteSessionService.autenticar(session, agente.get());
+        return HttpResponse.seeOther(URI.create("/agente/pedidos"));
+    }
+
+    @Post(value = "/logout", consumes = MediaType.APPLICATION_FORM_URLENCODED)
+    public MutableHttpResponse<?> logout(@Nullable Session session) {
+        agenteSessionService.limparSessao(session);
+        return HttpResponse.seeOther(URI.create("/agente/login"));
+    }
+
+    @Get("/pedidos")
+    public Object listarPedidos(
+            @Nullable Session session,
+            @Nullable @QueryValue String mensagem,
+            @Nullable @QueryValue String erro
+    ) {
+        Optional<AgenteSessao> agente = agenteSessionService.agenteAutenticado(session);
+        if (agente.isEmpty()) {
+            return HttpResponse.redirect(URI.create("/agente/login"));
+        }
+
+        List<PedidoAluguel> pedidos = pedidoAluguelService.listarParaAnalise();
+        Map<String, Object> model = new LinkedHashMap<>();
+        model.put("agenteNome", agente.get().nomeExibicao());
+        model.put("pedidos", pedidos);
+        model.put("mensagem", mensagem);
+        model.put("erro", erro);
+        model.put("totalPedidos", pedidos.size());
+        model.put("pendentes", pedidoAluguelService.contarPorStatus(StatusPedido.PENDENTE));
+        model.put("aprovados", pedidoAluguelService.contarPorStatus(StatusPedido.APROVADO));
+        model.put("reprovados", pedidoAluguelService.contarPorStatus(StatusPedido.REPROVADO));
+        model.put("cancelados", pedidoAluguelService.contarPorStatus(StatusPedido.CANCELADO));
+        return new ModelAndView<>("agente/pedidos/lista", model);
+    }
+
+    @Get("/pedidos/{id}")
+    public Object detalharPedido(@PathVariable Long id, @Nullable Session session) {
+        Optional<AgenteSessao> agente = agenteSessionService.agenteAutenticado(session);
+        if (agente.isEmpty()) {
+            return HttpResponse.redirect(URI.create("/agente/login"));
+        }
+
+        Optional<PedidoAluguel> pedidoOpt = pedidoAluguelService.buscarDetalheParaAnalise(id);
+        if (pedidoOpt.isEmpty()) {
+            URI uri = UriBuilder.of("/agente/pedidos")
+                    .queryParam("erro", "Pedido não encontrado.")
+                    .build();
+            return HttpResponse.redirect(uri);
+        }
+
+        PedidoAluguel pedido = pedidoOpt.get();
+        Map<String, Object> model = new LinkedHashMap<>();
+        model.put("agenteNome", agente.get().nomeExibicao());
+        model.put("pedido", pedido);
+        model.put("cliente", pedido.getCliente());
+        return new ModelAndView<>("agente/pedidos/detalhe", model);
+    }
+}

@@ -15,6 +15,7 @@ import io.micronaut.views.ModelAndView;
 import sistemaaluguelcarros.domain.Cliente;
 import sistemaaluguelcarros.service.ClienteService;
 import sistemaaluguelcarros.service.SessionAuthService;
+import sistemaaluguelcarros.validation.ValidationRules;
 
 import java.net.URI;
 import java.util.LinkedHashMap;
@@ -108,14 +109,14 @@ public class ClienteController {
                 nullable(profissao)
         );
 
-        String erroValidacao = validarCamposObrigatorios(cliente);
+        String erroValidacao = ValidationRules.validarCliente(cliente).orElse(null);
         if (erroValidacao != null) {
             return formularioModel(cliente, "Cadastrar cliente", "/clientes", erroValidacao, true, "/login");
         }
 
         try {
             clienteService.cadastrarComSenha(cliente, senha, confirmacaoSenha);
-            return redirectParaLoginComMensagem("Cadastro realizado. Faça login com seu CPF e senha.");
+            return redirectParaLoginComMensagemPost("Cadastro realizado. Faça login com seu CPF e senha.");
         } catch (IllegalStateException ex) {
             return formularioModel(cliente, "Cadastrar cliente", "/clientes", ex.getMessage(), true, "/login");
         }
@@ -150,14 +151,14 @@ public class ClienteController {
         cliente.setEndereco(sanitize(endereco));
         cliente.setProfissao(nullable(profissao));
 
-        String erroValidacao = validarCamposObrigatorios(cliente);
+        String erroValidacao = ValidationRules.validarCliente(cliente).orElse(null);
         if (erroValidacao != null) {
             return formularioModel(cliente, "Editar cliente", "/clientes/" + id + "/editar", erroValidacao, false, "/clientes");
         }
 
         try {
             clienteService.salvar(cliente);
-            return redirectComMensagem("Cliente atualizado com sucesso.");
+            return redirectComMensagemPost("Cliente atualizado com sucesso.");
         } catch (IllegalStateException ex) {
             return formularioModel(cliente, "Editar cliente", "/clientes/" + id + "/editar", ex.getMessage(), false, "/clientes");
         }
@@ -174,9 +175,9 @@ public class ClienteController {
         try {
             clienteService.excluir(id);
             sessionAuthService.limparSessao(session);
-            return redirectParaLoginComMensagem("Cliente excluído com sucesso.");
+            return redirectParaLoginComMensagemPost("Cliente excluído com sucesso.");
         } catch (IllegalStateException ex) {
-            return redirectComErro("Não foi possível excluir o cliente. " + ex.getMessage());
+            return redirectComErroPost("Não foi possível excluir o cliente. " + ex.getMessage());
         }
     }
 
@@ -198,13 +199,6 @@ public class ClienteController {
         return new ModelAndView<>("clientes/formulario", model);
     }
 
-    private MutableHttpResponse<?> redirectComMensagem(String mensagem) {
-        URI uri = UriBuilder.of("/clientes")
-                .queryParam("mensagem", mensagem)
-                .build();
-        return HttpResponse.redirect(uri);
-    }
-
     private MutableHttpResponse<?> redirectComErro(String erro) {
         URI uri = UriBuilder.of("/clientes")
                 .queryParam("erro", erro)
@@ -212,33 +206,29 @@ public class ClienteController {
         return HttpResponse.redirect(uri);
     }
 
-    private MutableHttpResponse<?> redirectParaLoginComMensagem(String mensagem) {
+    private MutableHttpResponse<?> redirectComMensagemPost(String mensagem) {
+        URI uri = UriBuilder.of("/clientes")
+                .queryParam("mensagem", mensagem)
+                .build();
+        return HttpResponse.seeOther(uri);
+    }
+
+    private MutableHttpResponse<?> redirectComErroPost(String erro) {
+        URI uri = UriBuilder.of("/clientes")
+                .queryParam("erro", erro)
+                .build();
+        return HttpResponse.seeOther(uri);
+    }
+
+    private MutableHttpResponse<?> redirectParaLoginComMensagemPost(String mensagem) {
         URI uri = UriBuilder.of("/login")
                 .queryParam("mensagem", mensagem)
                 .build();
-        return HttpResponse.redirect(uri);
+        return HttpResponse.seeOther(uri);
     }
 
     private MutableHttpResponse<?> redirectLogin() {
         return HttpResponse.redirect(LOGIN_URI);
-    }
-
-    @Nullable
-    private String validarCamposObrigatorios(Cliente cliente) {
-        if (isBlank(cliente.getNome())) {
-            return "Nome é obrigatório.";
-        }
-        if (isBlank(cliente.getCpf())) {
-            return "CPF é obrigatório.";
-        }
-        if (isBlank(cliente.getEndereco())) {
-            return "Endereço é obrigatório.";
-        }
-        return null;
-    }
-
-    private boolean isBlank(@Nullable String valor) {
-        return valor == null || valor.isBlank();
     }
 
     private String sanitize(String valor) {

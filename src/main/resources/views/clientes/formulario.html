@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title th:text="${titulo} + ' | Sistema de Aluguel de Carros'">Cadastro de cliente</title>
     <link rel="stylesheet" href="/css/app.css">
+    <script src="/js/form-validations.js" defer></script>
 </head>
 <body>
 <main class="container">
@@ -30,43 +31,64 @@
     <section class="panel">
         <div th:if="${erro}" class="alert alert-error" th:text="${erro}"></div>
 
-        <form method="post" th:action="${formAction}" enctype="application/x-www-form-urlencoded">
+        <form method="post" th:action="${formAction}" enctype="application/x-www-form-urlencoded" data-validate-form>
             <div class="grid">
                 <div>
                     <label for="nome">Nome *</label>
-                    <input id="nome" name="nome" type="text" th:value="${cliente.nome}" required>
+                    <input id="nome" name="nome" type="text" th:value="${cliente.nome}" required
+                           minlength="3" maxlength="120"
+                           pattern="[A-Za-zÀ-ÿ]+(?:[ '-][A-Za-zÀ-ÿ]+)*"
+                           title="Informe um nome com 3 a 120 caracteres, usando apenas letras, espaços, apóstrofo ou hífen.">
                 </div>
 
                 <div>
                     <label for="cpf">CPF *</label>
-                    <input id="cpf" name="cpf" type="text" th:value="${cliente.cpf}" required>
-                    <div class="hint">O CPF deve ser único no sistema.</div>
+                    <input id="cpf" name="cpf" type="text" th:value="${cliente.cpf}" required
+                           minlength="14" maxlength="14" inputmode="numeric"
+                           placeholder="000.000.000-00"
+                           pattern="\d{3}\.\d{3}\.\d{3}-\d{2}"
+                           title="Informe um CPF válido no formato 000.000.000-00."
+                           data-cpf-mask>
+                    <div class="hint">Use o formato 000.000.000-00. O CPF deve ser válido e único no sistema.</div>
                 </div>
 
                 <div>
                     <label for="rg">RG</label>
-                    <input id="rg" name="rg" type="text" th:value="${cliente.rg}">
+                    <input id="rg" name="rg" type="text" th:value="${cliente.rg}"
+                           minlength="5" maxlength="20"
+                           pattern="[0-9A-Za-z.-]{5,20}"
+                           title="Use de 5 a 20 caracteres com letras, números, ponto ou hífen.">
                 </div>
 
                 <div>
                     <label for="profissao">Profissão</label>
-                    <input id="profissao" name="profissao" type="text" th:value="${cliente.profissao}">
+                    <input id="profissao" name="profissao" type="text" th:value="${cliente.profissao}"
+                           minlength="2" maxlength="100"
+                           pattern="[A-Za-zÀ-ÿ]+(?:[A-Za-zÀ-ÿ '/-]*[A-Za-zÀ-ÿ]+)?"
+                           title="Use de 2 a 100 caracteres com letras, espaços, barra, apóstrofo ou hífen.">
                 </div>
 
                 <div class="field-full">
                     <label for="endereco">Endereço *</label>
-                    <input id="endereco" name="endereco" type="text" th:value="${cliente.endereco}" required>
+                    <input id="endereco" name="endereco" type="text" th:value="${cliente.endereco}" required
+                           minlength="8" maxlength="255"
+                           title="Informe um endereço com 8 a 255 caracteres.">
                 </div>
 
                 <div class="field-full" th:if="${cadastroComSenha}">
                     <label for="senha">Senha *</label>
-                    <input id="senha" name="senha" type="password" autocomplete="new-password" required>
-                    <div class="hint">Mínimo de 6 caracteres. Será armazenada com hash seguro.</div>
+                    <input id="senha" name="senha" type="password" autocomplete="new-password" required
+                           minlength="6" maxlength="60"
+                           pattern="(?=.*[A-Za-z])(?=.*\d).{6,60}"
+                           title="A senha deve ter entre 6 e 60 caracteres, com ao menos uma letra e um número.">
+                    <div class="hint">Use entre 6 e 60 caracteres, com pelo menos uma letra e um número.</div>
                 </div>
 
                 <div class="field-full" th:if="${cadastroComSenha}">
                     <label for="confirmacaoSenha">Confirmar senha *</label>
-                    <input id="confirmacaoSenha" name="confirmacaoSenha" type="password" autocomplete="new-password" required>
+                    <input id="confirmacaoSenha" name="confirmacaoSenha" type="password" autocomplete="new-password" required
+                           data-password-confirm-for="senha"
+                           title="A confirmação deve ser idêntica à senha informada.">
                 </div>
             </div>
 

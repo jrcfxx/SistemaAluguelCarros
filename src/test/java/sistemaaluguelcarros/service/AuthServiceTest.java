@@ -43,14 +43,14 @@ class AuthServiceTest {
         @Test
         @DisplayName("deve autenticar quando CPF e senha conferem")
         void deveAutenticarComSucesso() {
-            Cliente cliente = new Cliente("Ana", "12345678900", null, "Rua A", null);
+            Cliente cliente = new Cliente("Ana", "52998224725", null, "Rua A, 10", null);
             cliente.setId(1L);
             cliente.setSenhaHash(HASH);
 
-            when(clienteRepository.findByCpf("12345678900")).thenReturn(Optional.of(cliente));
+            when(clienteRepository.findByCpf("52998224725")).thenReturn(Optional.of(cliente));
             when(passwordHashService.matches("minhasenha", HASH)).thenReturn(true);
 
-            Optional<Cliente> resultado = authService.autenticar("123.456.789-00", "minhasenha");
+            Optional<Cliente> resultado = authService.autenticar("529.982.247-25", "minhasenha");
 
             assertThat(resultado).isPresent();
             assertThat(resultado.get().getId()).isEqualTo(1L);
@@ -60,13 +60,13 @@ class AuthServiceTest {
         @Test
         @DisplayName("deve retornar vazio quando senha não confere")
         void deveFalharQuandoSenhaInvalida() {
-            Cliente cliente = new Cliente("Ana", "12345678900", null, "Rua A", null);
+            Cliente cliente = new Cliente("Ana", "52998224725", null, "Rua A, 10", null);
             cliente.setSenhaHash(HASH);
 
-            when(clienteRepository.findByCpf("12345678900")).thenReturn(Optional.of(cliente));
+            when(clienteRepository.findByCpf("52998224725")).thenReturn(Optional.of(cliente));
             when(passwordHashService.matches("errada", HASH)).thenReturn(false);
 
-            Optional<Cliente> resultado = authService.autenticar("123.456.789-00", "errada");
+            Optional<Cliente> resultado = authService.autenticar("529.982.247-25", "errada");
 
             assertThat(resultado).isEmpty();
             verify(passwordHashService).matches("errada", HASH);
@@ -75,9 +75,9 @@ class AuthServiceTest {
         @Test
         @DisplayName("deve retornar vazio quando CPF não existe")
         void deveFalharQuandoCpfNaoExiste() {
-            when(clienteRepository.findByCpf("00000000000")).thenReturn(Optional.empty());
+            when(clienteRepository.findByCpf("12345678909")).thenReturn(Optional.empty());
 
-            Optional<Cliente> resultado = authService.autenticar("000.000.000-00", "qualquer");
+            Optional<Cliente> resultado = authService.autenticar("123.456.789-09", "qualquer");
 
             assertThat(resultado).isEmpty();
             verifyNoInteractions(passwordHashService);
@@ -86,7 +86,16 @@ class AuthServiceTest {
         @Test
         @DisplayName("deve retornar vazio quando senha está em branco")
         void deveFalharQuandoSenhaEstaEmBranco() {
-            Optional<Cliente> resultado = authService.autenticar("123.456.789-00", "   ");
+            Optional<Cliente> resultado = authService.autenticar("529.982.247-25", "   ");
+
+            assertThat(resultado).isEmpty();
+            verifyNoInteractions(clienteRepository, passwordHashService);
+        }
+
+        @Test
+        @DisplayName("deve retornar vazio quando CPF é inválido")
+        void deveFalharQuandoCpfInvalido() {
+            Optional<Cliente> resultado = authService.autenticar("111.111.111-11", "qualquer123");
 
             assertThat(resultado).isEmpty();
             verifyNoInteractions(clienteRepository, passwordHashService);

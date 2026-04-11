@@ -71,7 +71,7 @@ class PedidoAluguelServiceTest {
         void deveRejeitarQuandoClienteNaoExiste() {
             when(clienteService.buscarPorId(99L)).thenReturn(Optional.empty());
 
-            assertThatThrownBy(() -> pedidoAluguelService.criarPedido(99L, "Pedido teste"))
+            assertThatThrownBy(() -> pedidoAluguelService.criarPedido(99L, "Pedido de aluguel com sete dias"))
                     .isInstanceOf(IllegalStateException.class)
                     .hasMessage("Cliente não encontrado.");
 
@@ -87,6 +87,19 @@ class PedidoAluguelServiceTest {
             assertThatThrownBy(() -> pedidoAluguelService.criarPedido(1L, "   "))
                     .isInstanceOf(IllegalStateException.class)
                     .hasMessage("Descrição da solicitação é obrigatória.");
+
+            verify(pedidoAluguelRepository, never()).save(any());
+        }
+
+        @Test
+        @DisplayName("deve rejeitar pedido com descrição muito curta")
+        void deveRejeitarQuandoDescricaoMuitoCurta() {
+            Cliente cliente = novoCliente(1L, "Julia Fiorini", "14434366661");
+            when(clienteService.buscarPorId(1L)).thenReturn(Optional.of(cliente));
+
+            assertThatThrownBy(() -> pedidoAluguelService.criarPedido(1L, "Curta demais"))
+                    .isInstanceOf(IllegalStateException.class)
+                    .hasMessageContaining("entre 15 e 1000 caracteres");
 
             verify(pedidoAluguelRepository, never()).save(any());
         }
@@ -122,6 +135,43 @@ class PedidoAluguelServiceTest {
             assertThat(resultado).contains(pedido);
             verify(pedidoAluguelRepository).findByIdAndClienteId(5L, 1L);
         }
+
+        @Test
+        @DisplayName("deve listar pedidos para análise do agente")
+        void deveListarPedidosParaAnaliseDoAgente() {
+            PedidoAluguel pedido1 = novoPedido(1L, 1L, "Pedido A", StatusPedido.PENDENTE);
+            PedidoAluguel pedido2 = novoPedido(2L, 2L, "Pedido B", StatusPedido.CANCELADO);
+            when(pedidoAluguelRepository.listarParaAnalise()).thenReturn(List.of(pedido2, pedido1));
+
+            List<PedidoAluguel> pedidos = pedidoAluguelService.listarParaAnalise();
+
+            assertThat(pedidos).hasSize(2);
+            assertThat(pedidos.get(0).getId()).isEqualTo(2L);
+            verify(pedidoAluguelRepository).listarParaAnalise();
+        }
+
+        @Test
+        @DisplayName("deve contar pedidos por status")
+        void deveContarPedidosPorStatus() {
+            when(pedidoAluguelRepository.countByStatus(StatusPedido.PENDENTE)).thenReturn(3L);
+
+            long total = pedidoAluguelService.contarPorStatus(StatusPedido.PENDENTE);
+
+            assertThat(total).isEqualTo(3L);
+            verify(pedidoAluguelRepository).countByStatus(StatusPedido.PENDENTE);
+        }
+
+        @Test
+        @DisplayName("deve buscar detalhe do pedido para análise")
+        void deveBuscarDetalheDoPedidoParaAnalise() {
+            PedidoAluguel pedido = novoPedido(7L, 3L, "Pedido detalhado", StatusPedido.PENDENTE);
+            when(pedidoAluguelRepository.buscarDetalhePorId(7L)).thenReturn(Optional.of(pedido));
+
+            Optional<PedidoAluguel> resultado = pedidoAluguelService.buscarDetalheParaAnalise(7L);
+
+            assertThat(resultado).contains(pedido);
+            verify(pedidoAluguelRepository).buscarDetalhePorId(7L);
+        }
     }
 
     @Nested
@@ -131,13 +181,13 @@ class PedidoAluguelServiceTest {
         @Test
         @DisplayName("deve atualizar descrição quando pedido está pendente")
         void deveAtualizarQuandoPendente() {
-            PedidoAluguel pedido = novoPedido(8L, 2L, "Descrição antiga", StatusPedido.PENDENTE);
+            PedidoAluguel pedido = novoPedido(8L, 2L, "Descrição antiga detalhada", StatusPedido.PENDENTE);
             when(pedidoAluguelRepository.findByIdAndClienteId(8L, 2L)).thenReturn(Optional.of(pedido));
             when(pedidoAluguelRepository.update(any(PedidoAluguel.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-            PedidoAluguel atualizado = pedidoAluguelService.atualizarPedido(2L, 8L, " Nova descrição ");
+            PedidoAluguel atualizado = pedidoAluguelService.atualizarPedido(2L, 8L, " Nova descrição detalhada ");
 
-            assertThat(atualizado.getDescricaoSolicitacao()).isEqualTo("Nova descrição");
+            assertThat(atualizado.getDescricaoSolicitacao()).isEqualTo("Nova descrição detalhada");
             verify(pedidoAluguelRepository).update(eq(pedido));
         }
 

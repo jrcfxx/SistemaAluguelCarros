@@ -3,13 +3,12 @@ package sistemaaluguelcarros.service;
 import jakarta.inject.Singleton;
 import sistemaaluguelcarros.domain.Cliente;
 import sistemaaluguelcarros.repository.ClienteRepository;
+import sistemaaluguelcarros.validation.ValidationRules;
 
 import java.util.Optional;
 
 @Singleton
 public class AuthService {
-
-    private static final String SOMENTE_DIGITOS_REGEX = "\\D";
 
     private final ClienteRepository clienteRepository;
     private final PasswordHashService passwordHashService;
@@ -26,7 +25,10 @@ public class AuthService {
         if (cpf == null || cpf.isBlank() || senhaPlana == null || senhaPlana.isBlank()) {
             return Optional.empty();
         }
-        String cpfNorm = cpf.replaceAll(SOMENTE_DIGITOS_REGEX, "").trim();
+        if (!ValidationRules.isCpfValido(cpf)) {
+            return Optional.empty();
+        }
+        String cpfNorm = ValidationRules.normalizarCpf(cpf);
         Optional<Cliente> opt = clienteRepository.findByCpf(cpfNorm);
         if (opt.isEmpty()) {
             return Optional.empty();

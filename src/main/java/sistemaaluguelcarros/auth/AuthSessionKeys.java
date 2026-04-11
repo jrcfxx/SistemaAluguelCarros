@@ -6,6 +6,8 @@ package sistemaaluguelcarros.auth;
 public final class AuthSessionKeys {
 
     public static final String CLIENTE_ID = "clienteId";
+    public static final String AGENTE_USERNAME = "agenteUsername";
+    public static final String AGENTE_NOME_EXIBICAO = "agenteNomeExibicao";
 
     private AuthSessionKeys() {
     }

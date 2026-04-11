@@ -4,14 +4,12 @@ import jakarta.inject.Singleton;
 import jakarta.validation.Valid;
 import sistemaaluguelcarros.domain.Cliente;
 import sistemaaluguelcarros.repository.ClienteRepository;
+import sistemaaluguelcarros.validation.ValidationRules;
 
 import java.util.Optional;
 
 @Singleton
 public class ClienteService {
-
-    private static final int SENHA_MIN_LENGTH = 6;
-    private static final String SOMENTE_DIGITOS_REGEX = "\\D";
 
     private final ClienteRepository clienteRepository;
     private final PasswordHashService passwordHashService;
@@ -28,16 +26,13 @@ public class ClienteService {
         if (cliente.getId() != null) {
             throw new IllegalStateException("Para atualizar um cliente existente, use salvar.");
         }
+        ValidationRules.validarCliente(cliente).ifPresent(mensagem -> {
+            throw new IllegalStateException(mensagem);
+        });
         normalizarCpf(cliente);
-        if (senhaPlana == null || senhaPlana.isBlank()) {
-            throw new IllegalStateException("Senha é obrigatória.");
-        }
-        if (senhaPlana.length() < SENHA_MIN_LENGTH) {
-            throw new IllegalStateException("A senha deve ter no mínimo " + SENHA_MIN_LENGTH + " caracteres.");
-        }
-        if (!senhaPlana.equals(confirmacaoSenha)) {
-            throw new IllegalStateException("A confirmação de senha não confere.");
-        }
+        ValidationRules.validarSenhaCadastro(senhaPlana, confirmacaoSenha).ifPresent(mensagem -> {
+            throw new IllegalStateException(mensagem);
+        });
 
         Optional<Cliente> existente = clienteRepository.findByCpf(cliente.getCpf());
         if (existente.isPresent()) {
@@ -55,6 +50,9 @@ public class ClienteService {
         if (cliente.getId() == null) {
             throw new IllegalStateException("Cadastro de novos clientes deve usar cadastrarComSenha.");
         }
+        ValidationRules.validarCliente(cliente).ifPresent(mensagem -> {
+            throw new IllegalStateException(mensagem);
+        });
         normalizarCpf(cliente);
 
         Optional<Cliente> existente = clienteRepository.findByCpf(cliente.getCpf());
@@ -92,6 +90,6 @@ public class ClienteService {
     }
 
     private String normalizarCpf(String cpf) {
-        return cpf == null ? "" : cpf.replaceAll(SOMENTE_DIGITOS_REGEX, "").trim();
+        return ValidationRules.normalizarCpf(cpf);
     }
 }

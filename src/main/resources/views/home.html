@@ -14,10 +14,14 @@
             <span class="brand-dot"></span>
             <span>AutoDrive</span>
         </a>
-        <div class="topbar-actions" th:if="${autenticado}">
+        <div class="topbar-actions" th:if="${autenticado or agenteAutenticado}">
             <span class="user-chip" th:if="${clienteNome != null}" th:text="|Olá, ${clienteNome}|">Olá, usuário</span>
-            <form method="post" action="/logout" class="inline-form">
+            <span class="user-chip" th:if="${agenteNome != null}" th:text="|Área do agente: ${agenteNome}|">Área do agente</span>
+            <form method="post" action="/logout" class="inline-form" th:if="${autenticado}">
                 <button class="button button-neutral" type="submit">Sair</button>
+            </form>
+            <form method="post" action="/agente/logout" class="inline-form" th:if="${agenteAutenticado}">
+                <button class="button button-neutral" type="submit">Sair da área do agente</button>
             </form>
         </div>
     </div>
@@ -35,6 +39,8 @@
             <a class="button button-secondary" href="/pedidos" th:if="${autenticado}">Meus pedidos</a>
             <a class="button button-secondary" href="/pedidos/novo" th:if="${autenticado}">Novo pedido</a>
             <a class="button button-secondary" href="/login" th:if="${!autenticado}">Entrar</a>
+            <a class="button button-secondary" href="/agente/pedidos" th:if="${agenteAutenticado}">Painel do agente</a>
+            <a class="button button-secondary" href="/agente/login" th:if="${!agenteAutenticado}">Área do agente</a>
         </div>
     </section>
 </main>

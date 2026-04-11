@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalhe do pedido | Sistema de Aluguel de Carros</title>
+    <link rel="stylesheet" href="/css/app.css">
+</head>
+<body>
+<main class="container">
+    <div class="topbar">
+        <a class="brand-mark" href="/">
+            <span class="brand-dot"></span>
+            <span>Sistema de Aluguel de Carros</span>
+        </a>
+        <div class="topbar-actions">
+            <span class="user-chip" th:text="|Agente: ${agenteNome}|">Agente</span>
+            <form method="post" action="/agente/logout" class="inline-form">
+                <button class="button button-neutral" type="submit">Sair</button>
+            </form>
+        </div>
+    </div>
+
+    <section class="hero">
+        <span class="eyebrow">• Pedido em análise</span>
+        <h1 th:text="|Pedido #${pedido.id}|">Pedido #1</h1>
+        <p>
+            Nesta etapa o agente já consegue consultar os dados do pedido e do cliente para análise.
+            Aprovação e reprovação serão disponibilizadas no próximo incremento.
+        </p>
+        <div class="hero-stats">
+            <span class="stat-chip" th:text="|Status: ${pedido.status}|">Status: PENDENTE</span>
+            <span class="stat-chip" th:text="|Cliente: ${cliente.nome}|">Cliente</span>
+        </div>
+    </section>
+
+    <section class="panel">
+        <div class="panel-header">
+            <div>
+                <h2>Dados do pedido</h2>
+                <p>Visão detalhada para triagem e análise do agente.</p>
+            </div>
+        </div>
+
+        <div class="grid">
+            <div class="field-full">
+                <label>Status atual</label>
+                <span class="status-badge"
+                      th:classappend="${pedido.status.name() == 'PENDENTE'} ? ' status-pendente' :
+                                      (${pedido.status.name() == 'APROVADO'} ? ' status-aprovado' :
+                                      (${pedido.status.name() == 'REPROVADO'} ? ' status-reprovado' : ' status-cancelado'))"
+                      th:text="${pedido.status}">
+                    PENDENTE
+                </span>
+            </div>
+
+            <div>
+                <label>Data da solicitação</label>
+                <input type="text" th:value="${#temporals.format(pedido.dataSolicitacao, 'dd/MM/yyyy HH:mm')}" readonly>
+            </div>
+
+            <div>
+                <label>Última atualização</label>
+                <input type="text" th:value="${#temporals.format(pedido.ultimaAtualizacao, 'dd/MM/yyyy HH:mm')}" readonly>
+            </div>
+
+            <div class="field-full">
+                <label>Descrição da solicitação</label>
+                <textarea rows="6" readonly th:text="${pedido.descricaoSolicitacao}">Descrição</textarea>
+            </div>
+        </div>
+    </section>
+
+    <section class="panel">
+        <div class="panel-header">
+            <div>
+                <h2>Dados do cliente</h2>
+                <p>Informações disponíveis para análise cadastral inicial.</p>
+            </div>
+        </div>
+
+        <div class="grid">
+            <div>
+                <label>Nome</label>
+                <input type="text" th:value="${cliente.nome}" readonly>
+            </div>
+
+            <div>
+                <label>CPF</label>
+                <input type="text" th:value="${cliente.cpf}" readonly>
+            </div>
+
+            <div>
+                <label>RG</label>
+                <input type="text" th:value="${cliente.rg != null and !#strings.isEmpty(cliente.rg) ? cliente.rg : '-'}" readonly>
+            </div>
+
+            <div>
+                <label>Profissão</label>
+                <input type="text" th:value="${cliente.profissao != null and !#strings.isEmpty(cliente.profissao) ? cliente.profissao : '-'}" readonly>
+            </div>
+
+            <div class="field-full">
+                <label>Endereço</label>
+                <textarea rows="3" readonly th:text="${cliente.endereco != null and !#strings.isEmpty(cliente.endereco) ? cliente.endereco : '-'}">-</textarea>
+            </div>
+        </div>
+
+        <div class="actions">
+            <a class="button button-neutral" href="/agente/pedidos">Voltar para fila</a>
+        </div>
+    </section>
+</main>
+</body>
+</html>

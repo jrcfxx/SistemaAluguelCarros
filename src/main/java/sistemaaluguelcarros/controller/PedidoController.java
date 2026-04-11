@@ -91,7 +91,7 @@ public class PedidoController {
                     clienteAutenticado.get().getId(),
                     descricaoSolicitacao
             );
-            return redirectListaComMensagem(
+            return redirectListaComMensagemPost(
                     "Pedido criado com sucesso. Status inicial: " + pedido.getStatus() + "."
             );
         } catch (IllegalStateException ex) {
@@ -150,10 +150,10 @@ public class PedidoController {
 
         try {
             pedidoAluguelService.atualizarPedido(clienteAutenticado.get().getId(), id, descricaoSolicitacao);
-            return redirectListaComMensagem("Pedido atualizado com sucesso.");
+            return redirectListaComMensagemPost("Pedido atualizado com sucesso.");
         } catch (IllegalStateException ex) {
             if ("Pedido não encontrado.".equals(ex.getMessage())) {
-                return redirectListaComErro(MSG_PEDIDO_NAO_ENCONTRADO);
+                return redirectListaComErroPost(MSG_PEDIDO_NAO_ENCONTRADO);
             }
             PedidoAluguel pedidoForm = pedidoOpt.get();
             pedidoForm.setDescricaoSolicitacao(descricaoSolicitacao != null ? descricaoSolicitacao : "");
@@ -170,12 +170,12 @@ public class PedidoController {
 
         try {
             pedidoAluguelService.cancelarPedido(clienteAutenticado.get().getId(), id);
-            return redirectListaComMensagem("Pedido cancelado com sucesso.");
+            return redirectListaComMensagemPost("Pedido cancelado com sucesso.");
         } catch (IllegalStateException ex) {
             if ("Pedido não encontrado.".equals(ex.getMessage())) {
-                return redirectListaComErro(MSG_PEDIDO_NAO_ENCONTRADO);
+                return redirectListaComErroPost(MSG_PEDIDO_NAO_ENCONTRADO);
             }
-            return redirectListaComErro(ex.getMessage());
+            return redirectListaComErroPost(ex.getMessage());
         }
     }
 
@@ -219,18 +219,25 @@ public class PedidoController {
         return new ModelAndView<>("pedidos/formulario", model);
     }
 
-    private MutableHttpResponse<?> redirectListaComMensagem(String mensagem) {
-        URI uri = UriBuilder.of("/pedidos")
-                .queryParam("mensagem", mensagem)
-                .build();
-        return HttpResponse.redirect(uri);
-    }
-
     private MutableHttpResponse<?> redirectListaComErro(String erro) {
         URI uri = UriBuilder.of("/pedidos")
                 .queryParam("erro", erro)
                 .build();
         return HttpResponse.redirect(uri);
+    }
+
+    private MutableHttpResponse<?> redirectListaComMensagemPost(String mensagem) {
+        URI uri = UriBuilder.of("/pedidos")
+                .queryParam("mensagem", mensagem)
+                .build();
+        return HttpResponse.seeOther(uri);
+    }
+
+    private MutableHttpResponse<?> redirectListaComErroPost(String erro) {
+        URI uri = UriBuilder.of("/pedidos")
+                .queryParam("erro", erro)
+                .build();
+        return HttpResponse.seeOther(uri);
     }
 
     private MutableHttpResponse<?> redirectLogin() {

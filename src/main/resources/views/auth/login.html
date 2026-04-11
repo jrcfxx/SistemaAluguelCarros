@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login | Sistema de Aluguel de Carros</title>
     <link rel="stylesheet" href="/css/app.css">
+    <script src="/js/form-validations.js" defer></script>
 </head>
 <body>
 <main class="container">
@@ -27,21 +28,29 @@
         <div th:if="${mensagem}" class="alert alert-success" th:text="${mensagem}"></div>
         <div th:if="${erro}" class="alert alert-error" th:text="${erro}"></div>
 
-        <form method="post" action="/login" enctype="application/x-www-form-urlencoded">
+        <form method="post" action="/login" enctype="application/x-www-form-urlencoded" data-validate-form>
             <div class="grid">
                 <div class="field-full">
                     <label for="cpf">CPF</label>
-                    <input id="cpf" name="cpf" type="text" autocomplete="username" required>
+                    <input id="cpf" name="cpf" type="text" autocomplete="username" required
+                           minlength="14" maxlength="14" inputmode="numeric"
+                           placeholder="000.000.000-00"
+                           pattern="\d{3}\.\d{3}\.\d{3}-\d{2}"
+                           title="Informe um CPF válido no formato 000.000.000-00."
+                           data-cpf-mask>
                 </div>
                 <div class="field-full">
                     <label for="senha">Senha</label>
-                    <input id="senha" name="senha" type="password" autocomplete="current-password" required>
+                    <input id="senha" name="senha" type="password" autocomplete="current-password" required
+                           minlength="6" maxlength="60"
+                           title="Informe sua senha cadastrada.">
                 </div>
             </div>
 
             <div class="actions">
                 <a class="button button-neutral" href="/">Início</a>
                 <a class="button button-neutral" href="/clientes/novo">Criar conta</a>
+                <a class="button button-neutral" href="/agente/login">Área do agente</a>
                 <button class="button button-primary-solid" type="submit">Entrar</button>
             </div>
         </form>

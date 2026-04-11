@@ -12,6 +12,7 @@ import io.micronaut.http.uri.UriBuilder;
 import io.micronaut.session.Session;
 import io.micronaut.views.ModelAndView;
 import sistemaaluguelcarros.domain.Cliente;
+import sistemaaluguelcarros.service.AgenteSessionService;
 import sistemaaluguelcarros.service.AuthService;
 import sistemaaluguelcarros.service.SessionAuthService;
 
@@ -27,13 +28,16 @@ public class AuthController {
 
     private final AuthService authService;
     private final SessionAuthService sessionAuthService;
+    private final AgenteSessionService agenteSessionService;
 
     public AuthController(
             AuthService authService,
-            SessionAuthService sessionAuthService
+            SessionAuthService sessionAuthService,
+            AgenteSessionService agenteSessionService
     ) {
         this.authService = authService;
         this.sessionAuthService = sessionAuthService;
+        this.agenteSessionService = agenteSessionService;
     }
 
     @Get("/login")
@@ -58,15 +62,17 @@ public class AuthController {
             URI uri = UriBuilder.of("/login")
                     .queryParam("erro", MSG_LOGIN_INVALIDO)
                     .build();
-            return HttpResponse.redirect(uri);
+            return HttpResponse.seeOther(uri);
         }
+        agenteSessionService.limparSessao(session);
         sessionAuthService.autenticar(session, cliente.get());
-        return HttpResponse.redirect(URI.create("/clientes"));
+        return HttpResponse.seeOther(URI.create("/clientes"));
     }
 
     @Post(value = "/logout", consumes = MediaType.APPLICATION_FORM_URLENCODED)
     public MutableHttpResponse<?> logout(@Nullable Session session) {
         sessionAuthService.limparSessao(session);
-        return HttpResponse.redirect(URI.create("/login"));
+        agenteSessionService.limparSessao(session);
+        return HttpResponse.seeOther(URI.create("/login"));
     }
 }
