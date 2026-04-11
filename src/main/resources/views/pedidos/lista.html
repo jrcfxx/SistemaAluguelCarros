@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meus pedidos | Sistema de Aluguel de Carros</title>
+    <link rel="stylesheet" href="/css/app.css">
+</head>
+<body>
+<main class="container">
+    <div class="topbar">
+        <a class="brand-mark" href="/">
+            <span class="brand-dot"></span>
+            <span>Sistema de Aluguel de Carros</span>
+        </a>
+        <div class="topbar-actions">
+            <span class="user-chip" th:if="${clienteNome != null}" th:text="|Olá, ${clienteNome}|">Olá, usuário</span>
+            <form method="post" action="/logout" class="inline-form">
+                <button class="button button-neutral" type="submit">Sair</button>
+            </form>
+        </div>
+    </div>
+
+    <section class="hero">
+        <span class="eyebrow">• Pedidos</span>
+        <h1>Meus pedidos</h1>
+        <p>
+            Aqui você acompanha as solicitações de aluguel já registradas e o status atual de cada uma.
+        </p>
+        <div class="hero-actions">
+            <a class="button button-primary" href="/pedidos/novo">Novo pedido</a>
+            <a class="button button-secondary" href="/clientes">Meu cadastro</a>
+        </div>
+    </section>
+
+    <section class="panel">
+        <div th:if="${mensagem}" class="alert alert-success" th:text="${mensagem}"></div>
+        <div th:if="${erro}" class="alert alert-error" th:text="${erro}"></div>
+
+        <div class="panel-header">
+            <div>
+                <h2>Histórico de solicitações</h2>
+                <p th:text="|Cliente autenticado: ${clienteNome} • CPF: ${clienteCpf}|">Cliente autenticado</p>
+            </div>
+            <a class="button button-primary-solid" href="/pedidos/novo">Criar novo pedido</a>
+        </div>
+
+        <div class="table-wrap" th:if="${#lists.size(pedidos) > 0}">
+            <table>
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Solicitação</th>
+                    <th>Status</th>
+                    <th>Data de solicitação</th>
+                    <th>Última atualização</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="pedido : ${pedidos}">
+                    <td th:text="${pedido.id}">1</td>
+                    <td th:text="${pedido.descricaoSolicitacao}">Descrição</td>
+                    <td>
+                        <span class="status-badge"
+                              th:classappend="${pedido.status.name() == 'PENDENTE'} ? ' status-pendente' :
+                                              (${pedido.status.name() == 'APROVADO'} ? ' status-aprovado' :
+                                              (${pedido.status.name() == 'REPROVADO'} ? ' status-reprovado' : ' status-cancelado'))"
+                              th:text="${pedido.status}">
+                            PENDENTE
+                        </span>
+                    </td>
+                    <td th:text="${#temporals.format(pedido.dataSolicitacao, 'dd/MM/yyyy HH:mm')}">21/03/2026 10:00</td>
+                    <td th:text="${#temporals.format(pedido.ultimaAtualizacao, 'dd/MM/yyyy HH:mm')}">21/03/2026 10:00</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="empty-state" th:if="${#lists.size(pedidos) == 0}">
+            <strong>Você ainda não possui pedidos cadastrados.</strong>
+            <p class="muted">Crie sua primeira solicitação para começar a acompanhar o status do aluguel.</p>
+            <div class="actions">
+                <a class="button button-primary-solid" href="/pedidos/novo">Criar primeiro pedido</a>
+            </div>
+        </div>
+    </section>
+</main>
+</body>
+</html>

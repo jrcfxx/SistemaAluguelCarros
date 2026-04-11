@@ -31,6 +31,7 @@
         <div class="hero-actions">
             <a class="button button-primary" href="/clientes/novo" th:if="${!autenticado}">Criar conta</a>
             <a class="button button-primary" href="/clientes" th:if="${autenticado}">Ver meu cadastro</a>
+            <a class="button button-secondary" href="/pedidos" th:if="${autenticado}">Meus pedidos</a>
             <a class="button button-secondary" href="/pedidos/novo" th:if="${autenticado}">Novo pedido</a>
             <a class="button button-secondary" href="/login" th:if="${!autenticado}">Entrar</a>
         </div>

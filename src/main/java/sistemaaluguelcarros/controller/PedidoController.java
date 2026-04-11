@@ -17,6 +17,7 @@ import sistemaaluguelcarros.service.PedidoAluguelService;
 import sistemaaluguelcarros.service.SessionAuthService;
 
 import java.net.URI;
+import java.util.List;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -35,6 +36,27 @@ public class PedidoController {
     ) {
         this.pedidoAluguelService = pedidoAluguelService;
         this.sessionAuthService = sessionAuthService;
+    }
+
+    @Get
+    public Object listar(
+            @Nullable Session session,
+            @Nullable @QueryValue String mensagem,
+            @Nullable @QueryValue String erro
+    ) {
+        Optional<Cliente> clienteAutenticado = sessionAuthService.clienteAutenticado(session);
+        if (clienteAutenticado.isEmpty()) {
+            return redirectLogin();
+        }
+
+        List<PedidoAluguel> pedidos = pedidoAluguelService.listarPorCliente(clienteAutenticado.get().getId());
+        Map<String, Object> model = new LinkedHashMap<>();
+        model.put("clienteNome", clienteAutenticado.get().getNome());
+        model.put("clienteCpf", clienteAutenticado.get().getCpf());
+        model.put("pedidos", pedidos);
+        model.put("mensagem", mensagem);
+        model.put("erro", erro);
+        return new ModelAndView<>("pedidos/lista", model);
     }
 
     @Get("/novo")
@@ -66,7 +88,7 @@ public class PedidoController {
                     clienteAutenticado.get().getId(),
                     descricaoSolicitacao
             );
-            return redirectComMensagem(
+            return redirectListaComMensagem(
                     "Pedido criado com sucesso. Status inicial: " + pedido.getStatus() + "."
             );
         } catch (IllegalStateException ex) {
@@ -89,8 +111,8 @@ public class PedidoController {
         return new ModelAndView<>("pedidos/formulario", model);
     }
 
-    private MutableHttpResponse<?> redirectComMensagem(String mensagem) {
-        URI uri = UriBuilder.of("/pedidos/novo")
+    private MutableHttpResponse<?> redirectListaComMensagem(String mensagem) {
+        URI uri = UriBuilder.of("/pedidos")
                 .queryParam("mensagem", mensagem)
                 .build();
         return HttpResponse.redirect(uri);
