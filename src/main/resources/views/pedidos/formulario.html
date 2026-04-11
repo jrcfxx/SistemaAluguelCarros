@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Novo pedido | Sistema de Aluguel de Carros</title>
+    <title th:text="${titulo} + ' | Sistema de Aluguel de Carros'">Pedido | Sistema de Aluguel de Carros</title>
     <link rel="stylesheet" href="/css/app.css">
 </head>
 <body>
@@ -22,11 +22,15 @@
     </div>
 
     <section class="hero">
-        <span class="eyebrow">• Pedido de aluguel</span>
-        <h1>Novo pedido</h1>
-        <p>
+        <span class="eyebrow" th:text="${modoEdicao} ? '• Editar pedido' : '• Pedido de aluguel'">• Pedido</span>
+        <h1 th:text="${titulo}">Novo pedido</h1>
+        <p th:if="${!modoEdicao}">
             Descreva a sua necessidade de aluguel. O pedido será registrado com status inicial
             <strong>PENDENTE</strong> para as próximas etapas do sistema.
+        </p>
+        <p th:if="${modoEdicao}">
+            Ajuste o texto da solicitação. O status permanece
+            <strong th:text="${pedidoStatus}">PENDENTE</strong> até a análise do agente.
         </p>
         <div class="hero-actions">
             <a class="button button-primary" href="/pedidos">Meus pedidos</a>
@@ -41,12 +45,12 @@
 
         <div class="panel-header">
             <div>
-                <h2>Solicitação do cliente</h2>
+                <h2 th:text="${modoEdicao} ? 'Alterar solicitação' : 'Solicitação do cliente'">Solicitação</h2>
                 <p th:text="|Cliente autenticado: ${clienteNome} • CPF: ${clienteCpf}|">Cliente autenticado</p>
             </div>
         </div>
 
-        <form method="post" action="/pedidos" enctype="application/x-www-form-urlencoded">
+        <form method="post" th:action="${formAction}" enctype="application/x-www-form-urlencoded">
             <div class="grid">
                 <div class="field-full">
                     <label for="descricaoSolicitacao">Descrição da solicitação *</label>
@@ -56,13 +60,14 @@
                               required
                               placeholder="Ex.: preciso de um veículo compacto para deslocamento urbano durante 7 dias."
                               th:text="${descricaoSolicitacao}"></textarea>
-                    <div class="hint">Neste incremento, o pedido registra a solicitação e nasce com status `PENDENTE`.</div>
+                    <div class="hint" th:if="${!modoEdicao}">O pedido nasce com status `PENDENTE` até análise.</div>
+                    <div class="hint" th:if="${modoEdicao}">Somente pedidos `PENDENTE` podem ser editados.</div>
                 </div>
             </div>
 
             <div class="actions">
-                <a class="button button-neutral" href="/clientes">Cancelar</a>
-                <button class="button button-primary-solid" type="submit">Criar pedido</button>
+                <a class="button button-neutral" th:href="${voltarUrl}">Voltar</a>
+                <button class="button button-primary-solid" type="submit" th:text="${modoEdicao} ? 'Salvar alterações' : 'Criar pedido'">Enviar</button>
             </div>
         </form>
     </section>

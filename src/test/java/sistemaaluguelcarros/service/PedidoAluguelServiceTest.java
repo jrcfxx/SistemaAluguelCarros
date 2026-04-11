@@ -18,6 +18,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -120,6 +121,92 @@ class PedidoAluguelServiceTest {
 
             assertThat(resultado).contains(pedido);
             verify(pedidoAluguelRepository).findByIdAndClienteId(5L, 1L);
+        }
+    }
+
+    @Nested
+    @DisplayName("atualizarPedido")
+    class AtualizarPedido {
+
+        @Test
+        @DisplayName("deve atualizar descrição quando pedido está pendente")
+        void deveAtualizarQuandoPendente() {
+            PedidoAluguel pedido = novoPedido(8L, 2L, "Descrição antiga", StatusPedido.PENDENTE);
+            when(pedidoAluguelRepository.findByIdAndClienteId(8L, 2L)).thenReturn(Optional.of(pedido));
+            when(pedidoAluguelRepository.update(any(PedidoAluguel.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+            PedidoAluguel atualizado = pedidoAluguelService.atualizarPedido(2L, 8L, " Nova descrição ");
+
+            assertThat(atualizado.getDescricaoSolicitacao()).isEqualTo("Nova descrição");
+            verify(pedidoAluguelRepository).update(eq(pedido));
+        }
+
+        @Test
+        @DisplayName("deve bloquear atualização quando pedido não está pendente")
+        void deveBloquearQuandoNaoPendente() {
+            PedidoAluguel pedido = novoPedido(8L, 2L, "X", StatusPedido.APROVADO);
+            when(pedidoAluguelRepository.findByIdAndClienteId(8L, 2L)).thenReturn(Optional.of(pedido));
+
+            assertThatThrownBy(() -> pedidoAluguelService.atualizarPedido(2L, 8L, "Tentativa"))
+                    .isInstanceOf(IllegalStateException.class)
+                    .hasMessageContaining("PENDENTE");
+
+            verify(pedidoAluguelRepository, never()).update(any());
+        }
+
+        @Test
+        @DisplayName("deve rejeitar quando pedido não existe para o cliente")
+        void deveRejeitarQuandoPedidoNaoDoCliente() {
+            when(pedidoAluguelRepository.findByIdAndClienteId(8L, 2L)).thenReturn(Optional.empty());
+
+            assertThatThrownBy(() -> pedidoAluguelService.atualizarPedido(2L, 8L, "X"))
+                    .isInstanceOf(IllegalStateException.class)
+                    .hasMessage("Pedido não encontrado.");
+
+            verify(pedidoAluguelRepository, never()).update(any());
+        }
+    }
+
+    @Nested
+    @DisplayName("cancelarPedido")
+    class CancelarPedido {
+
+        @Test
+        @DisplayName("deve cancelar quando pedido está pendente")
+        void deveCancelarQuandoPendente() {
+            PedidoAluguel pedido = novoPedido(9L, 3L, "Pedido", StatusPedido.PENDENTE);
+            when(pedidoAluguelRepository.findByIdAndClienteId(9L, 3L)).thenReturn(Optional.of(pedido));
+            when(pedidoAluguelRepository.update(any(PedidoAluguel.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+            PedidoAluguel cancelado = pedidoAluguelService.cancelarPedido(3L, 9L);
+
+            assertThat(cancelado.getStatus()).isEqualTo(StatusPedido.CANCELADO);
+            verify(pedidoAluguelRepository).update(eq(pedido));
+        }
+
+        @Test
+        @DisplayName("deve bloquear cancelamento quando pedido não está pendente")
+        void deveBloquearQuandoNaoPendente() {
+            PedidoAluguel pedido = novoPedido(9L, 3L, "Pedido", StatusPedido.REPROVADO);
+            when(pedidoAluguelRepository.findByIdAndClienteId(9L, 3L)).thenReturn(Optional.of(pedido));
+
+            assertThatThrownBy(() -> pedidoAluguelService.cancelarPedido(3L, 9L))
+                    .isInstanceOf(IllegalStateException.class)
+                    .hasMessageContaining("PENDENTE");
+
+            verify(pedidoAluguelRepository, never()).update(any());
+        }
+
+        @Test
+        @DisplayName("deve rejeitar quando pedido não existe para o cliente")
+        void deveRejeitarQuandoPedidoNaoDoCliente() {
+            when(pedidoAluguelRepository.findByIdAndClienteId(9L, 3L)).thenReturn(Optional.empty());
+
+            assertThatThrownBy(() -> pedidoAluguelService.cancelarPedido(3L, 9L))
+                    .isInstanceOf(IllegalStateException.class)
+                    .hasMessage("Pedido não encontrado.");
+
+            verify(pedidoAluguelRepository, never()).update(any());
         }
     }
 

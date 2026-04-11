@@ -54,6 +54,7 @@
                     <th>Status</th>
                     <th>Data de solicitação</th>
                     <th>Última atualização</th>
+                    <th>Ações</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -71,6 +72,16 @@
                     </td>
                     <td th:text="${#temporals.format(pedido.dataSolicitacao, 'dd/MM/yyyy HH:mm')}">21/03/2026 10:00</td>
                     <td th:text="${#temporals.format(pedido.ultimaAtualizacao, 'dd/MM/yyyy HH:mm')}">21/03/2026 10:00</td>
+                    <td>
+                        <div class="row-actions" th:if="${pedido.status.name() == 'PENDENTE'}">
+                            <a class="link-button" th:href="@{'/pedidos/' + ${pedido.id} + '/editar'}">Editar</a>
+                            <form th:action="@{'/pedidos/' + ${pedido.id} + '/cancelar'}" method="post" class="inline-form"
+                                  onsubmit="return confirm('Cancelar este pedido? O status passará para CANCELADO.');">
+                                <button type="submit" class="danger-button">Cancelar</button>
+                            </form>
+                        </div>
+                        <span class="muted" th:if="${pedido.status.name() != 'PENDENTE'}">Não editável</span>
+                    </td>
                 </tr>
                 </tbody>
             </table>

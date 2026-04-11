@@ -54,6 +54,45 @@ public class PedidoAluguelService {
         return pedidoAluguelRepository.findByClienteIdOrderByDataSolicitacaoDesc(clienteId);
     }
 
+    /**
+     * Atualiza a descrição de um pedido do cliente. Somente {@link StatusPedido#PENDENTE}.
+     */
+    public PedidoAluguel atualizarPedido(Long clienteId, Long pedidoId, String descricaoSolicitacao) {
+        PedidoAluguel pedido = pedidoAluguelRepository.findByIdAndClienteId(pedidoId, clienteId)
+                .orElseThrow(() -> new IllegalStateException("Pedido não encontrado."));
+
+        if (pedido.getStatus() != StatusPedido.PENDENTE) {
+            throw new IllegalStateException(
+                    "Só é possível editar pedidos com status PENDENTE. Status atual: " + pedido.getStatus() + "."
+            );
+        }
+
+        String descricaoNormalizada = normalizarDescricao(descricaoSolicitacao);
+        if (descricaoNormalizada.isEmpty()) {
+            throw new IllegalStateException("Descrição da solicitação é obrigatória.");
+        }
+
+        pedido.setDescricaoSolicitacao(descricaoNormalizada);
+        return pedidoAluguelRepository.update(pedido);
+    }
+
+    /**
+     * Cancela um pedido do cliente (status {@link StatusPedido#CANCELADO}). Somente {@link StatusPedido#PENDENTE}.
+     */
+    public PedidoAluguel cancelarPedido(Long clienteId, Long pedidoId) {
+        PedidoAluguel pedido = pedidoAluguelRepository.findByIdAndClienteId(pedidoId, clienteId)
+                .orElseThrow(() -> new IllegalStateException("Pedido não encontrado."));
+
+        if (pedido.getStatus() != StatusPedido.PENDENTE) {
+            throw new IllegalStateException(
+                    "Só é possível cancelar pedidos com status PENDENTE. Status atual: " + pedido.getStatus() + "."
+            );
+        }
+
+        pedido.setStatus(StatusPedido.CANCELADO);
+        return pedidoAluguelRepository.update(pedido);
+    }
+
     private String normalizarDescricao(String descricaoSolicitacao) {
         return descricaoSolicitacao == null ? "" : descricaoSolicitacao.trim();
     }

@@ -17,7 +17,7 @@
   <img src="https://img.shields.io/badge/Micronaut-4.x-1B1F23?style=for-the-badge&logo=micronaut&logoColor=white" alt="Micronaut" />
   <img src="https://img.shields.io/badge/Thymeleaf-Views-005F0F?style=for-the-badge" alt="Thymeleaf" />
   <img src="https://img.shields.io/badge/Azure%20SQL-SQL%20Server-0B6E99?style=for-the-badge" alt="Azure SQL Server" />
-  <img src="https://img.shields.io/badge/Status-Consulta%20de%20Pedidos%20Implementada-4FD1C5?style=for-the-badge" alt="Status do projeto" />
+  <img src="https://img.shields.io/badge/Status-Edi%C3%A7%C3%A3o%20e%20cancelamento%20de%20pedidos-4FD1C5?style=for-the-badge" alt="Status do projeto" />
 </p>
 
 <p>
@@ -41,7 +41,7 @@
 | **Arquitetura alvo** | Aplicação web em `Java` com padrão `MVC` |
 | **Stack principal** | `Micronaut`, `Thymeleaf`, `JPA/Hibernate`, `Azure SQL Server`, `Gradle` |
 | **Foco funcional** | Clientes, pedidos, análise financeira, contratos e propriedade do automóvel |
-| **Situação atual** | Modelagem concluída, base técnica pronta, autenticação implementada e fluxo web de consulta de pedidos com status funcional |
+| **Situação atual** | Modelagem concluída, base técnica pronta, autenticação implementada, consulta de pedidos com status e modificação/cancelamento de pedidos pendentes pelo cliente |
 
 ## Sumário
 
@@ -99,7 +99,7 @@ Atualmente, o repositório já possui a base de configuração do projeto e os a
 
 > **Importante**
 >
-> O projeto já possui base técnica, domínio de `Cliente`, autenticação por `CPF + senha`, sessão HTTP, área autenticada do cliente, criação de `PedidoAluguel` e listagem dos pedidos com visualização de status. O próximo passo natural é implementar modificação e cancelamento de pedido.
+> O projeto já possui base técnica, domínio de `Cliente`, autenticação por `CPF + senha`, sessão HTTP, área autenticada do cliente, criação de `PedidoAluguel`, listagem com status e edição/cancelamento de pedidos `PENDENTE` pelo próprio cliente. O próximo passo natural é a análise de pedido por agente.
 
 ### Entregáveis já produzidos e plano incremental
 
@@ -113,8 +113,8 @@ Atualmente, o repositório já possui a base de configuração do projeto e os a
 | `5` | Domínio e persistência de `PedidoAluguel` | `Sprint 03` | `Concluído` |
 | `6` | Criação de pedido pelo cliente | `Sprint 03` | `Concluído` |
 | `7` | Consulta de pedidos e visualização de status | `Sprint 03` | `Concluído` |
-| `8` | Modificação e cancelamento de pedido | `Sprint 03` | `Próximo` |
-| `9` | Análise de pedido por agente | `Sprint 03` | `Pendente` |
+| `8` | Modificação e cancelamento de pedido | `Sprint 03` | `Concluído` |
+| `9` | Análise de pedido por agente | `Sprint 03` | `Próximo` |
 | `10` | Aprovação, reprovação e geração de contrato | `Sprint 03` | `Pendente` |
 | `11` | Gestão de rendimentos e empregadores | `Sprint 03` | `Pendente` |
 | `12` | Automóveis e transferência de propriedade | `Sprint 03` | `Pendente` |
@@ -159,6 +159,7 @@ Atualmente, o repositório já possui a base de configuração do projeto e os a
 | Tela de criação de pedido | `Concluído` |
 | Tela de listagem de pedidos | `Concluído` |
 | Visualização de status dos pedidos | `Concluído` |
+| Edição e cancelamento de pedidos (status `PENDENTE`) | `Concluído` |
 | Modal de confirmação de exclusão | `Concluído` |
 | Restrição para acesso apenas ao próprio cadastro | `Concluído` |
 | Normalização de CPF em cadastro, edição e login | `Concluído` |
@@ -240,6 +241,7 @@ Atualmente a aplicação já possui:
 - domínio inicial de pedidos com status `PENDENTE`, `APROVADO`, `REPROVADO` e `CANCELADO`;
 - formulário web para criação de pedidos pelo cliente autenticado;
 - listagem web de pedidos do cliente autenticado com visualização de status;
+- edição da descrição e cancelamento de pedidos `PENDENTE` pelo próprio cliente;
 - recursos estáticos compartilhados por CSS e JavaScript;
 - modal de confirmação para exclusão;
 - integração preparada com `Azure SQL Server`.
@@ -310,6 +312,9 @@ POST /logout -> encerramento da sessão
 /pedidos -> listagem protegida dos pedidos do cliente autenticado
 /pedidos/novo -> formulário protegido para criação de pedido
 POST /pedidos -> criação de `PedidoAluguel` com status inicial `PENDENTE`
+/pedidos/{id}/editar -> formulário protegido para edição (somente pedido `PENDENTE` do cliente)
+POST /pedidos/{id}/editar -> atualização da descrição (somente `PENDENTE`)
+POST /pedidos/{id}/cancelar -> cancelamento com status `CANCELADO` (somente `PENDENTE`)
 ```
 
 <a id="diagramas-do-projeto"></a>
@@ -759,19 +764,18 @@ java -version
 
 > **Observação**
 >
-> Os incrementos `1`, `2`, `3`, `4`, `5`, `6` e `7` já foram concluídos. A aplicação possui base técnica, persistência de `Cliente`, autenticação com sessão, autorização sobre o próprio cadastro, domínio de `PedidoAluguel`, criação web de pedidos e listagem com status. O próximo incremento recomendado é implementar modificação e cancelamento de pedido.
+> Os incrementos `1` a `8` já foram concluídos. A aplicação possui base técnica, persistência de `Cliente`, autenticação com sessão, autorização sobre o próprio cadastro, domínio de `PedidoAluguel`, criação e listagem de pedidos, edição/cancelamento de pedidos pendentes e visualização de status. O próximo incremento recomendado é a análise de pedido por agente.
 
 <a id="roadmap-sugerido"></a>
 ## Roadmap sugerido
 
 Com base no laboratório e no estado atual do repositório, os próximos passos mais naturais são:
 
-1. implementar modificação e cancelamento de pedido;
+1. implementar análise por agente;
 2. modelar rendimentos e empregadores;
-3. implementar análise por agente;
-4. aprovar/reprovar pedido e gerar contrato;
-5. modelar automóveis e transferência de propriedade;
-6. revisar os diagramas conforme a implementação evoluir.
+3. aprovar/reprovar pedido e gerar contrato;
+4. modelar automóveis e transferência de propriedade;
+5. revisar os diagramas conforme a implementação evoluir.
 
 ### Próximos marcos esperados
 
