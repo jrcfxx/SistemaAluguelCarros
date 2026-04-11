@@ -20,6 +20,7 @@ import sistemaaluguelcarros.service.AgenteAuthService;
 import sistemaaluguelcarros.service.AgenteSessionService;
 import sistemaaluguelcarros.service.ContratoService;
 import sistemaaluguelcarros.service.PedidoAluguelService;
+import sistemaaluguelcarros.service.RendimentoService;
 import sistemaaluguelcarros.service.SessionAuthService;
 
 import java.net.URI;
@@ -38,19 +39,22 @@ public class AgenteController {
     private final SessionAuthService sessionAuthService;
     private final PedidoAluguelService pedidoAluguelService;
     private final ContratoService contratoService;
+    private final RendimentoService rendimentoService;
 
     public AgenteController(
             AgenteAuthService agenteAuthService,
             AgenteSessionService agenteSessionService,
             SessionAuthService sessionAuthService,
             PedidoAluguelService pedidoAluguelService,
-            ContratoService contratoService
+            ContratoService contratoService,
+            RendimentoService rendimentoService
     ) {
         this.agenteAuthService = agenteAuthService;
         this.agenteSessionService = agenteSessionService;
         this.sessionAuthService = sessionAuthService;
         this.pedidoAluguelService = pedidoAluguelService;
         this.contratoService = contratoService;
+        this.rendimentoService = rendimentoService;
     }
 
     @Get("/login")
@@ -136,10 +140,12 @@ public class AgenteController {
         }
 
         PedidoAluguel pedido = pedidoOpt.get();
+        Long clienteId = pedido.getCliente().getId();
         Map<String, Object> model = new LinkedHashMap<>();
         model.put("agenteNome", agente.get().nomeExibicao());
         model.put("pedido", pedido);
         model.put("cliente", pedido.getCliente());
+        model.put("rendimentos", rendimentoService.listarPorCliente(clienteId));
         model.put("mensagem", mensagem);
         model.put("erro", erro);
         return new ModelAndView<>("agente/pedidos/detalhe", model);

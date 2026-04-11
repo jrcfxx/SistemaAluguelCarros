@@ -90,6 +90,7 @@ class PedidoControllerTest {
         assertThat(mv.getView().orElseThrow()).isEqualTo("pedidos/lista");
         Map<?, ?> model = (Map<?, ?>) mv.getModel().get();
         assertThat(model.get("clienteNome")).isEqualTo("Julia Fiorini");
+        assertThat(model.get("clienteId")).isEqualTo(1L);
         assertThat((List<?>) model.get("pedidos")).hasSize(1);
     }
 

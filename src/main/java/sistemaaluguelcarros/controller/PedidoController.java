@@ -61,6 +61,7 @@ public class PedidoController {
         Map<String, Object> model = new LinkedHashMap<>();
         model.put("clienteNome", clienteAutenticado.get().getNome());
         model.put("clienteCpf", clienteAutenticado.get().getCpf());
+        model.put("clienteId", clienteAutenticado.get().getId());
         model.put("pedidos", pedidos);
         model.put("mensagem", mensagem);
         model.put("erro", erro);

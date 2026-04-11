@@ -1,13 +1,18 @@
 package sistemaaluguelcarros.domain;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.constraints.NotBlank;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(
@@ -43,6 +48,9 @@ public class Cliente {
      */
     @Column(name = "senha_hash", length = 255)
     private String senhaHash;
+
+    @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Rendimento> rendimentos = new ArrayList<>();
 
     public Cliente() {
     }
@@ -109,5 +117,13 @@ public class Cliente {
 
     public void setSenhaHash(String senhaHash) {
         this.senhaHash = senhaHash;
+    }
+
+    public List<Rendimento> getRendimentos() {
+        return rendimentos;
+    }
+
+    public void setRendimentos(List<Rendimento> rendimentos) {
+        this.rendimentos = rendimentos;
     }
 }

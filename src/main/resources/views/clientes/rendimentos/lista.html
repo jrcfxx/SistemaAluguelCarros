@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rendimentos | Sistema de Aluguel de Carros</title>
+    <link rel="stylesheet" href="/css/app.css">
+</head>
+<body>
+<main class="container">
+    <div class="topbar">
+        <a class="brand-mark" href="/">
+            <span class="brand-dot"></span>
+            <span>Sistema de Aluguel de Carros</span>
+        </a>
+        <div class="topbar-actions">
+            <span class="user-chip" th:if="${clienteNome != null}" th:text="|Olá, ${clienteNome}|">Olá</span>
+            <form method="post" action="/logout" class="inline-form">
+                <button class="button button-neutral" type="submit">Sair</button>
+            </form>
+        </div>
+    </div>
+
+    <section class="hero">
+        <span class="eyebrow">Capacidade financeira</span>
+        <h1>Meus rendimentos</h1>
+        <p>
+            Cadastre até <strong th:text="${limiteRendimentos}">3</strong> fontes de renda com o empregador correspondente.
+            Esses dados podem ser usados pelo agente na análise do pedido.
+        </p>
+        <div class="hero-stats">
+            <span class="stat-chip" th:text="|Cadastrados: ${totalRendimentos} / ${limiteRendimentos}|">0 / 3</span>
+        </div>
+        <div class="actions">
+            <a class="button button-primary" th:href="@{'/clientes'}">Meu cadastro</a>
+            <a class="button button-secondary" href="/pedidos">Meus pedidos</a>
+            <a class="button button-secondary" href="/">Início</a>
+        </div>
+    </section>
+
+    <section class="panel">
+        <div th:if="${mensagem}" class="alert alert-success" th:text="${mensagem}"></div>
+        <div th:if="${erro}" class="alert alert-error" th:text="${erro}"></div>
+
+        <div class="panel-header">
+            <div>
+                <h2>Rendimentos cadastrados</h2>
+                <p>Lista das fontes de renda vinculadas ao seu perfil.</p>
+            </div>
+        </div>
+
+        <div class="table-wrap" th:if="${#lists.size(rendimentos) > 0}">
+            <table>
+                <thead>
+                <tr>
+                    <th>Empregador</th>
+                    <th>CNPJ</th>
+                    <th>Valor mensal (R$)</th>
+                    <th>Ações</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="r : ${rendimentos}">
+                    <td th:text="${r.empregador.nome}">Empresa</td>
+                    <td th:text="${r.empregador.cnpj != null ? r.empregador.cnpj : '-'}">-</td>
+                    <td th:text="${#numbers.formatDecimal(r.valorMensal, 1, 2)}">0,00</td>
+                    <td>
+                        <form th:action="@{'/clientes/' + ${clienteId} + '/rendimentos/' + ${r.id} + '/excluir'}"
+                              method="post" class="inline-form"
+                              onsubmit="return confirm('Remover este rendimento?');">
+                            <button type="submit" class="danger-button">Remover</button>
+                        </form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="empty-state" th:if="${#lists.size(rendimentos) == 0}">
+            <strong>Nenhum rendimento cadastrado.</strong>
+            <p class="muted">Use o formulário abaixo para incluir sua primeira fonte de renda.</p>
+        </div>
+    </section>
+
+    <section class="panel" th:if="${podeAdicionar}">
+        <div class="panel-header">
+            <div>
+                <h2>Adicionar rendimento</h2>
+                <p>Informe o empregador (empresa ou fonte pagadora) e o valor mensal bruto estimado.</p>
+            </div>
+        </div>
+
+        <form method="post" th:action="@{'/clientes/' + ${clienteId} + '/rendimentos'}" enctype="application/x-www-form-urlencoded">
+            <div class="grid">
+                <div class="field-full">
+                    <label for="nomeEmpregador">Nome do empregador *</label>
+                    <input id="nomeEmpregador" name="nomeEmpregador" type="text" required
+                           minlength="2" maxlength="120"
+                           placeholder="Ex.: Tech Soluções Ltda."
+                           title="Entre 2 e 120 caracteres.">
+                </div>
+                <div>
+                    <label for="cnpj">CNPJ (opcional)</label>
+                    <input id="cnpj" name="cnpj" type="text" maxlength="18"
+                           placeholder="00.000.000/0000-00"
+                           inputmode="numeric"
+                           title="Deixe em branco ou informe 14 dígitos.">
+                </div>
+                <div>
+                    <label for="valorMensal">Valor mensal (R$) *</label>
+                    <input id="valorMensal" name="valorMensal" type="text" required
+                           placeholder="3500,50"
+                           title="Use vírgula ou ponto para centavos.">
+                </div>
+            </div>
+            <div class="actions">
+                <button class="button button-primary-solid" type="submit">Salvar rendimento</button>
+            </div>
+        </form>
+    </section>
+
+    <section class="panel muted" th:if="${!podeAdicionar}">
+        <p><strong>Limite atingido.</strong> Você já possui três rendimentos cadastrados. Remova um para incluir outro.</p>
+    </section>
+</main>
+</body>
+</html>

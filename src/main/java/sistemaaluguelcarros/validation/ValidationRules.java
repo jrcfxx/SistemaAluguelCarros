@@ -2,6 +2,7 @@ package sistemaaluguelcarros.validation;
 
 import sistemaaluguelcarros.domain.Cliente;
 
+import java.math.BigDecimal;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
@@ -19,6 +20,9 @@ public final class ValidationRules {
     public static final int SENHA_MAX_LENGTH = 60;
     public static final int DESCRICAO_PEDIDO_MIN_LENGTH = 15;
     public static final int DESCRICAO_PEDIDO_MAX_LENGTH = 1000;
+    public static final int MAX_RENDIMENTOS_POR_CLIENTE = 3;
+    public static final int EMPREGADOR_NOME_MIN_LENGTH = 2;
+    public static final int EMPREGADOR_NOME_MAX_LENGTH = 120;
 
     private static final String SOMENTE_DIGITOS_REGEX = "\\D";
     private static final Pattern NOME_PATTERN = Pattern.compile("^[A-Za-zÀ-ÿ]+(?:[ '\\-][A-Za-zÀ-ÿ]+)*$");
@@ -84,6 +88,49 @@ public final class ValidationRules {
         }
         if (!senhaPlana.equals(confirmacaoSenha)) {
             return Optional.of("A confirmação de senha não confere.");
+        }
+        return Optional.empty();
+    }
+
+    public static Optional<String> validarNomeEmpregador(String nome) {
+        String n = safeTrim(nome);
+        if (n.length() < EMPREGADOR_NOME_MIN_LENGTH || n.length() > EMPREGADOR_NOME_MAX_LENGTH) {
+            return Optional.of("O nome do empregador deve ter entre 2 e 120 caracteres.");
+        }
+        return Optional.empty();
+    }
+
+    /**
+     * @param cnpjBruto texto livre; normaliza para dígitos ou {@code null} se vazio
+     */
+    public static Optional<String> validarCnpjOpcional(String cnpjBruto) {
+        String digitos = normalizarCnpj(cnpjBruto);
+        if (digitos == null) {
+            return Optional.empty();
+        }
+        if (digitos.length() != 14) {
+            return Optional.of("CNPJ deve ter 14 dígitos ou ficar em branco.");
+        }
+        return Optional.empty();
+    }
+
+    public static String normalizarCnpj(String cnpj) {
+        if (cnpj == null) {
+            return null;
+        }
+        String digitos = cnpj.replaceAll(SOMENTE_DIGITOS_REGEX, "");
+        return digitos.isEmpty() ? null : digitos;
+    }
+
+    public static Optional<String> validarValorRendimento(BigDecimal valor) {
+        if (valor == null) {
+            return Optional.of("Informe o valor mensal do rendimento.");
+        }
+        if (valor.compareTo(BigDecimal.ZERO) <= 0) {
+            return Optional.of("O valor deve ser maior que zero.");
+        }
+        if (valor.compareTo(new BigDecimal("999999999999.99")) > 0) {
+            return Optional.of("Valor acima do limite permitido.");
         }
         return Optional.empty();
     }

@@ -19,6 +19,7 @@ import sistemaaluguelcarros.service.AgenteAuthService;
 import sistemaaluguelcarros.service.AgenteSessionService;
 import sistemaaluguelcarros.service.ContratoService;
 import sistemaaluguelcarros.service.PedidoAluguelService;
+import sistemaaluguelcarros.service.RendimentoService;
 import sistemaaluguelcarros.service.SessionAuthService;
 
 import java.util.List;
@@ -51,6 +52,9 @@ class AgenteControllerTest {
     private ContratoService contratoService;
 
     @Mock
+    private RendimentoService rendimentoService;
+
+    @Mock
     private Session session;
 
     private AgenteController agenteController;
@@ -62,7 +66,8 @@ class AgenteControllerTest {
                 agenteSessionService,
                 sessionAuthService,
                 pedidoAluguelService,
-                contratoService
+                contratoService,
+                rendimentoService
         );
     }
 
@@ -120,6 +125,7 @@ class AgenteControllerTest {
 
         when(agenteSessionService.agenteAutenticado(session)).thenReturn(Optional.of(agente));
         when(pedidoAluguelService.buscarDetalheParaAnalise(12L)).thenReturn(Optional.of(pedido));
+        when(rendimentoService.listarPorCliente(5L)).thenReturn(List.of());
 
         Object resposta = agenteController.detalharPedido(12L, session, null, null);
 

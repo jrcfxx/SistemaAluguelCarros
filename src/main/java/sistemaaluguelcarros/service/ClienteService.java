@@ -79,10 +79,9 @@ public class ClienteService {
     }
 
     public void excluir(Long id) {
-        if (!clienteRepository.existsById(id)) {
-            throw new IllegalStateException("Cliente não encontrado.");
-        }
-        clienteRepository.deleteById(id);
+        Cliente cliente = clienteRepository.findById(id)
+                .orElseThrow(() -> new IllegalStateException("Cliente não encontrado."));
+        clienteRepository.delete(cliente);
     }
 
     private void normalizarCpf(Cliente cliente) {

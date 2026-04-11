@@ -17,7 +17,7 @@
   <img src="https://img.shields.io/badge/Micronaut-4.x-1B1F23?style=for-the-badge&logo=micronaut&logoColor=white" alt="Micronaut" />
   <img src="https://img.shields.io/badge/Thymeleaf-Views-005F0F?style=for-the-badge" alt="Thymeleaf" />
   <img src="https://img.shields.io/badge/Azure%20SQL-SQL%20Server-0B6E99?style=for-the-badge" alt="Azure SQL Server" />
-  <img src="https://img.shields.io/badge/Status-Aprova%C3%A7%C3%A3o%20e%20contratos-4FD1C5?style=for-the-badge" alt="Status do projeto" />
+  <img src="https://img.shields.io/badge/Status-Autom%C3%B3veis%20e%20propriedade-4FD1C5?style=for-the-badge" alt="Status do projeto" />
 </p>
 
 <p>
@@ -41,7 +41,7 @@
 | **Arquitetura alvo** | Aplicação web em `Java` com padrão `MVC` |
 | **Stack principal** | `Micronaut`, `Thymeleaf`, `JPA/Hibernate`, `Azure SQL Server`, `Gradle` |
 | **Foco funcional** | Clientes, pedidos, análise financeira, contratos e propriedade do automóvel |
-| **Situação atual** | Base funcional com cliente, agente, pedidos, aprovação/reprovação pelo agente, geração e visualização de contrato (acadêmica) e validações de formulário no cliente e no servidor |
+| **Situação atual** | Base funcional com cliente, agente, pedidos, rendimentos vinculados ao cliente (até 3), aprovação/reprovação pelo agente, geração e visualização de contrato (acadêmica) e validações de formulário no cliente e no servidor |
 
 ## Sumário
 
@@ -99,7 +99,7 @@ Atualmente, o repositório já possui a base de configuração do projeto e os a
 
 > **Importante**
 >
-> O projeto já possui base técnica, domínio de `Cliente`, autenticação por `CPF + senha`, sessão HTTP, área autenticada do cliente, criação de `PedidoAluguel`, listagem com status, edição/cancelamento de pedidos `PENDENTE`, área protegida de agente, aprovação e reprovação de pedidos `PENDENTE`, entidade `Contrato` vinculada ao pedido aprovado e telas de visualização para agente e cliente. O próximo passo natural é a gestão de rendimentos e empregadores.
+> O projeto já possui base técnica, domínio de `Cliente`, `Empregador` e `Rendimento` (até três por cliente), autenticação por `CPF + senha`, sessão HTTP, área autenticada do cliente, criação de `PedidoAluguel`, listagem com status, edição/cancelamento de pedidos `PENDENTE`, área protegida de agente, aprovação e reprovação de pedidos `PENDENTE`, entidade `Contrato` vinculada ao pedido aprovado e telas de visualização para agente e cliente. O próximo passo natural é modelar automóveis e transferência de propriedade.
 
 ### Entregáveis já produzidos e plano incremental
 
@@ -116,8 +116,8 @@ Atualmente, o repositório já possui a base de configuração do projeto e os a
 | `8` | Modificação e cancelamento de pedido | `Sprint 03` | `Concluído` |
 | `9` | Análise de pedido por agente | `Sprint 03` | `Concluído` |
 | `10` | Aprovação, reprovação e geração de contrato | `Sprint 03` | `Concluído` |
-| `11` | Gestão de rendimentos e empregadores | `Sprint 03` | `Próximo` |
-| `12` | Automóveis e transferência de propriedade | `Sprint 03` | `Pendente` |
+| `11` | Gestão de rendimentos e empregadores | `Sprint 03` | `Concluído` |
+| `12` | Automóveis e transferência de propriedade | `Sprint 03` | `Próximo` |
 | `13` | Revisão final, componentes, implantação, polimento e entrega | `Sprint 03` | `Pendente` |
 
 ### Entregas concretas já implementadas
@@ -187,6 +187,11 @@ Atualmente, o repositório já possui a base de configuração do projeto e os a
 | Testes de `PedidoAluguelService` | `Concluído` |
 | Testes de `PedidoController` | `Concluído` |
 | Testes de `ContratoService` | `Concluído` |
+| Entidades `Empregador` e `Rendimento` | `Concluído` |
+| `RendimentoRepository` e `RendimentoService` | `Concluído` |
+| `RendimentoController` e tela de gestão de rendimentos | `Concluído` |
+| Visualização de rendimentos na análise do pedido (agente) | `Concluído` |
+| Testes de `RendimentoService` | `Concluído` |
 
 <a id="identidade-visual"></a>
 ## Identidade visual
@@ -339,6 +344,9 @@ POST /agente/logout -> encerramento da sessão do agente
 /clientes -> área protegida com os dados do cliente autenticado
 /clientes/{id}/editar -> edição protegida do próprio cadastro
 /clientes/{id}/excluir -> exclusão protegida do próprio cadastro com modal de confirmação
+/clientes/{id}/rendimentos -> listagem e gestão dos rendimentos (máximo 3) do cliente autenticado
+POST /clientes/{id}/rendimentos -> inclusão de rendimento com empregador e valor
+POST /clientes/{id}/rendimentos/{rid}/excluir -> remoção de um rendimento
 /agente/pedidos -> painel protegido do agente para análise
 /agente/pedidos/{id} -> detalhe do pedido para análise
 /pedidos -> listagem protegida dos pedidos do cliente autenticado
@@ -701,16 +709,20 @@ Como sistema, quero transferir a propriedade de um automóvel para refletir as c
 |       |       |   |-- AuthController.java
 |       |       |   |-- ClienteController.java
 |       |       |   |-- HomeController.java
-|       |       |   `-- PedidoController.java
+|       |       |   |-- PedidoController.java
+|       |       |   `-- RendimentoController.java
 |       |       |-- domain/          # Entidades JPA
 |       |       |   |-- Cliente.java
 |       |       |   |-- Contrato.java
+|       |       |   |-- Empregador.java
 |       |       |   |-- PedidoAluguel.java
+|       |       |   |-- Rendimento.java
 |       |       |   `-- StatusPedido.java
 |       |       |-- repository/      # Repositórios Micronaut Data
 |       |       |   |-- ClienteRepository.java
 |       |       |   |-- ContratoRepository.java
-|       |       |   `-- PedidoAluguelRepository.java
+|       |       |   |-- PedidoAluguelRepository.java
+|       |       |   `-- RendimentoRepository.java
 |       |       |-- service/         # Regras de negócio
 |       |           |-- AgenteAuthService.java
 |       |           |-- AgenteSessionService.java
@@ -719,6 +731,7 @@ Como sistema, quero transferir a propriedade de um automóvel para refletir as c
 |       |           |-- ContratoService.java
 |       |           |-- PedidoAluguelService.java
 |       |           |-- PasswordHashService.java
+|       |           |-- RendimentoService.java
 |       |           `-- SessionAuthService.java
 |       |       `-- validation/
 |       |           `-- ValidationRules.java
@@ -742,7 +755,9 @@ Como sistema, quero transferir a propriedade de um automóvel para refletir as c
 |               |   `-- modal-excluir.html
 |               |-- clientes/
 |               |   |-- formulario.html
-|               |   `-- lista.html
+|               |   |-- lista.html
+|               |   `-- rendimentos/
+|               |       `-- lista.html
 |               |-- contrato/
 |               |   `-- visualizar.html
 |               |-- pedidos/
@@ -763,6 +778,7 @@ Como sistema, quero transferir a propriedade de um automóvel para refletir as c
 |                   |-- ClienteServiceTest.java
 |                   |-- ContratoServiceTest.java
 |                   |-- PedidoAluguelServiceTest.java
+|                   |-- RendimentoServiceTest.java
 |                   `-- SessionAuthServiceTest.java
 |-- .env.example
 |-- .gitignore
@@ -832,15 +848,15 @@ java -version
 
 > **Observação**
 >
-> Os incrementos `1` a `10` já foram concluídos. A aplicação possui base técnica, persistência de `Cliente`, autenticação com sessão, autorização sobre o próprio cadastro, domínio de `PedidoAluguel` e `Contrato`, criação e listagem de pedidos, edição/cancelamento de pedidos pendentes, área de agente com aprovação/reprovação e geração de contrato na aprovação, além de visualização de contrato para cliente e agente. O próximo incremento recomendado é a gestão de rendimentos e empregadores.
+> Os incrementos `1` a `11` já foram concluídos. A aplicação possui base técnica, persistência de `Cliente`, `Empregador` e `Rendimento` (máximo de três rendimentos por cliente), autenticação com sessão, autorização sobre o próprio cadastro, domínio de `PedidoAluguel` e `Contrato`, criação e listagem de pedidos, edição/cancelamento de pedidos pendentes, área de agente com aprovação/reprovação e geração de contrato na aprovação, visualização de contrato para cliente e agente e listagem de rendimentos na tela de análise do pedido. O próximo incremento recomendado é automóveis e transferência de propriedade.
 
 <a id="roadmap-sugerido"></a>
 ## Roadmap sugerido
 
 Com base no laboratório e no estado atual do repositório, os próximos passos mais naturais são:
 
-1. modelar rendimentos e empregadores;
-2. modelar automóveis e transferência de propriedade;
+1. modelar automóveis e transferência de propriedade;
+2. revisar integração entre contratos, veículos e análise do agente;
 3. revisar os diagramas conforme a implementação evoluir.
 
 ### Próximos marcos esperados

@@ -133,6 +133,33 @@
             </div>
         </div>
 
+        <div class="panel-header" style="margin-top: 1.5rem;">
+            <div>
+                <h3>Rendimentos declarados</h3>
+                <p>Fontes de renda informadas pelo cliente (máximo de três registros).</p>
+            </div>
+        </div>
+
+        <div class="table-wrap" th:if="${#lists.size(rendimentos) > 0}">
+            <table>
+                <thead>
+                <tr>
+                    <th>Empregador</th>
+                    <th>CNPJ</th>
+                    <th>Valor mensal (R$)</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="r : ${rendimentos}">
+                    <td th:text="${r.empregador.nome}">Empresa</td>
+                    <td th:text="${r.empregador.cnpj != null ? r.empregador.cnpj : '-'}">-</td>
+                    <td th:text="${#numbers.formatDecimal(r.valorMensal, 1, 2)}">0,00</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <p class="muted" th:if="${#lists.size(rendimentos) == 0}">O cliente ainda não cadastrou rendimentos.</p>
+
         <div class="actions">
             <a class="button button-neutral" href="/agente/pedidos">Voltar para fila</a>
         </div>

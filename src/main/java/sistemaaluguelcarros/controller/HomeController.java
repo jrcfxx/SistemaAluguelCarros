@@ -35,6 +35,7 @@ public class HomeController {
         Optional<AgenteSessao> agenteAutenticado = agenteSessionService.agenteAutenticado(session);
         model.put("autenticado", clienteAutenticado.isPresent());
         model.put("clienteNome", clienteAutenticado.map(Cliente::getNome).orElse(null));
+        model.put("clienteId", clienteAutenticado.map(Cliente::getId).orElse(null));
         model.put("agenteAutenticado", agenteAutenticado.isPresent());
         model.put("agenteNome", agenteAutenticado.map(AgenteSessao::nomeExibicao).orElse(null));
         return new ModelAndView<>("home", model);
