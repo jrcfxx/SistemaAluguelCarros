@@ -33,5 +33,10 @@ public interface PedidoAluguelRepository extends CrudRepository<PedidoAluguel, L
 
     long countByStatus(StatusPedido status);
 
-    Optional<PedidoAluguel> findByIdAndClienteId(Long id, Long clienteId);
+    @Query(
+            "SELECT p FROM PedidoAluguel p JOIN FETCH p.cliente "
+                    + "LEFT JOIN FETCH p.automovel LEFT JOIN FETCH p.contrato "
+                    + "WHERE p.id = :pedidoId AND p.cliente.id = :clienteId"
+    )
+    Optional<PedidoAluguel> findByIdAndClienteId(Long pedidoId, Long clienteId);
 }

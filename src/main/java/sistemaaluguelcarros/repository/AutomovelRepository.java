@@ -13,6 +13,8 @@ public interface AutomovelRepository extends CrudRepository<Automovel, Long> {
 
     Optional<Automovel> findByPlacaNormalizada(String placaNormalizada);
 
+    List<Automovel> findByProprietarioCliente_Id(Long proprietarioClienteId);
+
     @Query(
             "SELECT DISTINCT a FROM Automovel a LEFT JOIN FETCH a.proprietarioCliente "
                     + "ORDER BY a.marca ASC, a.modelo ASC, a.placaNormalizada ASC"

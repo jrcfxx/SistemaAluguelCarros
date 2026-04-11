@@ -17,7 +17,7 @@
   <img src="https://img.shields.io/badge/Micronaut-4.x-1B1F23?style=for-the-badge&logo=micronaut&logoColor=white" alt="Micronaut" />
   <img src="https://img.shields.io/badge/Thymeleaf-Views-005F0F?style=for-the-badge" alt="Thymeleaf" />
   <img src="https://img.shields.io/badge/Azure%20SQL-SQL%20Server-0B6E99?style=for-the-badge" alt="Azure SQL Server" />
-  <img src="https://img.shields.io/badge/Status-Autom%C3%B3veis%20e%20propriedade-4FD1C5?style=for-the-badge" alt="Status do projeto" />
+  <img src="https://img.shields.io/badge/Status-Revis%C3%A3o%20final%20e%20entrega-4FD1C5?style=for-the-badge" alt="Status do projeto" />
 </p>
 
 <p>
@@ -258,29 +258,23 @@ Pelo enunciado e pela configuração presente no projeto, a solução foi pensad
 Atualmente a aplicação já possui:
 
 - camada `auth` com chaves de sessão e `AgenteSessao`;
-- camada `domain` com `Cliente`, `PedidoAluguel` e `StatusPedido`;
-- camada `repository` com `ClienteRepository` e `PedidoAluguelRepository`;
-- camada `service` com `ClienteService`, `AuthService`, `SessionAuthService`, `PasswordHashService`, `PedidoAluguelService`, `AgenteAuthService` e `AgenteSessionService`;
-- camada `validation` com regras centralizadas de cliente, CPF, senha e pedido;
-- camada `controller` com `HomeController`, `ClienteController`, `AuthController`, `PedidoController` e `AgenteController`;
-- views `Thymeleaf` para home, login de cliente, login de agente, cliente, pedidos do cliente e análise do agente;
-- autenticação por `CPF + senha` com `BCrypt`;
-- sessão HTTP para controle de acesso;
-- autorização para que o cliente acesse apenas o próprio cadastro;
-- domínio inicial de pedidos com status `PENDENTE`, `APROVADO`, `REPROVADO` e `CANCELADO`;
-- formulário web para criação de pedidos pelo cliente autenticado;
-- listagem web de pedidos do cliente autenticado com visualização de status;
-- edição da descrição e cancelamento de pedidos `PENDENTE` pelo próprio cliente;
-- área protegida de agente com listagem completa de pedidos para análise;
-- tela de detalhamento de pedido com dados do cliente para o agente;
-- aprovação e reprovação de pedidos `PENDENTE` pelo agente, com redirecionamentos `303 See Other` após `POST`;
-- geração automática de `Contrato` (texto acadêmico) ao aprovar pedido;
-- visualização de contrato em rota dedicada para agente e para cliente (autorização por dono do pedido);
-- validação client-side com máscara de `CPF`, confirmação de senha e bloqueio de envio inválido;
-- validação server-side para `CPF`, nome, endereço, profissão, senha e descrição de pedido;
-- recursos estáticos compartilhados por CSS e JavaScript;
-- modal de confirmação para exclusão;
-- integração preparada com `Azure SQL Server`.
+- camada `domain` com `Cliente`, `PedidoAluguel`, `Contrato`, `Automovel`, `Rendimento`, `Empregador`, `StatusPedido`, `TipoContrato` e `TipoProprietarioVeiculo`;
+- camada `repository` com repositórios Micronaut Data para as entidades persistidas;
+- camada `service` com regras de cliente, autenticação, pedidos, contratos, frota, titularidade de veículo, rendimentos e agente (`PasswordHashService`, `PropriedadeVeiculoService`, `AutomovelService`, `RendimentoService`, entre outros);
+- camada `validation` com `ValidationRules` (cliente, CPF, senha, pedido, veículo);
+- camada `controller` com `HomeController`, `ClienteController`, `AuthController`, `PedidoController`, `AgenteController`, `RendimentoController` e `AutomovelController`;
+- views `Thymeleaf` para home, logins, cadastro de cliente, pedidos, contratos, rendimentos, frota e painel do agente;
+- autenticação por `CPF + senha` com `BCrypt` e sessões separadas cliente/agente;
+- autorização para que o cliente acesse apenas o próprio cadastro e pedidos;
+- pedidos vinculados a automóvel da frota; edição/cancelamento apenas em `PENDENTE`;
+- área do agente com análise, escolha do tipo de contrato na aprovação (detalhe), fila rápida com locação simples, frota e contratos;
+- geração de `Contrato` com tipo persistido e atualização da titularidade do veículo conforme o tipo;
+- rendimentos (até três) e exibição na análise do pedido;
+- redirecionamentos `303 See Other` após `POST` onde aplicável;
+- validação client-side (`form-validations.js`) e server-side alinhadas;
+- recursos estáticos em `public/css` e `public/js`;
+- modal de confirmação para exclusão de cliente;
+- integração com `Azure SQL Server` via variáveis de ambiente.
 
 ### Jornada macro do sistema
 
@@ -307,6 +301,7 @@ Cliente / Agente
        +--> Gestão de Rendimentos
        +--> Gestão de Pedidos
        +--> Gestão de Contratos
+       +--> Frota e titularidade de automóveis
        |
        v
  Repositórios JPA
@@ -383,6 +378,10 @@ Os modelos UML presentes no repositório estão na pasta `Diagrams/`:
 
 As figuras de casos de uso e de pacotes são as versões atualizadas entregues na disciplina. O diagrama de classes permanece disponível como imagem exportada; se existir o arquivo fonte `.drawio` correspondente, ele pode ser editado no [diagrams.net](https://www.diagrams.net/). Os diagramas de componentes e de implantação complementam a visão arquitetural e de infraestrutura exigida nas sprints finais.
 
+> **Consistência com o código**
+>
+> A implementação evoluiu com entidades como `Automovel`, `TipoContrato`, `TipoProprietarioVeiculo`, vínculo de pedido a veículo e fluxo de titularidade após contrato. Se a imagem `DiagramaDeClasses.drawio.png` ainda não refletir esses elementos, regenere o diagrama de classes a partir do código ou atualize o `.drawio` para manter alinhamento acadêmico entre modelo e sistema.
+
 ### Diagrama de Casos de Uso
 
 <div align="center">
@@ -395,7 +394,7 @@ O diagrama de casos de uso modela os principais atores e suas interações:
 | Ator | Ações principais |
 |---|---|
 | `Cliente` | cadastrar-se, fazer login, criar pedido, consultar pedido, modificar pedido, cancelar pedido |
-| `Agente` | analisar pedido, aprovar pedido, reprovar pedido, modificar pedido |
+| `Agente` | analisar pedido, aprovar pedido, reprovar pedido, gerenciar frota de automóveis |
 | `Empresa` | especialização de `Agente` |
 | `Banco` | especialização de `Agente` |
 
@@ -489,6 +488,9 @@ As principais regras de negócio levantadas até o momento são:
 | `Contrato condicionado` | O contrato é gerado automaticamente na aprovação do pedido pelo agente |
 | `Contrato único` | Cada pedido aprovado possui no máximo um contrato persistido |
 | `Decisão do agente` | Apenas o agente autenticado aprova ou reprova; só pedidos `PENDENTE` são elegíveis |
+| `Tipo de contrato na aprovação` | No detalhe do pedido, o agente escolhe o `TipoContrato`; na fila rápida da lista, a aprovação usa locação simples por padrão |
+| `Titularidade do veículo` | Ao gerar o contrato, a titularidade do `Automovel` é ajustada conforme o tipo (locadora, cliente ou banco, conforme implementação) |
+| `Exclusão de cliente` | Se o cliente figurava como titular de veículo (ex.: opção de compra), a titularidade é revertida antes da exclusão |
 | `Leitura do contrato` | O cliente só acessa contrato do próprio pedido aprovado; o agente consulta contratos no painel |
 | `Autenticação` | Apenas usuários autenticados podem criar pedidos |
 | `Pedido com veículo` | Novo pedido exige seleção de um automóvel cadastrado na frota |

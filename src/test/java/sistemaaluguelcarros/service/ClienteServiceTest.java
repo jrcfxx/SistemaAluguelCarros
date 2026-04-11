@@ -8,8 +8,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import sistemaaluguelcarros.domain.Cliente;
+import sistemaaluguelcarros.repository.AutomovelRepository;
 import sistemaaluguelcarros.repository.ClienteRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -31,11 +33,14 @@ class ClienteServiceTest {
     @Mock
     private PasswordHashService passwordHashService;
 
+    @Mock
+    private AutomovelRepository automovelRepository;
+
     private ClienteService clienteService;
 
     @BeforeEach
     void setUp() {
-        clienteService = new ClienteService(clienteRepository, passwordHashService);
+        clienteService = new ClienteService(clienteRepository, passwordHashService, automovelRepository);
     }
 
     @Nested
@@ -233,10 +238,12 @@ class ClienteServiceTest {
         void deveExcluirPorId() {
             Cliente cliente = novoCliente(1L, "Carlos", "52998224725", null, "Rua W, 200", null);
             when(clienteRepository.findById(1L)).thenReturn(Optional.of(cliente));
+            when(automovelRepository.findByProprietarioCliente_Id(1L)).thenReturn(List.of());
 
             clienteService.excluir(1L);
 
             verify(clienteRepository).findById(1L);
+            verify(automovelRepository).findByProprietarioCliente_Id(1L);
             verify(clienteRepository).delete(cliente);
         }
 

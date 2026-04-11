@@ -1,8 +1,12 @@
 package sistemaaluguelcarros.service;
 
 import jakarta.inject.Singleton;
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
+import sistemaaluguelcarros.domain.Automovel;
 import sistemaaluguelcarros.domain.Cliente;
+import sistemaaluguelcarros.domain.TipoProprietarioVeiculo;
+import sistemaaluguelcarros.repository.AutomovelRepository;
 import sistemaaluguelcarros.repository.ClienteRepository;
 import sistemaaluguelcarros.validation.ValidationRules;
 
@@ -13,10 +17,16 @@ public class ClienteService {
 
     private final ClienteRepository clienteRepository;
     private final PasswordHashService passwordHashService;
+    private final AutomovelRepository automovelRepository;
 
-    public ClienteService(ClienteRepository clienteRepository, PasswordHashService passwordHashService) {
+    public ClienteService(
+            ClienteRepository clienteRepository,
+            PasswordHashService passwordHashService,
+            AutomovelRepository automovelRepository
+    ) {
         this.clienteRepository = clienteRepository;
         this.passwordHashService = passwordHashService;
+        this.automovelRepository = automovelRepository;
     }
 
     /**
@@ -78,9 +88,17 @@ public class ClienteService {
         return clienteRepository.findAll();
     }
 
+    @Transactional
     public void excluir(Long id) {
         Cliente cliente = clienteRepository.findById(id)
                 .orElseThrow(() -> new IllegalStateException("Cliente não encontrado."));
+        for (Automovel automovel : automovelRepository.findByProprietarioCliente_Id(id)) {
+            if (automovel.getTipoProprietario() == TipoProprietarioVeiculo.CLIENTE) {
+                automovel.setTipoProprietario(TipoProprietarioVeiculo.LOCADORA);
+            }
+            automovel.setProprietarioCliente(null);
+            automovelRepository.update(automovel);
+        }
         clienteRepository.delete(cliente);
     }
 
