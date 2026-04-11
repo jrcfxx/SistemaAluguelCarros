@@ -344,7 +344,7 @@ O diagrama de casos de uso modela os principais atores e suas interações:
 ### Diagrama de Pacotes
 
 <div align="center">
-  <img src="Diagrams/modelagem%20pacote-lab%20projeto.png" alt="Diagrama de Pacotes do Sistema de Aluguel de Carros" width="92%" />
+  <img src="Diagrams/modelagem%20pacote-lab%20projeto.png" alt="Diagrama de Pacotes do Sistema de Aluguel de Carros" width="100%" />
   <p><em>Organização lógica dos módulos e das dependências estruturais do projeto.</em></p>
 </div>
 
@@ -362,7 +362,7 @@ O diagrama de componentes consolida a organização arquitetural da aplicação 
 ### Diagrama de Implantação
 
 <div align="center">
-  <img src="Diagrams/Diagrama%20de%20implanta%C3%A7%C3%A3o.png" alt="Diagrama de Implantação do Sistema de Aluguel de Carros" width="92%" />
+  <img src="Diagrams/Diagrama%20de%20implanta%C3%A7%C3%A3o.png" alt="Diagrama de Implantação do Sistema de Aluguel de Carros" width="15%" />
   <p><em>Distribuição da aplicação entre cliente web, servidor central e banco de dados.</em></p>
 </div>
 

@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Início | Sistema de Aluguel de Carros</title>
+    <title>Início | AutoDrive</title>
+    <link rel="icon" href="/assets/images/AutoDriveLOGO.png" type="image/png">
     <link rel="stylesheet" href="/css/app.css">
 </head>
 <body>
@@ -11,7 +12,7 @@
     <div class="topbar">
         <a class="brand-mark" href="/">
             <span class="brand-dot"></span>
-            <span>Sistema de Aluguel de Carros</span>
+            <span>AutoDrive</span>
         </a>
         <div class="topbar-actions" th:if="${autenticado}">
             <span class="user-chip" th:if="${clienteNome != null}" th:text="|Olá, ${clienteNome}|">Olá, usuário</span>
