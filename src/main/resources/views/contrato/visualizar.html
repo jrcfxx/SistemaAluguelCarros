@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${tituloPagina}">Contrato</title>
+    <link rel="stylesheet" href="/css/app.css">
+</head>
+<body>
+<main class="container">
+    <div class="topbar">
+        <a class="brand-mark" href="/">
+            <span class="brand-dot"></span>
+            <span>Sistema de Aluguel de Carros</span>
+        </a>
+        <div class="topbar-actions">
+            <span class="user-chip" th:if="${agenteNome != null}" th:text="|Agente: ${agenteNome}|">Agente</span>
+            <span class="user-chip" th:if="${clienteNome != null}" th:text="|Olá, ${clienteNome}|">Cliente</span>
+            <form th:if="${agenteNome != null}" method="post" action="/agente/logout" class="inline-form">
+                <button class="button button-neutral" type="submit">Sair</button>
+            </form>
+            <form th:if="${clienteNome != null}" method="post" action="/logout" class="inline-form">
+                <button class="button button-neutral" type="submit">Sair</button>
+            </form>
+        </div>
+    </div>
+
+    <section class="hero">
+        <span class="eyebrow">• Contrato de locação</span>
+        <h1 th:text="${contrato.numeroContrato}">CTR-1</h1>
+        <p>
+            Documento gerado em
+            <strong th:text="${#temporals.format(contrato.dataGeracao, 'dd/MM/yyyy HH:mm')}">01/01/2026</strong>
+            referente ao pedido nº <strong th:text="${pedido.id}">1</strong>
+            (status do pedido: <span th:text="${pedido.status}">APROVADO</span>).
+        </p>
+        <div class="hero-actions">
+            <a class="button button-primary" th:href="${voltarUrl}">Voltar</a>
+        </div>
+    </section>
+
+    <section class="panel">
+        <div class="panel-header">
+            <div>
+                <h2>Termos</h2>
+                <p th:text="|Cliente: ${cliente.nome} • CPF: ${cliente.cpf}|">Cliente</p>
+            </div>
+        </div>
+        <div class="field-full">
+            <pre class="contrato-termos" th:text="${contrato.termos}">Texto do contrato</pre>
+        </div>
+    </section>
+</main>
+</body>
+</html>

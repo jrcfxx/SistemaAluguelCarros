@@ -13,8 +13,10 @@ import io.micronaut.http.uri.UriBuilder;
 import io.micronaut.session.Session;
 import io.micronaut.views.ModelAndView;
 import sistemaaluguelcarros.domain.Cliente;
+import sistemaaluguelcarros.domain.Contrato;
 import sistemaaluguelcarros.domain.PedidoAluguel;
 import sistemaaluguelcarros.domain.StatusPedido;
+import sistemaaluguelcarros.service.ContratoService;
 import sistemaaluguelcarros.service.PedidoAluguelService;
 import sistemaaluguelcarros.service.SessionAuthService;
 
@@ -32,13 +34,16 @@ public class PedidoController {
 
     private final PedidoAluguelService pedidoAluguelService;
     private final SessionAuthService sessionAuthService;
+    private final ContratoService contratoService;
 
     public PedidoController(
             PedidoAluguelService pedidoAluguelService,
-            SessionAuthService sessionAuthService
+            SessionAuthService sessionAuthService,
+            ContratoService contratoService
     ) {
         this.pedidoAluguelService = pedidoAluguelService;
         this.sessionAuthService = sessionAuthService;
+        this.contratoService = contratoService;
     }
 
     @Get
@@ -177,6 +182,38 @@ public class PedidoController {
             }
             return redirectListaComErroPost(ex.getMessage());
         }
+    }
+
+    @Get("/{pedidoId}/contrato")
+    public Object visualizarContrato(@PathVariable Long pedidoId, @Nullable Session session) {
+        Optional<Cliente> clienteAutenticado = sessionAuthService.clienteAutenticado(session);
+        if (clienteAutenticado.isEmpty()) {
+            return redirectLogin();
+        }
+
+        Optional<Contrato> contratoOpt = contratoService.buscarPorPedidoDoCliente(
+                pedidoId,
+                clienteAutenticado.get().getId()
+        );
+        if (contratoOpt.isEmpty()) {
+            return redirectListaComErro("Contrato não encontrado ou não disponível para a sua conta.");
+        }
+
+        Contrato contrato = contratoOpt.get();
+        PedidoAluguel pedido = contrato.getPedido();
+        if (pedido.getStatus() != StatusPedido.APROVADO) {
+            return redirectListaComErro("Contrato não disponível para este pedido.");
+        }
+
+        Map<String, Object> model = new LinkedHashMap<>();
+        model.put("clienteNome", clienteAutenticado.get().getNome());
+        model.put("clienteCpf", clienteAutenticado.get().getCpf());
+        model.put("contrato", contrato);
+        model.put("pedido", pedido);
+        model.put("cliente", pedido.getCliente());
+        model.put("tituloPagina", "Meu contrato");
+        model.put("voltarUrl", "/pedidos");
+        return new ModelAndView<>("contrato/visualizar", model);
     }
 
     private ModelAndView<Map<String, Object>> formularioCriacao(

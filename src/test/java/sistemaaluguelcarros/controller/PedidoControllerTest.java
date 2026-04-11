@@ -12,7 +12,9 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import sistemaaluguelcarros.domain.Cliente;
 import sistemaaluguelcarros.domain.PedidoAluguel;
+import sistemaaluguelcarros.domain.Contrato;
 import sistemaaluguelcarros.domain.StatusPedido;
+import sistemaaluguelcarros.service.ContratoService;
 import sistemaaluguelcarros.service.PedidoAluguelService;
 import sistemaaluguelcarros.service.SessionAuthService;
 
@@ -38,13 +40,16 @@ class PedidoControllerTest {
     private SessionAuthService sessionAuthService;
 
     @Mock
+    private ContratoService contratoService;
+
+    @Mock
     private Session session;
 
     private PedidoController pedidoController;
 
     @BeforeEach
     void setUp() {
-        pedidoController = new PedidoController(pedidoAluguelService, sessionAuthService);
+        pedidoController = new PedidoController(pedidoAluguelService, sessionAuthService, contratoService);
     }
 
     @Test
@@ -234,6 +239,39 @@ class PedidoControllerTest {
 
         assertThat(resposta).isInstanceOf(MutableHttpResponse.class);
         verify(pedidoAluguelService).cancelarPedido(1L, 5L);
+    }
+
+    @Test
+    @DisplayName("deve exibir contrato quando cliente é dono do pedido aprovado")
+    void deveExibirContratoQuandoClienteDono() {
+        Cliente cliente = novoCliente(1L, "Julia Fiorini", "14434366661");
+        PedidoAluguel pedido = new PedidoAluguel(cliente, "Descrição longa o suficiente para o pedido de teste.");
+        pedido.setId(3L);
+        pedido.setStatus(StatusPedido.APROVADO);
+        Contrato contrato = new Contrato();
+        contrato.setId(40L);
+        contrato.setPedido(pedido);
+
+        when(sessionAuthService.clienteAutenticado(session)).thenReturn(Optional.of(cliente));
+        when(contratoService.buscarPorPedidoDoCliente(3L, 1L)).thenReturn(Optional.of(contrato));
+
+        Object resposta = pedidoController.visualizarContrato(3L, session);
+
+        assertThat(resposta).isInstanceOf(ModelAndView.class);
+        ModelAndView<?> mv = (ModelAndView<?>) resposta;
+        assertThat(mv.getView().orElseThrow()).isEqualTo("contrato/visualizar");
+    }
+
+    @Test
+    @DisplayName("deve redirecionar quando contrato não pertence ao cliente")
+    void deveRedirecionarQuandoContratoNaoDoCliente() {
+        Cliente cliente = novoCliente(1L, "Julia Fiorini", "14434366661");
+        when(sessionAuthService.clienteAutenticado(session)).thenReturn(Optional.of(cliente));
+        when(contratoService.buscarPorPedidoDoCliente(3L, 1L)).thenReturn(Optional.empty());
+
+        Object resposta = pedidoController.visualizarContrato(3L, session);
+
+        assertThat(resposta).isInstanceOf(MutableHttpResponse.class);
     }
 
     private static Cliente novoCliente(Long id, String nome, String cpf) {

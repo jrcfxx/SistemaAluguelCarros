@@ -1,7 +1,9 @@
 package sistemaaluguelcarros.service;
 
 import jakarta.inject.Singleton;
+import jakarta.transaction.Transactional;
 import sistemaaluguelcarros.domain.Cliente;
+import sistemaaluguelcarros.domain.Contrato;
 import sistemaaluguelcarros.domain.PedidoAluguel;
 import sistemaaluguelcarros.domain.StatusPedido;
 import sistemaaluguelcarros.repository.PedidoAluguelRepository;
@@ -16,13 +18,16 @@ public class PedidoAluguelService {
 
     private final PedidoAluguelRepository pedidoAluguelRepository;
     private final ClienteService clienteService;
+    private final ContratoService contratoService;
 
     public PedidoAluguelService(
             PedidoAluguelRepository pedidoAluguelRepository,
-            ClienteService clienteService
+            ClienteService clienteService,
+            ContratoService contratoService
     ) {
         this.pedidoAluguelRepository = pedidoAluguelRepository;
         this.clienteService = clienteService;
+        this.contratoService = contratoService;
     }
 
     public PedidoAluguel criarPedido(Long clienteId, String descricaoSolicitacao) {
@@ -103,6 +108,45 @@ public class PedidoAluguelService {
         }
 
         pedido.setStatus(StatusPedido.CANCELADO);
+        return pedidoAluguelRepository.update(pedido);
+    }
+
+    /**
+     * Aprova o pedido (fluxo do agente), gera contrato e atualiza o status. Somente {@link StatusPedido#PENDENTE}.
+     */
+    @Transactional
+    public PedidoAluguel aprovarPedido(Long pedidoId) {
+        PedidoAluguel pedido = pedidoAluguelRepository.buscarDetalhePorId(pedidoId)
+                .orElseThrow(() -> new IllegalStateException("Pedido não encontrado."));
+
+        if (pedido.getStatus() != StatusPedido.PENDENTE) {
+            throw new IllegalStateException(
+                    "Apenas pedidos PENDENTES podem ser aprovados. Status atual: " + pedido.getStatus() + "."
+            );
+        }
+
+        pedido.setStatus(StatusPedido.APROVADO);
+        PedidoAluguel atualizado = pedidoAluguelRepository.update(pedido);
+        Contrato contrato = contratoService.criarContratoParaPedidoAprovado(atualizado);
+        atualizado.setContrato(contrato);
+        return atualizado;
+    }
+
+    /**
+     * Reprova o pedido (fluxo do agente). Somente {@link StatusPedido#PENDENTE}. Não gera contrato.
+     */
+    @Transactional
+    public PedidoAluguel reprovarPedido(Long pedidoId) {
+        PedidoAluguel pedido = pedidoAluguelRepository.buscarDetalhePorId(pedidoId)
+                .orElseThrow(() -> new IllegalStateException("Pedido não encontrado."));
+
+        if (pedido.getStatus() != StatusPedido.PENDENTE) {
+            throw new IllegalStateException(
+                    "Apenas pedidos PENDENTES podem ser reprovados. Status atual: " + pedido.getStatus() + "."
+            );
+        }
+
+        pedido.setStatus(StatusPedido.REPROVADO);
         return pedidoAluguelRepository.update(pedido);
     }
 

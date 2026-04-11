@@ -12,10 +12,12 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import sistemaaluguelcarros.auth.AgenteSessao;
 import sistemaaluguelcarros.domain.Cliente;
+import sistemaaluguelcarros.domain.Contrato;
 import sistemaaluguelcarros.domain.PedidoAluguel;
 import sistemaaluguelcarros.domain.StatusPedido;
 import sistemaaluguelcarros.service.AgenteAuthService;
 import sistemaaluguelcarros.service.AgenteSessionService;
+import sistemaaluguelcarros.service.ContratoService;
 import sistemaaluguelcarros.service.PedidoAluguelService;
 import sistemaaluguelcarros.service.SessionAuthService;
 
@@ -24,6 +26,8 @@ import java.util.Map;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -44,6 +48,9 @@ class AgenteControllerTest {
     private PedidoAluguelService pedidoAluguelService;
 
     @Mock
+    private ContratoService contratoService;
+
+    @Mock
     private Session session;
 
     private AgenteController agenteController;
@@ -54,7 +61,8 @@ class AgenteControllerTest {
                 agenteAuthService,
                 agenteSessionService,
                 sessionAuthService,
-                pedidoAluguelService
+                pedidoAluguelService,
+                contratoService
         );
     }
 
@@ -113,13 +121,58 @@ class AgenteControllerTest {
         when(agenteSessionService.agenteAutenticado(session)).thenReturn(Optional.of(agente));
         when(pedidoAluguelService.buscarDetalheParaAnalise(12L)).thenReturn(Optional.of(pedido));
 
-        Object resposta = agenteController.detalharPedido(12L, session);
+        Object resposta = agenteController.detalharPedido(12L, session, null, null);
 
         assertThat(resposta).isInstanceOf(ModelAndView.class);
         ModelAndView<?> mv = (ModelAndView<?>) resposta;
         assertThat(mv.getView().orElseThrow()).isEqualTo("agente/pedidos/detalhe");
         Map<?, ?> model = (Map<?, ?>) mv.getModel().get();
         assertThat(model.get("pedido")).isEqualTo(pedido);
+    }
+
+    @Test
+    @DisplayName("deve aprovar pedido quando agente está autenticado")
+    void deveAprovarPedidoQuandoAgenteAutenticado() {
+        AgenteSessao agente = new AgenteSessao("analista", "Agente Financeiro");
+        PedidoAluguel pedido = novoPedido(5L, 1L, "Descrição longa o suficiente para o pedido.", StatusPedido.APROVADO);
+
+        when(agenteSessionService.agenteAutenticado(session)).thenReturn(Optional.of(agente));
+        when(pedidoAluguelService.aprovarPedido(5L)).thenReturn(pedido);
+
+        Object resposta = agenteController.aprovarPedido(5L, session);
+
+        assertThat(resposta).isInstanceOf(MutableHttpResponse.class);
+        verify(pedidoAluguelService).aprovarPedido(5L);
+    }
+
+    @Test
+    @DisplayName("deve redirecionar ao aprovar sem sessão do agente")
+    void deveRedirecionarAoAprovarSemAgente() {
+        when(agenteSessionService.agenteAutenticado(session)).thenReturn(Optional.empty());
+
+        Object resposta = agenteController.aprovarPedido(1L, session);
+
+        assertThat(resposta).isInstanceOf(HttpResponse.class);
+        verify(pedidoAluguelService, never()).aprovarPedido(anyLong());
+    }
+
+    @Test
+    @DisplayName("deve exibir contrato para agente autenticado")
+    void deveExibirContratoParaAgenteAutenticado() {
+        AgenteSessao agente = new AgenteSessao("analista", "Agente Financeiro");
+        PedidoAluguel pedido = novoPedido(3L, 2L, "Descrição longa o suficiente para o pedido.", StatusPedido.APROVADO);
+        Contrato contrato = new Contrato();
+        contrato.setId(77L);
+        contrato.setPedido(pedido);
+
+        when(agenteSessionService.agenteAutenticado(session)).thenReturn(Optional.of(agente));
+        when(contratoService.buscarParaExibicaoAgente(77L)).thenReturn(Optional.of(contrato));
+
+        Object resposta = agenteController.visualizarContrato(77L, session);
+
+        assertThat(resposta).isInstanceOf(ModelAndView.class);
+        ModelAndView<?> mv = (ModelAndView<?>) resposta;
+        assertThat(mv.getView().orElseThrow()).isEqualTo("contrato/visualizar");
     }
 
     private static PedidoAluguel novoPedido(Long id, Long clienteId, String descricao, StatusPedido status) {

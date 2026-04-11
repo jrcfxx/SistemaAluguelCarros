@@ -13,10 +13,12 @@ import io.micronaut.http.uri.UriBuilder;
 import io.micronaut.session.Session;
 import io.micronaut.views.ModelAndView;
 import sistemaaluguelcarros.auth.AgenteSessao;
+import sistemaaluguelcarros.domain.Contrato;
 import sistemaaluguelcarros.domain.PedidoAluguel;
 import sistemaaluguelcarros.domain.StatusPedido;
 import sistemaaluguelcarros.service.AgenteAuthService;
 import sistemaaluguelcarros.service.AgenteSessionService;
+import sistemaaluguelcarros.service.ContratoService;
 import sistemaaluguelcarros.service.PedidoAluguelService;
 import sistemaaluguelcarros.service.SessionAuthService;
 
@@ -35,17 +37,20 @@ public class AgenteController {
     private final AgenteSessionService agenteSessionService;
     private final SessionAuthService sessionAuthService;
     private final PedidoAluguelService pedidoAluguelService;
+    private final ContratoService contratoService;
 
     public AgenteController(
             AgenteAuthService agenteAuthService,
             AgenteSessionService agenteSessionService,
             SessionAuthService sessionAuthService,
-            PedidoAluguelService pedidoAluguelService
+            PedidoAluguelService pedidoAluguelService,
+            ContratoService contratoService
     ) {
         this.agenteAuthService = agenteAuthService;
         this.agenteSessionService = agenteSessionService;
         this.sessionAuthService = sessionAuthService;
         this.pedidoAluguelService = pedidoAluguelService;
+        this.contratoService = contratoService;
     }
 
     @Get("/login")
@@ -111,7 +116,12 @@ public class AgenteController {
     }
 
     @Get("/pedidos/{id}")
-    public Object detalharPedido(@PathVariable Long id, @Nullable Session session) {
+    public Object detalharPedido(
+            @PathVariable Long id,
+            @Nullable Session session,
+            @Nullable @QueryValue String mensagem,
+            @Nullable @QueryValue String erro
+    ) {
         Optional<AgenteSessao> agente = agenteSessionService.agenteAutenticado(session);
         if (agente.isEmpty()) {
             return HttpResponse.redirect(URI.create("/agente/login"));
@@ -130,6 +140,73 @@ public class AgenteController {
         model.put("agenteNome", agente.get().nomeExibicao());
         model.put("pedido", pedido);
         model.put("cliente", pedido.getCliente());
+        model.put("mensagem", mensagem);
+        model.put("erro", erro);
         return new ModelAndView<>("agente/pedidos/detalhe", model);
+    }
+
+    @Post(value = "/pedidos/{id}/aprovar", consumes = MediaType.APPLICATION_FORM_URLENCODED)
+    public Object aprovarPedido(@PathVariable Long id, @Nullable Session session) {
+        if (agenteSessionService.agenteAutenticado(session).isEmpty()) {
+            return HttpResponse.redirect(URI.create("/agente/login"));
+        }
+        try {
+            pedidoAluguelService.aprovarPedido(id);
+            URI uri = UriBuilder.of("/agente/pedidos/" + id)
+                    .queryParam("mensagem", "Pedido aprovado e contrato gerado com sucesso.")
+                    .build();
+            return HttpResponse.seeOther(uri);
+        } catch (IllegalStateException ex) {
+            URI uri = UriBuilder.of("/agente/pedidos/" + id)
+                    .queryParam("erro", ex.getMessage())
+                    .build();
+            return HttpResponse.seeOther(uri);
+        }
+    }
+
+    @Post(value = "/pedidos/{id}/reprovar", consumes = MediaType.APPLICATION_FORM_URLENCODED)
+    public Object reprovarPedido(@PathVariable Long id, @Nullable Session session) {
+        if (agenteSessionService.agenteAutenticado(session).isEmpty()) {
+            return HttpResponse.redirect(URI.create("/agente/login"));
+        }
+        try {
+            pedidoAluguelService.reprovarPedido(id);
+            URI uri = UriBuilder.of("/agente/pedidos/" + id)
+                    .queryParam("mensagem", "Pedido reprovado.")
+                    .build();
+            return HttpResponse.seeOther(uri);
+        } catch (IllegalStateException ex) {
+            URI uri = UriBuilder.of("/agente/pedidos/" + id)
+                    .queryParam("erro", ex.getMessage())
+                    .build();
+            return HttpResponse.seeOther(uri);
+        }
+    }
+
+    @Get("/contratos/{id}")
+    public Object visualizarContrato(@PathVariable Long id, @Nullable Session session) {
+        Optional<AgenteSessao> agente = agenteSessionService.agenteAutenticado(session);
+        if (agente.isEmpty()) {
+            return HttpResponse.redirect(URI.create("/agente/login"));
+        }
+
+        Optional<Contrato> contratoOpt = contratoService.buscarParaExibicaoAgente(id);
+        if (contratoOpt.isEmpty()) {
+            URI uri = UriBuilder.of("/agente/pedidos")
+                    .queryParam("erro", "Contrato não encontrado.")
+                    .build();
+            return HttpResponse.redirect(uri);
+        }
+
+        Contrato contrato = contratoOpt.get();
+        PedidoAluguel pedido = contrato.getPedido();
+        Map<String, Object> model = new LinkedHashMap<>();
+        model.put("agenteNome", agente.get().nomeExibicao());
+        model.put("contrato", contrato);
+        model.put("pedido", pedido);
+        model.put("cliente", pedido.getCliente());
+        model.put("tituloPagina", "Contrato (agente)");
+        model.put("voltarUrl", "/agente/pedidos/" + pedido.getId());
+        return new ModelAndView<>("contrato/visualizar", model);
     }
 }

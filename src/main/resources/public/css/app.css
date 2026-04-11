@@ -516,6 +516,19 @@ textarea:focus {
 .pill-cyan { background: #0f766e; }
 .pill-amber { background: #b45309; }
 
+.contrato-termos {
+    white-space: pre-wrap;
+    font-family: inherit;
+    font-size: 0.95rem;
+    line-height: 1.55;
+    margin: 0;
+    padding: 16px;
+    background: var(--surface-soft);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--line);
+    color: var(--text);
+}
+
 @media (max-width: 720px) {
     .grid {
         grid-template-columns: 1fr;

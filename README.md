@@ -17,7 +17,7 @@
   <img src="https://img.shields.io/badge/Micronaut-4.x-1B1F23?style=for-the-badge&logo=micronaut&logoColor=white" alt="Micronaut" />
   <img src="https://img.shields.io/badge/Thymeleaf-Views-005F0F?style=for-the-badge" alt="Thymeleaf" />
   <img src="https://img.shields.io/badge/Azure%20SQL-SQL%20Server-0B6E99?style=for-the-badge" alt="Azure SQL Server" />
-  <img src="https://img.shields.io/badge/Status-Edi%C3%A7%C3%A3o%20e%20cancelamento%20de%20pedidos-4FD1C5?style=for-the-badge" alt="Status do projeto" />
+  <img src="https://img.shields.io/badge/Status-Aprova%C3%A7%C3%A3o%20e%20contratos-4FD1C5?style=for-the-badge" alt="Status do projeto" />
 </p>
 
 <p>
@@ -41,7 +41,7 @@
 | **Arquitetura alvo** | Aplicação web em `Java` com padrão `MVC` |
 | **Stack principal** | `Micronaut`, `Thymeleaf`, `JPA/Hibernate`, `Azure SQL Server`, `Gradle` |
 | **Foco funcional** | Clientes, pedidos, análise financeira, contratos e propriedade do automóvel |
-| **Situação atual** | Modelagem concluída, base técnica pronta, autenticação implementada, consulta de pedidos com status, modificação/cancelamento de pedidos pendentes pelo cliente e validações de formulário/client-side/backend aplicadas |
+| **Situação atual** | Base funcional com cliente, agente, pedidos, aprovação/reprovação pelo agente, geração e visualização de contrato (acadêmica) e validações de formulário no cliente e no servidor |
 
 ## Sumário
 
@@ -99,7 +99,7 @@ Atualmente, o repositório já possui a base de configuração do projeto e os a
 
 > **Importante**
 >
-> O projeto já possui base técnica, domínio de `Cliente`, autenticação por `CPF + senha`, sessão HTTP, área autenticada do cliente, criação de `PedidoAluguel`, listagem com status, edição/cancelamento de pedidos `PENDENTE` e agora também uma área protegida de agente para análise dos pedidos. O próximo passo natural é permitir aprovação, reprovação e geração de contrato.
+> O projeto já possui base técnica, domínio de `Cliente`, autenticação por `CPF + senha`, sessão HTTP, área autenticada do cliente, criação de `PedidoAluguel`, listagem com status, edição/cancelamento de pedidos `PENDENTE`, área protegida de agente, aprovação e reprovação de pedidos `PENDENTE`, entidade `Contrato` vinculada ao pedido aprovado e telas de visualização para agente e cliente. O próximo passo natural é a gestão de rendimentos e empregadores.
 
 ### Entregáveis já produzidos e plano incremental
 
@@ -115,8 +115,8 @@ Atualmente, o repositório já possui a base de configuração do projeto e os a
 | `7` | Consulta de pedidos e visualização de status | `Sprint 03` | `Concluído` |
 | `8` | Modificação e cancelamento de pedido | `Sprint 03` | `Concluído` |
 | `9` | Análise de pedido por agente | `Sprint 03` | `Concluído` |
-| `10` | Aprovação, reprovação e geração de contrato | `Sprint 03` | `Próximo` |
-| `11` | Gestão de rendimentos e empregadores | `Sprint 03` | `Pendente` |
+| `10` | Aprovação, reprovação e geração de contrato | `Sprint 03` | `Concluído` |
+| `11` | Gestão de rendimentos e empregadores | `Sprint 03` | `Próximo` |
 | `12` | Automóveis e transferência de propriedade | `Sprint 03` | `Pendente` |
 | `13` | Revisão final, componentes, implantação, polimento e entrega | `Sprint 03` | `Pendente` |
 
@@ -167,6 +167,10 @@ Atualmente, o repositório já possui a base de configuração do projeto e os a
 | Edição e cancelamento de pedidos (status `PENDENTE`) | `Concluído` |
 | Painel do agente para análise de pedidos | `Concluído` |
 | Detalhamento do pedido para o agente | `Concluído` |
+| Aprovação e reprovação de pedidos `PENDENTE` pelo agente | `Concluído` |
+| Entidade `Contrato` com vínculo `1:1` ao pedido aprovado | `Concluído` |
+| `ContratoRepository` e `ContratoService` | `Concluído` |
+| Visualização de contrato pelo agente e pelo cliente (próprio pedido) | `Concluído` |
 | Modal de confirmação de exclusão | `Concluído` |
 | Restrição para acesso apenas ao próprio cadastro | `Concluído` |
 | Sessões separadas para cliente e agente | `Concluído` |
@@ -182,6 +186,7 @@ Atualmente, o repositório já possui a base de configuração do projeto e os a
 | Testes de `SessionAuthService` | `Concluído` |
 | Testes de `PedidoAluguelService` | `Concluído` |
 | Testes de `PedidoController` | `Concluído` |
+| Testes de `ContratoService` | `Concluído` |
 
 <a id="identidade-visual"></a>
 ## Identidade visual
@@ -259,6 +264,9 @@ Atualmente a aplicação já possui:
 - edição da descrição e cancelamento de pedidos `PENDENTE` pelo próprio cliente;
 - área protegida de agente com listagem completa de pedidos para análise;
 - tela de detalhamento de pedido com dados do cliente para o agente;
+- aprovação e reprovação de pedidos `PENDENTE` pelo agente, com redirecionamentos `303 See Other` após `POST`;
+- geração automática de `Contrato` (texto acadêmico) ao aprovar pedido;
+- visualização de contrato em rota dedicada para agente e para cliente (autorização por dono do pedido);
 - validação client-side com máscara de `CPF`, confirmação de senha e bloqueio de envio inválido;
 - validação server-side para `CPF`, nome, endereço, profissão, senha e descrição de pedido;
 - recursos estáticos compartilhados por CSS e JavaScript;
@@ -339,6 +347,10 @@ POST /pedidos -> criação de `PedidoAluguel` com status inicial `PENDENTE`
 /pedidos/{id}/editar -> formulário protegido para edição (somente pedido `PENDENTE` do cliente)
 POST /pedidos/{id}/editar -> atualização da descrição (somente `PENDENTE`)
 POST /pedidos/{id}/cancelar -> cancelamento com status `CANCELADO` (somente `PENDENTE`)
+/pedidos/{id}/contrato -> visualização do contrato do próprio pedido aprovado (cliente autenticado)
+POST /agente/pedidos/{id}/aprovar -> aprovação pelo agente (gera contrato)
+POST /agente/pedidos/{id}/reprovar -> reprovação pelo agente (sem contrato)
+/agente/contratos/{id} -> visualização do contrato pelo agente autenticado
 ```
 
 <a id="diagramas-do-projeto"></a>
@@ -457,7 +469,10 @@ As principais regras de negócio levantadas até o momento são:
 | `Consulta isolada` | O cliente autenticado visualiza apenas os próprios pedidos |
 | `Máximo de rendimentos` | Cada cliente pode possuir até `3` rendimentos |
 | `Pedido pendente` | Apenas pedidos `PENDENTE` podem ser alterados ou cancelados |
-| `Contrato condicionado` | O contrato só pode ser gerado após aprovação |
+| `Contrato condicionado` | O contrato é gerado automaticamente na aprovação do pedido pelo agente |
+| `Contrato único` | Cada pedido aprovado possui no máximo um contrato persistido |
+| `Decisão do agente` | Apenas o agente autenticado aprova ou reprova; só pedidos `PENDENTE` são elegíveis |
+| `Leitura do contrato` | O cliente só acessa contrato do próprio pedido aprovado; o agente consulta contratos no painel |
 | `Autenticação` | Apenas usuários autenticados podem criar pedidos |
 
 <a id="historias-de-usuario"></a>
@@ -689,16 +704,19 @@ Como sistema, quero transferir a propriedade de um automóvel para refletir as c
 |       |       |   `-- PedidoController.java
 |       |       |-- domain/          # Entidades JPA
 |       |       |   |-- Cliente.java
+|       |       |   |-- Contrato.java
 |       |       |   |-- PedidoAluguel.java
 |       |       |   `-- StatusPedido.java
 |       |       |-- repository/      # Repositórios Micronaut Data
 |       |       |   |-- ClienteRepository.java
+|       |       |   |-- ContratoRepository.java
 |       |       |   `-- PedidoAluguelRepository.java
 |       |       |-- service/         # Regras de negócio
 |       |           |-- AgenteAuthService.java
 |       |           |-- AgenteSessionService.java
 |       |           |-- AuthService.java
 |       |           |-- ClienteService.java
+|       |           |-- ContratoService.java
 |       |           |-- PedidoAluguelService.java
 |       |           |-- PasswordHashService.java
 |       |           `-- SessionAuthService.java
@@ -725,6 +743,8 @@ Como sistema, quero transferir a propriedade de um automóvel para refletir as c
 |               |-- clientes/
 |               |   |-- formulario.html
 |               |   `-- lista.html
+|               |-- contrato/
+|               |   `-- visualizar.html
 |               |-- pedidos/
 |               |   |-- formulario.html
 |               |   `-- lista.html
@@ -741,6 +761,7 @@ Como sistema, quero transferir a propriedade de um automóvel para refletir as c
 |                   |-- AgenteSessionServiceTest.java
 |                   |-- AuthServiceTest.java
 |                   |-- ClienteServiceTest.java
+|                   |-- ContratoServiceTest.java
 |                   |-- PedidoAluguelServiceTest.java
 |                   `-- SessionAuthServiceTest.java
 |-- .env.example
@@ -811,17 +832,16 @@ java -version
 
 > **Observação**
 >
-> Os incrementos `1` a `9` já foram concluídos. A aplicação possui base técnica, persistência de `Cliente`, autenticação com sessão, autorização sobre o próprio cadastro, domínio de `PedidoAluguel`, criação e listagem de pedidos, edição/cancelamento de pedidos pendentes, visualização de status e área de agente para análise. O próximo incremento recomendado é aprovação, reprovação e geração de contrato.
+> Os incrementos `1` a `10` já foram concluídos. A aplicação possui base técnica, persistência de `Cliente`, autenticação com sessão, autorização sobre o próprio cadastro, domínio de `PedidoAluguel` e `Contrato`, criação e listagem de pedidos, edição/cancelamento de pedidos pendentes, área de agente com aprovação/reprovação e geração de contrato na aprovação, além de visualização de contrato para cliente e agente. O próximo incremento recomendado é a gestão de rendimentos e empregadores.
 
 <a id="roadmap-sugerido"></a>
 ## Roadmap sugerido
 
 Com base no laboratório e no estado atual do repositório, os próximos passos mais naturais são:
 
-1. aprovar/reprovar pedido e gerar contrato;
-2. modelar rendimentos e empregadores;
-3. modelar automóveis e transferência de propriedade;
-4. revisar os diagramas conforme a implementação evoluir.
+1. modelar rendimentos e empregadores;
+2. modelar automóveis e transferência de propriedade;
+3. revisar os diagramas conforme a implementação evoluir.
 
 ### Próximos marcos esperados
 

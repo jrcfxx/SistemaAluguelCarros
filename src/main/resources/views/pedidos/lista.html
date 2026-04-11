@@ -80,7 +80,13 @@
                                 <button type="submit" class="danger-button">Cancelar</button>
                             </form>
                         </div>
-                        <span class="muted" th:if="${pedido.status.name() != 'PENDENTE'}">Não editável</span>
+                        <div class="row-actions" th:if="${pedido.status.name() == 'APROVADO' and pedido.contrato != null}">
+                            <a class="link-button" th:href="@{'/pedidos/' + ${pedido.id} + '/contrato'}">Ver contrato</a>
+                        </div>
+                        <span class="muted"
+                              th:if="${pedido.status.name() != 'PENDENTE' and !(pedido.status.name() == 'APROVADO' and pedido.contrato != null)}">
+                            Não editável
+                        </span>
                     </td>
                 </tr>
                 </tbody>

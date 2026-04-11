@@ -25,8 +25,8 @@
         <span class="eyebrow">• Pedido em análise</span>
         <h1 th:text="|Pedido #${pedido.id}|">Pedido #1</h1>
         <p>
-            Nesta etapa o agente já consegue consultar os dados do pedido e do cliente para análise.
-            Aprovação e reprovação serão disponibilizadas no próximo incremento.
+            Analise os dados do pedido e do cliente. Pedidos <strong>PENDENTES</strong> podem ser aprovados
+            (gera contrato) ou reprovados. Pedidos finalizados não podem ser alterados.
         </p>
         <div class="hero-stats">
             <span class="stat-chip" th:text="|Status: ${pedido.status}|">Status: PENDENTE</span>
@@ -35,6 +35,9 @@
     </section>
 
     <section class="panel">
+        <div th:if="${mensagem}" class="alert alert-success" th:text="${mensagem}"></div>
+        <div th:if="${erro}" class="alert alert-error" th:text="${erro}"></div>
+
         <div class="panel-header">
             <div>
                 <h2>Dados do pedido</h2>
@@ -69,6 +72,30 @@
                 <textarea rows="6" readonly th:text="${pedido.descricaoSolicitacao}">Descrição</textarea>
             </div>
         </div>
+
+        <div class="actions" th:if="${pedido.status.name() == 'PENDENTE'}">
+            <form th:action="@{'/agente/pedidos/' + ${pedido.id} + '/aprovar'}" method="post" class="inline-form"
+                  onsubmit="return confirm('Aprovar este pedido e gerar o contrato?');">
+                <button type="submit" class="button button-primary-solid">Aprovar pedido</button>
+            </form>
+            <form th:action="@{'/agente/pedidos/' + ${pedido.id} + '/reprovar'}" method="post" class="inline-form"
+                  onsubmit="return confirm('Reprovar este pedido? Não será gerado contrato.');">
+                <button type="submit" class="button button-neutral">Reprovar pedido</button>
+            </form>
+        </div>
+    </section>
+
+    <section class="panel" th:if="${pedido.contrato != null}">
+        <div class="panel-header">
+            <div>
+                <h2>Contrato gerado</h2>
+                <p>Este pedido possui contrato vinculado.</p>
+            </div>
+            <a class="button button-primary-solid" th:href="@{'/agente/contratos/' + ${pedido.contrato.id}}">Ver contrato</a>
+        </div>
+        <p class="muted" th:text="|Número: ${pedido.contrato.numeroContrato} • Gerado em ${#temporals.format(pedido.contrato.dataGeracao, 'dd/MM/yyyy HH:mm')}|">
+            Contrato
+        </p>
     </section>
 
     <section class="panel">

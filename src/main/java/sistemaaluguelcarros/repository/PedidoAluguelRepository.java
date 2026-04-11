@@ -12,12 +12,19 @@ import java.util.Optional;
 @Repository
 public interface PedidoAluguelRepository extends CrudRepository<PedidoAluguel, Long> {
 
-    @Query("SELECT p FROM PedidoAluguel p JOIN FETCH p.cliente ORDER BY p.dataSolicitacao DESC")
+    @Query(
+            "SELECT DISTINCT p FROM PedidoAluguel p JOIN FETCH p.cliente LEFT JOIN FETCH p.contrato ORDER BY p.dataSolicitacao DESC"
+    )
     List<PedidoAluguel> listarParaAnalise();
 
-    @Query("SELECT p FROM PedidoAluguel p JOIN FETCH p.cliente WHERE p.id = :id")
+    @Query(
+            "SELECT p FROM PedidoAluguel p JOIN FETCH p.cliente LEFT JOIN FETCH p.contrato WHERE p.id = :id"
+    )
     Optional<PedidoAluguel> buscarDetalhePorId(Long id);
 
+    @Query(
+            "SELECT DISTINCT p FROM PedidoAluguel p JOIN FETCH p.cliente LEFT JOIN FETCH p.contrato WHERE p.cliente.id = :clienteId ORDER BY p.dataSolicitacao DESC"
+    )
     List<PedidoAluguel> findByClienteIdOrderByDataSolicitacaoDesc(Long clienteId);
 
     long countByStatus(StatusPedido status);

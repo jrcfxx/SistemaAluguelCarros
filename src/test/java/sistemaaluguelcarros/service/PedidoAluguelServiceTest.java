@@ -8,9 +8,11 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import sistemaaluguelcarros.domain.Cliente;
+import sistemaaluguelcarros.domain.Contrato;
 import sistemaaluguelcarros.domain.PedidoAluguel;
 import sistemaaluguelcarros.domain.StatusPedido;
 import sistemaaluguelcarros.repository.PedidoAluguelRepository;
+import sistemaaluguelcarros.service.ContratoService;
 
 import java.util.List;
 import java.util.Optional;
@@ -33,11 +35,14 @@ class PedidoAluguelServiceTest {
     @Mock
     private ClienteService clienteService;
 
+    @Mock
+    private ContratoService contratoService;
+
     private PedidoAluguelService pedidoAluguelService;
 
     @BeforeEach
     void setUp() {
-        pedidoAluguelService = new PedidoAluguelService(pedidoAluguelRepository, clienteService);
+        pedidoAluguelService = new PedidoAluguelService(pedidoAluguelRepository, clienteService, contratoService);
     }
 
     @Nested
@@ -257,6 +262,72 @@ class PedidoAluguelServiceTest {
                     .hasMessage("Pedido não encontrado.");
 
             verify(pedidoAluguelRepository, never()).update(any());
+        }
+    }
+
+    @Nested
+    @DisplayName("aprovarPedido")
+    class AprovarPedido {
+
+        @Test
+        @DisplayName("deve aprovar pedido pendente e gerar contrato")
+        void deveAprovarPendenteEGerarContrato() {
+            PedidoAluguel pedido = novoPedido(20L, 1L, "Descrição longa o suficiente para validação do pedido.", StatusPedido.PENDENTE);
+            Contrato contrato = new Contrato();
+            contrato.setId(100L);
+
+            when(pedidoAluguelRepository.buscarDetalhePorId(20L)).thenReturn(Optional.of(pedido));
+            when(pedidoAluguelRepository.update(any(PedidoAluguel.class))).thenAnswer(invocation -> invocation.getArgument(0));
+            when(contratoService.criarContratoParaPedidoAprovado(any(PedidoAluguel.class))).thenReturn(contrato);
+
+            PedidoAluguel resultado = pedidoAluguelService.aprovarPedido(20L);
+
+            assertThat(resultado.getStatus()).isEqualTo(StatusPedido.APROVADO);
+            verify(contratoService).criarContratoParaPedidoAprovado(any(PedidoAluguel.class));
+        }
+
+        @Test
+        @DisplayName("deve bloquear aprovação quando pedido não está pendente")
+        void deveBloquearQuandoNaoPendente() {
+            PedidoAluguel pedido = novoPedido(20L, 1L, "Descrição longa o suficiente para validação do pedido.", StatusPedido.APROVADO);
+            when(pedidoAluguelRepository.buscarDetalhePorId(20L)).thenReturn(Optional.of(pedido));
+
+            assertThatThrownBy(() -> pedidoAluguelService.aprovarPedido(20L))
+                    .isInstanceOf(IllegalStateException.class)
+                    .hasMessageContaining("PENDENTES");
+
+            verify(contratoService, never()).criarContratoParaPedidoAprovado(any());
+        }
+    }
+
+    @Nested
+    @DisplayName("reprovarPedido")
+    class ReprovarPedido {
+
+        @Test
+        @DisplayName("deve reprovar pedido pendente sem gerar contrato")
+        void deveReprovarSemContrato() {
+            PedidoAluguel pedido = novoPedido(21L, 1L, "Descrição longa o suficiente para validação do pedido.", StatusPedido.PENDENTE);
+            when(pedidoAluguelRepository.buscarDetalhePorId(21L)).thenReturn(Optional.of(pedido));
+            when(pedidoAluguelRepository.update(any(PedidoAluguel.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+            PedidoAluguel resultado = pedidoAluguelService.reprovarPedido(21L);
+
+            assertThat(resultado.getStatus()).isEqualTo(StatusPedido.REPROVADO);
+            verify(contratoService, never()).criarContratoParaPedidoAprovado(any());
+        }
+
+        @Test
+        @DisplayName("deve bloquear reprovação quando pedido já foi finalizado")
+        void deveBloquearQuandoJaFinalizado() {
+            PedidoAluguel pedido = novoPedido(21L, 1L, "Descrição longa o suficiente para validação do pedido.", StatusPedido.REPROVADO);
+            when(pedidoAluguelRepository.buscarDetalhePorId(21L)).thenReturn(Optional.of(pedido));
+
+            assertThatThrownBy(() -> pedidoAluguelService.reprovarPedido(21L))
+                    .isInstanceOf(IllegalStateException.class)
+                    .hasMessageContaining("PENDENTES");
+
+            verify(contratoService, never()).criarContratoParaPedidoAprovado(any());
         }
     }
 

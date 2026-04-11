@@ -25,8 +25,8 @@
         <span class="eyebrow">• Análise de pedidos</span>
         <h1>Painel do agente</h1>
         <p>
-            Consulte todos os pedidos cadastrados, priorize os pendentes e abra os detalhes para análise.
-            A decisão de aprovar ou reprovar ficará para o próximo incremento.
+            Consulte todos os pedidos cadastrados, priorize os pendentes e aprove ou reprove quando estiverem
+            com status <strong>PENDENTE</strong>. Pedidos aprovados geram contrato automaticamente.
         </p>
         <div class="hero-stats">
             <span class="stat-chip" th:text="|Total: ${totalPedidos}|">Total: 0</span>
@@ -58,7 +58,8 @@
                     <th>Solicitação</th>
                     <th>Status</th>
                     <th>Solicitado em</th>
-                    <th>Ação</th>
+                    <th>Contrato</th>
+                    <th>Ações</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -78,7 +79,27 @@
                     </td>
                     <td th:text="${#temporals.format(pedido.dataSolicitacao, 'dd/MM/yyyy HH:mm')}">21/03/2026 10:00</td>
                     <td>
-                        <a class="link-button" th:href="@{'/agente/pedidos/' + ${pedido.id}}">Analisar</a>
+                        <span th:if="${pedido.contrato != null}" class="muted">Sim</span>
+                        <span th:if="${pedido.contrato == null}">—</span>
+                    </td>
+                    <td>
+                        <div class="row-actions">
+                            <a class="link-button" th:href="@{'/agente/pedidos/' + ${pedido.id}}">Detalhe</a>
+                            <a class="link-button" th:if="${pedido.contrato != null}"
+                               th:href="@{'/agente/contratos/' + ${pedido.contrato.id}}">Contrato</a>
+                            <form th:if="${pedido.status.name() == 'PENDENTE'}"
+                                  th:action="@{'/agente/pedidos/' + ${pedido.id} + '/aprovar'}"
+                                  method="post" class="inline-form"
+                                  onsubmit="return confirm('Aprovar este pedido e gerar o contrato?');">
+                                <button type="submit" class="link-button">Aprovar</button>
+                            </form>
+                            <form th:if="${pedido.status.name() == 'PENDENTE'}"
+                                  th:action="@{'/agente/pedidos/' + ${pedido.id} + '/reprovar'}"
+                                  method="post" class="inline-form"
+                                  onsubmit="return confirm('Reprovar este pedido? Não será gerado contrato.');">
+                                <button type="submit" class="danger-button">Reprovar</button>
+                            </form>
+                        </div>
                     </td>
                 </tr>
                 </tbody>
