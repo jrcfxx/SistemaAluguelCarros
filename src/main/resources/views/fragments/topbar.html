@@ -1,0 +1,18 @@
+<div th:fragment="topbar" xmlns:th="http://www.thymeleaf.org" class="topbar">
+    <a class="brand-mark" href="/">
+        <span class="brand-dot"></span>
+        <span>AutoDrive</span>
+    </a>
+
+    <div class="topbar-actions" th:if="${autenticado or agenteAutenticado or clienteNome != null or agenteNome != null}">
+        <span class="user-chip" th:if="${clienteNome != null}" th:text="|Olá, ${clienteNome}|">Olá, usuário</span>
+        <span class="user-chip" th:if="${agenteNome != null}" th:text="|Agente: ${agenteNome}|">Agente</span>
+
+        <form method="post" action="/logout" class="inline-form" th:if="${autenticado}">
+            <button class="button button-neutral" type="submit">Sair</button>
+        </form>
+        <form method="post" action="/agente/logout" class="inline-form" th:if="${agenteAutenticado}">
+            <button class="button button-neutral" type="submit">Sair da área do agente</button>
+        </form>
+    </div>
+</div>

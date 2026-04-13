@@ -1,21 +1,7 @@
 <!DOCTYPE html>
 <html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login | Sistema de Aluguel de Carros</title>
-    <link rel="stylesheet" href="/css/app.css">
-    <script src="/js/form-validations.js" defer></script>
-</head>
-<body>
-<main class="container">
-    <div class="topbar">
-        <a class="brand-mark" href="/">
-            <span class="brand-dot"></span>
-            <span>Sistema de Aluguel de Carros</span>
-        </a>
-    </div>
-
+<th:block th:replace="~{fragments/layout :: layout('Login do cliente', ~{::content}, ~{::scripts})}">
+    <th:block th:fragment="content">
     <section class="hero">
         <span class="eyebrow">• Acesso</span>
         <h1>Login do cliente</h1>
@@ -25,8 +11,7 @@
     </section>
 
     <section class="panel">
-        <div th:if="${mensagem}" class="alert alert-success" th:text="${mensagem}"></div>
-        <div th:if="${erro}" class="alert alert-error" th:text="${erro}"></div>
+        <div th:replace="~{fragments/flash :: flash}"></div>
 
         <form method="post" action="/login" enctype="application/x-www-form-urlencoded" data-validate-form>
             <div class="grid">
@@ -55,6 +40,9 @@
             </div>
         </form>
     </section>
-</main>
-</body>
+    </th:block>
+    <th:block th:fragment="scripts">
+        <script src="/js/form-validations.js" defer></script>
+    </th:block>
+</th:block>
 </html>

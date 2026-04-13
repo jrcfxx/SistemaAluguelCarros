@@ -9,6 +9,7 @@
     --bg-accent: #edf4ff;
     --surface: #ffffff;
     --surface-soft: #f8fbff;
+    --surface-glass: rgba(255, 255, 255, 0.72);
     --text: #0f172a;
     --muted: #475569;
     --line: #d9e4ef;
@@ -18,8 +19,10 @@
     --error-text: #991b1b;
     --danger: #dc2626;
     --danger-dark: #b91c1c;
+    --ring: rgba(79, 209, 197, 0.35);
     --shadow-lg: 0 22px 50px rgba(15, 23, 42, 0.14);
     --shadow-md: 0 12px 30px rgba(15, 23, 42, 0.08);
+    --shadow-sm: 0 10px 18px rgba(15, 23, 42, 0.06);
     --radius-xl: 28px;
     --radius-lg: 20px;
     --radius-md: 14px;
@@ -35,27 +38,116 @@ html {
 
 body {
     margin: 0;
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+    font-weight: 400;
     color: var(--text);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
     background:
-        radial-gradient(circle at top left, rgba(79, 209, 197, 0.12), transparent 22%),
-        radial-gradient(circle at top right, rgba(29, 78, 216, 0.1), transparent 24%),
+        radial-gradient(circle at 10% 0%, rgba(79, 209, 197, 0.22), transparent 28%),
+        radial-gradient(circle at 90% 0%, rgba(29, 78, 216, 0.18), transparent 30%),
+        radial-gradient(circle at 40% 120%, rgba(245, 158, 11, 0.12), transparent 35%),
         linear-gradient(180deg, var(--bg-accent) 0%, var(--bg) 100%);
+}
+
+.skip-link {
+    position: absolute;
+    left: -999px;
+    top: 12px;
+    padding: 10px 12px;
+    border-radius: 12px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    box-shadow: var(--shadow-sm);
+    color: var(--brand-slate);
+    font-weight: 800;
+    text-decoration: none;
+}
+.skip-link:focus {
+    left: 12px;
+    z-index: 9999;
+}
+
+a {
+    color: var(--brand-blue);
+    text-decoration-thickness: 2px;
+    text-underline-offset: 3px;
 }
 
 .container {
     max-width: 1140px;
     margin: 0 auto;
-    padding: 32px 20px 56px;
+    padding: 22px 20px 56px;
+}
+
+.topbar {
+    position: sticky;
+    top: 14px;
+    z-index: 50;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 18px;
+    padding: 14px 16px;
+    border-radius: 18px;
+    background: var(--surface-glass);
+    border: 1px solid rgba(217, 228, 239, 0.75);
+    box-shadow: var(--shadow-sm);
+    backdrop-filter: blur(12px);
+}
+
+.topbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.user-chip {
+    font-weight: 800;
+    color: var(--brand-slate);
+    font-size: 0.95rem;
+    padding: 8px 10px;
+    border-radius: 999px;
+    background: rgba(29, 78, 216, 0.08);
+    border: 1px solid rgba(29, 78, 216, 0.12);
+}
+
+.inline-form {
+    margin: 0;
+}
+
+.brand-mark {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--brand-slate);
+    font-weight: 900;
+    text-decoration: none;
+    letter-spacing: -0.02em;
+}
+
+.brand-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 999px;
+    background: linear-gradient(135deg, var(--brand-cyan), var(--brand-blue));
+    box-shadow: 0 0 0 6px rgba(79, 209, 197, 0.14);
 }
 
 .hero {
     position: relative;
     overflow: hidden;
-    background: linear-gradient(135deg, var(--brand-navy) 0%, var(--brand-slate) 55%, var(--brand-blue) 100%);
+    background:
+        radial-gradient(circle at 20% 10%, rgba(79, 209, 197, 0.18), transparent 42%),
+        radial-gradient(circle at 90% 30%, rgba(245, 158, 11, 0.16), transparent 44%),
+        linear-gradient(135deg, var(--brand-navy) 0%, var(--brand-slate) 55%, var(--brand-blue) 100%);
     color: white;
     border-radius: var(--radius-xl);
-    padding: 34px;
+    padding: 38px;
     box-shadow: var(--shadow-lg);
 }
 
@@ -103,16 +195,20 @@ body {
 }
 
 .hero h1 {
-    margin: 16px 0 10px;
-    font-size: 2.2rem;
-    line-height: 1.1;
+    margin: 20px 0 12px;
+    font-size: 2.35rem;
+    font-weight: 800;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
 }
 
 .hero p {
     margin: 0;
     max-width: 760px;
-    line-height: 1.6;
+    line-height: 1.65;
+    font-size: 1.05rem;
     color: #dbeafe;
+    font-weight: 400;
 }
 
 .hero-stats {
@@ -154,13 +250,22 @@ body {
     padding: 12px 18px;
     font-weight: 700;
     cursor: pointer;
-    transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease, background 0.15s ease;
+    transition: transform 0.18s ease, box-shadow 0.18s ease, opacity 0.18s ease, background 0.18s ease;
 }
 
 .button:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 10px 18px rgba(15, 23, 42, 0.08);
-    opacity: 0.98;
+    transform: translateY(-2px);
+    box-shadow: 0 12px 24px rgba(15, 23, 42, 0.12);
+}
+
+.button:active {
+    transform: translateY(0);
+    transition: transform 0.1s ease;
+}
+
+.button:focus-visible {
+    outline: 3px solid rgba(79, 209, 197, 0.95);
+    outline-offset: 2px;
 }
 
 .button-primary {
@@ -189,12 +294,13 @@ body {
 }
 
 .panel {
-    margin-top: 24px;
-    background: var(--surface);
-    border: 1px solid var(--line);
+    margin-top: 32px;
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid rgba(217, 228, 239, 0.9);
     border-radius: var(--radius-lg);
-    padding: 24px;
+    padding: 32px;
     box-shadow: var(--shadow-md);
+    backdrop-filter: blur(10px);
 }
 
 .panel-header {
@@ -209,6 +315,9 @@ body {
 .panel-header h2 {
     margin: 0;
     font-size: 1.35rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: var(--brand-slate);
 }
 
 .panel-header p,
@@ -238,6 +347,7 @@ body {
     overflow-x: auto;
     border: 1px solid var(--line);
     border-radius: 16px;
+    box-shadow: var(--shadow-sm);
 }
 
 table {
@@ -261,10 +371,23 @@ td {
 th {
     font-size: 0.9rem;
     color: var(--brand-slate);
+    font-weight: 800;
+}
+
+tbody tr {
+    transition: background-color 0.15s ease;
 }
 
 tbody tr:hover {
-    background: rgba(237, 244, 255, 0.8);
+    background: rgba(237, 244, 255, 0.6);
+}
+
+tbody tr:nth-child(even) {
+    background: rgba(248, 251, 255, 0.5);
+}
+
+tbody tr:nth-child(even):hover {
+    background: rgba(237, 244, 255, 0.7);
 }
 
 .row-actions {
@@ -404,7 +527,9 @@ tbody tr:hover {
 label {
     display: block;
     margin-bottom: 8px;
-    font-weight: 700;
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: var(--brand-slate);
 }
 
 input {
@@ -413,7 +538,7 @@ input {
     border-radius: 14px;
     padding: 12px 14px;
     font-size: 1rem;
-    background: #fff;
+    background: rgba(255, 255, 255, 0.9);
     color: var(--text);
     transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
@@ -425,71 +550,38 @@ textarea {
     padding: 12px 14px;
     font-size: 1rem;
     font-family: inherit;
-    background: #fff;
+    background: rgba(255, 255, 255, 0.9);
     color: var(--text);
     resize: vertical;
     transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
-input:focus {
+input:focus,
+input:focus-visible {
     outline: none;
     border-color: var(--brand-blue);
-    box-shadow: 0 0 0 4px rgba(29, 78, 216, 0.12);
+    box-shadow: 0 0 0 4px rgba(29, 78, 216, 0.12), 0 0 0 9px var(--ring);
 }
 
-textarea:focus {
+textarea:focus,
+textarea:focus-visible {
     outline: none;
     border-color: var(--brand-blue);
-    box-shadow: 0 0 0 4px rgba(29, 78, 216, 0.12);
+    box-shadow: 0 0 0 4px rgba(29, 78, 216, 0.12), 0 0 0 9px var(--ring);
+}
+
+input:disabled,
+textarea:disabled {
+    background: #f1f5f9;
+    color: var(--muted);
+    cursor: not-allowed;
+    opacity: 0.6;
 }
 
 .hint {
     margin-top: 6px;
     color: var(--muted);
     font-size: 0.92rem;
-}
-
-.topbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 12px;
-    flex-wrap: wrap;
-    margin-bottom: 18px;
-}
-
-.topbar-actions {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    flex-wrap: wrap;
-}
-
-.user-chip {
-    font-weight: 700;
-    color: var(--brand-slate);
-    font-size: 0.95rem;
-}
-
-.inline-form {
-    margin: 0;
-}
-
-.brand-mark {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    color: var(--brand-slate);
-    font-weight: 800;
-    text-decoration: none;
-}
-
-.brand-dot {
-    width: 12px;
-    height: 12px;
-    border-radius: 999px;
-    background: linear-gradient(135deg, var(--brand-cyan), var(--brand-blue));
-    box-shadow: 0 0 0 6px rgba(79, 209, 197, 0.14);
 }
 
 .palette-strip {

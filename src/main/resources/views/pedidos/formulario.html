@@ -1,26 +1,7 @@
 <!DOCTYPE html>
 <html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title th:text="${titulo} + ' | Sistema de Aluguel de Carros'">Pedido | Sistema de Aluguel de Carros</title>
-    <link rel="stylesheet" href="/css/app.css">
-</head>
-<body>
-<main class="container">
-    <div class="topbar">
-        <a class="brand-mark" href="/">
-            <span class="brand-dot"></span>
-            <span>Sistema de Aluguel de Carros</span>
-        </a>
-        <div class="topbar-actions">
-            <span class="user-chip" th:if="${clienteNome != null}" th:text="|Olá, ${clienteNome}|">Olá, usuário</span>
-            <form method="post" action="/logout" class="inline-form">
-                <button class="button button-neutral" type="submit">Sair</button>
-            </form>
-        </div>
-    </div>
-
+<th:block th:replace="~{fragments/layout :: layout(${titulo}, ~{::content}, null)}">
+    <th:block th:fragment="content">
     <section class="hero">
         <span class="eyebrow" th:text="${modoEdicao} ? '• Editar pedido' : '• Pedido de aluguel'">• Pedido</span>
         <h1 th:text="${titulo}">Novo pedido</h1>
@@ -40,8 +21,7 @@
     </section>
 
     <section class="panel">
-        <div th:if="${mensagem}" class="alert alert-success" th:text="${mensagem}"></div>
-        <div th:if="${erro}" class="alert alert-error" th:text="${erro}"></div>
+        <div th:replace="~{fragments/flash :: flash}"></div>
 
         <div class="panel-header">
             <div>
@@ -86,6 +66,6 @@
             </div>
         </form>
     </section>
-</main>
-</body>
+    </th:block>
+</th:block>
 </html>

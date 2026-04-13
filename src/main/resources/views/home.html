@@ -1,31 +1,7 @@
 <!DOCTYPE html>
 <html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Início | AutoDrive</title>
-    <link rel="icon" href="/assets/images/AutoDriveLOGO.png" type="image/png">
-    <link rel="stylesheet" href="/css/app.css">
-</head>
-<body>
-<main class="container">
-    <div class="topbar">
-        <a class="brand-mark" href="/">
-            <span class="brand-dot"></span>
-            <span>AutoDrive</span>
-        </a>
-        <div class="topbar-actions" th:if="${autenticado or agenteAutenticado}">
-            <span class="user-chip" th:if="${clienteNome != null}" th:text="|Olá, ${clienteNome}|">Olá, usuário</span>
-            <span class="user-chip" th:if="${agenteNome != null}" th:text="|Área do agente: ${agenteNome}|">Área do agente</span>
-            <form method="post" action="/logout" class="inline-form" th:if="${autenticado}">
-                <button class="button button-neutral" type="submit">Sair</button>
-            </form>
-            <form method="post" action="/agente/logout" class="inline-form" th:if="${agenteAutenticado}">
-                <button class="button button-neutral" type="submit">Sair da área do agente</button>
-            </form>
-        </div>
-    </div>
-
+<th:block th:replace="~{fragments/layout :: layout('Início', ~{::content}, null)}">
+    <th:block th:fragment="content">
     <section class="hero">
         <span class="eyebrow">• Bem-vindo</span>
         <h1>Gestão de aluguel de carros</h1>
@@ -45,6 +21,6 @@
             <a class="button button-secondary" href="/agente/login" th:if="${!agenteAutenticado}">Área do agente</a>
         </div>
     </section>
-</main>
-</body>
+    </th:block>
+</th:block>
 </html>

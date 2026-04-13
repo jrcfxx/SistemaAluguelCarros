@@ -1,26 +1,7 @@
 <!DOCTYPE html>
 <html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title th:text="${modoEdicao} ? 'Editar automóvel' : 'Novo automóvel'">Automóvel</title>
-    <link rel="stylesheet" href="/css/app.css">
-</head>
-<body>
-<main class="container">
-    <div class="topbar">
-        <a class="brand-mark" href="/">
-            <span class="brand-dot"></span>
-            <span>Sistema de Aluguel de Carros</span>
-        </a>
-        <div class="topbar-actions">
-            <span class="user-chip" th:text="|Agente: ${agenteNome}|">Agente</span>
-            <form method="post" action="/agente/logout" class="inline-form">
-                <button class="button button-neutral" type="submit">Sair</button>
-            </form>
-        </div>
-    </div>
-
+<th:block th:replace="~{fragments/layout :: layout(${modoEdicao} ? 'Editar automóvel' : 'Novo automóvel', ~{::content}, null)}">
+    <th:block th:fragment="content">
     <section class="hero">
         <span class="eyebrow" th:text="${modoEdicao} ? '• Editar frota' : '• Frota'">• Frota</span>
         <h1 th:text="${modoEdicao} ? 'Editar automóvel' : 'Novo automóvel'">Automóvel</h1>
@@ -34,7 +15,7 @@
     </section>
 
     <section class="panel">
-        <div th:if="${erro}" class="alert alert-error" th:text="${erro}"></div>
+        <div th:replace="~{fragments/flash :: flash}"></div>
 
         <form method="post" th:action="${formAction}" enctype="application/x-www-form-urlencoded">
             <div class="grid">
@@ -64,6 +45,6 @@
             </div>
         </form>
     </section>
-</main>
-</body>
+    </th:block>
+</th:block>
 </html>
