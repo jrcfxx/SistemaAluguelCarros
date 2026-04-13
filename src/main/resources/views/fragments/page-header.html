@@ -1,0 +1,16 @@
+<div th:fragment="pageHeader(title, subtitle, crumb, actions)" xmlns:th="http://www.thymeleaf.org">
+    <div class="page-header">
+        <div class="page-header-title">
+            <th:block th:if="${crumb != null}">
+                <div th:replace="${crumb}"></div>
+            </th:block>
+            <h1 class="page-title" th:text="${title}">Título</h1>
+            <p class="page-subtitle" th:if="${subtitle != null}" th:text="${subtitle}">Subtítulo</p>
+        </div>
+
+        <th:block th:if="${actions != null}">
+            <div class="page-header-actions" th:replace="${actions}"></div>
+        </th:block>
+    </div>
+</div>
+

@@ -4,7 +4,22 @@
         <span>AutoDrive</span>
     </a>
 
-    <div class="topbar-actions" th:if="${autenticado or agenteAutenticado or clienteNome != null or agenteNome != null}">
+    <div class="topbar-actions">
+        <!-- Cliente -->
+        <a class="button button-ghost" href="/pedidos" th:if="${autenticado}">Meus pedidos</a>
+        <a class="button button-primary-solid" href="/pedidos/novo" th:if="${autenticado}">Novo pedido</a>
+        <a class="button button-ghost" th:href="@{/clientes/{cid}/rendimentos(cid=${clienteId})}" th:if="${autenticado}">Rendimentos</a>
+        <a class="button button-ghost" href="/clientes" th:if="${autenticado}">Cadastro</a>
+
+        <!-- Agente -->
+        <a class="button button-ghost" href="/agente/pedidos" th:if="${agenteAutenticado}">Pedidos</a>
+        <a class="button button-ghost" href="/agente/automoveis" th:if="${agenteAutenticado}">Frota</a>
+
+        <!-- Visitante -->
+        <a class="button button-ghost" href="/login" th:if="${!autenticado}">Entrar</a>
+        <a class="button button-primary-solid" href="/clientes/novo" th:if="${!autenticado}">Criar conta</a>
+        <a class="button button-ghost" href="/agente/login" th:if="${!agenteAutenticado}">Área do agente</a>
+
         <span class="user-chip" th:if="${clienteNome != null}" th:text="|Olá, ${clienteNome}|">Olá, usuário</span>
         <span class="user-chip" th:if="${agenteNome != null}" th:text="|Agente: ${agenteNome}|">Agente</span>
 

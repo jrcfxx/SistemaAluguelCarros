@@ -2,20 +2,19 @@
 <html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
 <th:block th:replace="~{fragments/layout :: layout('Login do cliente', ~{::content}, ~{::scripts})}">
     <th:block th:fragment="content">
-    <section class="hero">
-        <span class="eyebrow">• Acesso</span>
-        <h1>Login do cliente</h1>
-        <p>
-            Informe seu CPF e senha cadastrados. Em caso de dúvida, verifique os dados ou crie uma nova conta.
-        </p>
-    </section>
+    <div th:replace="~{fragments/page-header :: pageHeader(
+            'Login do cliente',
+            'Entre com CPF e senha cadastrados.',
+            null,
+            null
+        )}"></div>
 
     <section class="panel">
         <div th:replace="~{fragments/flash :: flash}"></div>
 
         <form method="post" action="/login" enctype="application/x-www-form-urlencoded" data-validate-form>
             <div class="grid">
-                <div class="field-full">
+                <div class="field field-full">
                     <label for="cpf">CPF</label>
                     <input id="cpf" name="cpf" type="text" autocomplete="username" required
                            minlength="14" maxlength="14" inputmode="numeric"
@@ -24,7 +23,7 @@
                            title="Informe um CPF válido no formato 000.000.000-00."
                            data-cpf-mask>
                 </div>
-                <div class="field-full">
+                <div class="field field-full">
                     <label for="senha">Senha</label>
                     <input id="senha" name="senha" type="password" autocomplete="current-password" required
                            minlength="6" maxlength="60"
@@ -33,9 +32,7 @@
             </div>
 
             <div class="actions">
-                <a class="button button-neutral" href="/">Início</a>
-                <a class="button button-neutral" href="/clientes/novo">Criar conta</a>
-                <a class="button button-neutral" href="/agente/login">Área do agente</a>
+                <a class="button button-ghost" href="/clientes/novo">Criar conta</a>
                 <button class="button button-primary-solid" type="submit">Entrar</button>
             </div>
         </form>

@@ -1,0 +1,8 @@
+<nav th:fragment="breadcrumb(items)" xmlns:th="http://www.thymeleaf.org" class="breadcrumb" aria-label="breadcrumb">
+    <th:block th:each="item,iter : ${items}">
+        <a th:if="${item.href != null}" th:href="${item.href}" th:text="${item.label}">Item</a>
+        <span th:if="${item.href == null}" th:text="${item.label}">Item</span>
+        <span class="breadcrumb-sep" th:if="${!iter.last}">/</span>
+    </th:block>
+</nav>
+

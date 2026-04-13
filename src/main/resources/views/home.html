@@ -2,23 +2,41 @@
 <html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
 <th:block th:replace="~{fragments/layout :: layout('Início', ~{::content}, null)}">
     <th:block th:fragment="content">
-    <section class="hero">
-        <span class="eyebrow">• Bem-vindo</span>
-        <h1>Gestão de aluguel de carros</h1>
-        <p>
-            Cadastre-se para utilizar o sistema. Após o cadastro, faça login com seu CPF e senha
-            para acessar a área de clientes.
-        </p>
-        <div class="hero-actions">
-            <a class="button button-primary" href="/clientes/novo" th:if="${!autenticado}">Criar conta</a>
-            <a class="button button-primary" href="/clientes" th:if="${autenticado}">Ver meu cadastro</a>
-            <a class="button button-secondary" href="/pedidos" th:if="${autenticado}">Meus pedidos</a>
-            <a class="button button-secondary" href="/pedidos/novo" th:if="${autenticado}">Novo pedido</a>
-            <a class="button button-secondary" th:href="@{/clientes/{cid}/rendimentos(cid=${clienteId})}" th:if="${autenticado}">Meus rendimentos</a>
-            <a class="button button-secondary" href="/login" th:if="${!autenticado}">Entrar</a>
-            <a class="button button-secondary" href="/agente/pedidos" th:if="${agenteAutenticado}">Painel do agente</a>
-            <a class="button button-secondary" href="/agente/automoveis" th:if="${agenteAutenticado}">Frota (automóveis)</a>
-            <a class="button button-secondary" href="/agente/login" th:if="${!agenteAutenticado}">Área do agente</a>
+    <div class="home-brand">
+        <div class="home-brand-mark" aria-hidden="true">
+            <span class="brand-dot"></span>
+        </div>
+        <div class="home-brand-text">
+            <h1 class="home-brand-title">AutoDrive</h1>
+            <p class="home-brand-subtitle">Sistema de aluguel de carros</p>
+        </div>
+    </div>
+
+    <section class="panel">
+        <div class="panel-header">
+            <div>
+                <h2>Atalhos</h2>
+                <p th:if="${autenticado}" th:text="|Bem-vindo(a), ${clienteNome}.|">Bem-vindo(a).</p>
+                <p th:if="${agenteAutenticado}" th:text="|Bem-vindo(a), ${agenteNome}.|">Bem-vindo(a).</p>
+                <p th:if="${!autenticado and !agenteAutenticado}">Escolha uma opção para começar.</p>
+            </div>
+        </div>
+
+        <div class="actions" th:if="${autenticado}">
+            <a class="button button-primary-solid" href="/pedidos">Meus pedidos</a>
+            <a class="button button-ghost" th:href="@{/clientes/{cid}/rendimentos(cid=${clienteId})}">Rendimentos</a>
+            <a class="button button-ghost" href="/clientes">Meu cadastro</a>
+        </div>
+
+        <div class="actions" th:if="${agenteAutenticado}">
+            <a class="button button-primary-solid" href="/agente/pedidos">Painel do agente</a>
+            <a class="button button-ghost" href="/agente/automoveis">Frota</a>
+        </div>
+
+        <div class="actions" th:if="${!autenticado and !agenteAutenticado}">
+            <a class="button button-primary-solid" href="/clientes/novo">Criar conta</a>
+            <a class="button button-ghost" href="/login">Login do cliente</a>
+            <a class="button button-ghost" href="/agente/login">Área do agente</a>
         </div>
     </section>
     </th:block>

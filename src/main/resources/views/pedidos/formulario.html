@@ -13,11 +13,6 @@
             Ajuste o texto da solicitação. O status permanece
             <strong th:text="${pedidoStatus}">PENDENTE</strong> até a análise do agente.
         </p>
-        <div class="hero-actions">
-            <a class="button button-primary" href="/pedidos">Meus pedidos</a>
-            <a class="button button-primary" href="/clientes">Voltar para meu cadastro</a>
-            <a class="button button-secondary" href="/">Tela inicial</a>
-        </div>
     </section>
 
     <section class="panel">
@@ -32,7 +27,7 @@
 
         <form method="post" th:action="${formAction}" enctype="application/x-www-form-urlencoded" data-validate-form>
             <div class="grid">
-                <div class="field-full" th:if="${!modoEdicao}">
+                <div class="field field-full" th:if="${!modoEdicao}">
                     <label for="automovelId">Automóvel *</label>
                     <select id="automovelId" name="automovelId" required>
                         <option value="" disabled th:selected="${automovelIdSelecionado == null}">Selecione o veículo</option>
@@ -45,7 +40,7 @@
                     </select>
                     <div class="hint">Escolha um veículo da frota cadastrada pelo agente. A propriedade será ajustada conforme o tipo de contrato na aprovação.</div>
                 </div>
-                <div class="field-full">
+                <div class="field field-full">
                     <label for="descricaoSolicitacao">Descrição da solicitação *</label>
                     <textarea id="descricaoSolicitacao"
                               name="descricaoSolicitacao"

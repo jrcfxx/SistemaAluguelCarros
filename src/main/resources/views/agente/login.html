@@ -2,33 +2,29 @@
 <html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
 <th:block th:replace="~{fragments/layout :: layout('Login do agente', ~{::content}, null)}">
     <th:block th:fragment="content">
-    <section class="hero">
-        <span class="eyebrow">• Área protegida</span>
-        <h1>Login do agente</h1>
-        <p>
-            Entre com as credenciais configuradas para acessar a fila de análise de pedidos.
-            Neste incremento, o agente já pode visualizar e inspecionar as solicitações cadastradas.
-        </p>
-    </section>
+    <div th:replace="~{fragments/page-header :: pageHeader(
+            'Login do agente',
+            'Acesso à fila de análise de pedidos e gestão de frota.',
+            null,
+            null
+        )}"></div>
 
     <section class="panel">
         <div th:replace="~{fragments/flash :: flash}"></div>
 
         <form method="post" action="/agente/login" enctype="application/x-www-form-urlencoded">
             <div class="grid">
-                <div class="field-full">
+                <div class="field field-full">
                     <label for="username">Usuário</label>
                     <input id="username" name="username" type="text" autocomplete="username" required>
                 </div>
-                <div class="field-full">
+                <div class="field field-full">
                     <label for="senha">Senha</label>
                     <input id="senha" name="senha" type="password" autocomplete="current-password" required>
                 </div>
             </div>
 
             <div class="actions">
-                <a class="button button-neutral" href="/">Início</a>
-                <a class="button button-neutral" href="/login">Login do cliente</a>
                 <button class="button button-primary-solid" type="submit">Entrar como agente</button>
             </div>
         </form>
