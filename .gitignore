@@ -1,6 +1,8 @@
 # Gradle - cache e artefatos (evita arquivos soltos no repositório)
 .gradle/
 build/
+docker-compose.override.yml
+.env
 
 # IDE
 .idea/

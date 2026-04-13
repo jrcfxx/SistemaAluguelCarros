@@ -825,8 +825,9 @@ Como sistema, quero transferir a propriedade de um automóvel para refletir as c
 
 - `Java 17`
 - `Git` opcional para versionamento e clonagem
-- acesso ao `Azure SQL Server`
-- banco configurado com o esquema esperado do projeto
+- **Opção A (Azure)**: acesso ao `Azure SQL Server`
+- **Opção B (local - SQL Server)**: `Docker` (Docker Desktop) para subir um SQL Server local
+- **Opção C (local - sem Docker)**: nenhuma dependência extra (usa **H2** em arquivo)
 
 ### Comandos
 
@@ -834,6 +835,48 @@ Antes de executar, configure as variáveis de ambiente com base no arquivo `.env
 O projeto também carrega automaticamente um arquivo `.env` local, se ele existir.
 Por padrão, `DB_HBM2DDL_AUTO=update`, então o Hibernate tenta ajustar a estrutura necessária no banco durante o desenvolvimento.
 As credenciais do agente também podem ser configuradas por variáveis de ambiente (`AGENT_USERNAME`, `AGENT_PASSWORD` e `AGENT_DISPLAY_NAME`).
+
+#### Banco local (recomendado para desenvolvimento)
+
+1) Suba o SQL Server local e crie o database:
+
+```powershell
+.\scripts\start-local-db.ps1 -SaPassword "YourStrong!Passw0rd" -DbName "SistemaAluguelCarros"
+```
+
+2) Configure o `.env` (você pode copiar do `.env.example`) com:
+
+```text
+DB_HOST=localhost
+DB_PORT=1433
+DB_NAME=SistemaAluguelCarros
+DB_USER=sa
+DB_PASSWORD=YourStrong!Passw0rd
+DB_SCHEMA=dbo
+DB_ENCRYPT=false
+DB_TRUST_SERVER_CERT=true
+APP_SEED=true
+```
+
+> `APP_SEED=true` preenche alguns dados iniciais automaticamente quando o banco estiver vazio.
+
+3) Rode a aplicação:
+
+```powershell
+.\gradlew.bat run
+```
+
+#### Banco local sem Docker (H2)
+
+Se você estiver sem Docker Desktop (ou ele não estiver iniciando), dá pra rodar com H2 local (arquivo) assim:
+
+```powershell
+$env:MICRONAUT_ENVIRONMENTS="local"
+$env:APP_SEED="true"
+.\gradlew.bat run
+```
+
+#### Banco Azure (alternativa)
 
 No Windows:
 

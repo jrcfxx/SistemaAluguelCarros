@@ -29,6 +29,7 @@ dependencies {
     implementation("io.micronaut.session:micronaut-session")
     implementation("org.springframework.security:spring-security-crypto:6.3.4")
     runtimeOnly("com.microsoft.sqlserver:mssql-jdbc")
+    runtimeOnly("com.h2database:h2")
     compileOnly("org.graalvm.nativeimage:svm")
     runtimeOnly("org.yaml:snakeyaml")
     runtimeOnly("ch.qos.logback:logback-classic")

@@ -1,0 +1,16 @@
+datasources:
+  default:
+    url: jdbc:h2:file:./data/sistemaaluguelcarros;MODE=MSSQLServer;DATABASE_TO_LOWER=TRUE;DEFAULT_NULL_ORDERING=HIGH
+    driverClassName: org.h2.Driver
+    username: sa
+    password: ""
+    dialect: H2
+    schema-generate: NONE
+
+jpa:
+  default:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+        hbm2ddl:
+          auto: ${DB_HBM2DDL_AUTO:update}
