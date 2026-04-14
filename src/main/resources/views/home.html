@@ -2,41 +2,126 @@
 <html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
 <th:block th:replace="~{fragments/layout :: layout('Início', ~{::content}, null)}">
     <th:block th:fragment="content">
-    <div class="home-brand">
-        <div class="home-brand-mark" aria-hidden="true">
-            <span class="brand-dot"></span>
-        </div>
-        <div class="home-brand-text">
-            <h1 class="home-brand-title">AutoDrive</h1>
-            <p class="home-brand-subtitle">Sistema de aluguel de carros</p>
-        </div>
-    </div>
+    <!-- Hero Section Minimalista -->
+    <section class="hero-minimal">
+        <div class="hero-content">
+            <div class="brand-section">
+                <div class="brand-accent"></div>
+                <h1 class="brand-name">AutoDrive</h1>
+                <p class="brand-tagline">Experiência Premium em Mobilidade</p>
+            </div>
 
-    <section class="panel">
-        <div class="panel-header">
-            <div>
-                <h2>Atalhos</h2>
-                <p th:if="${autenticado}" th:text="|Bem-vindo(a), ${clienteNome}.|">Bem-vindo(a).</p>
-                <p th:if="${agenteAutenticado}" th:text="|Bem-vindo(a), ${agenteNome}.|">Bem-vindo(a).</p>
-                <p th:if="${!autenticado and !agenteAutenticado}">Escolha uma opção para começar.</p>
+            <div class="welcome-message">
+                <p th:if="${autenticado}" th:text="|Olá, ${clienteNome} •|" class="welcome-text">Olá</p>
+                <p th:if="${agenteAutenticado}" th:text="|Olá, ${agenteNome} •|" class="welcome-text">Olá</p>
+                <p th:if="${!autenticado and !agenteAutenticado}" class="welcome-text">Bem-vindo ao futuro da mobilidade</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Actions Grid Layout -->
+    <section class="actions-section">
+        <!-- Cliente Actions -->
+        <div class="actions-container" th:if="${autenticado}">
+            <div class="action-group">
+                <div class="action-item primary">
+                    <div class="action-content">
+                        <span class="action-icon">🚗</span>
+                        <div class="action-details">
+                            <h3>Meus Pedidos</h3>
+                            <p>Gerencie suas reservas</p>
+                        </div>
+                    </div>
+                    <a href="/pedidos" class="action-link"></a>
+                </div>
+
+                <div class="action-item secondary">
+                    <div class="action-content">
+                        <span class="action-icon">💰</span>
+                        <div class="action-details">
+                            <h3>Rendimentos</h3>
+                            <p>Visualize seus ganhos</p>
+                        </div>
+                    </div>
+                    <a th:href="@{/clientes/{cid}/rendimentos(cid=${clienteId})}" class="action-link"></a>
+                </div>
+
+                <div class="action-item secondary">
+                    <div class="action-content">
+                        <span class="action-icon">👤</span>
+                        <div class="action-details">
+                            <h3>Meu Perfil</h3>
+                            <p>Atualize seus dados</p>
+                        </div>
+                    </div>
+                    <a href="/clientes" class="action-link"></a>
+                </div>
             </div>
         </div>
 
-        <div class="actions" th:if="${autenticado}">
-            <a class="button button-primary-solid" href="/pedidos">Meus pedidos</a>
-            <a class="button button-ghost" th:href="@{/clientes/{cid}/rendimentos(cid=${clienteId})}">Rendimentos</a>
-            <a class="button button-ghost" href="/clientes">Meu cadastro</a>
+        <!-- Agente Actions -->
+        <div class="actions-container" th:if="${agenteAutenticado}">
+            <div class="action-group">
+                <div class="action-item primary">
+                    <div class="action-content">
+                        <span class="action-icon">📋</span>
+                        <div class="action-details">
+                            <h3>Painel do Agente</h3>
+                            <p>Gerenciar reservas</p>
+                        </div>
+                    </div>
+                    <a href="/agente/pedidos" class="action-link"></a>
+                </div>
+
+                <div class="action-item secondary">
+                    <div class="action-content">
+                        <span class="action-icon">🚙</span>
+                        <div class="action-details">
+                            <h3>Frota</h3>
+                            <p>Controle da frota</p>
+                        </div>
+                    </div>
+                    <a href="/agente/automoveis" class="action-link"></a>
+                </div>
+            </div>
         </div>
 
-        <div class="actions" th:if="${agenteAutenticado}">
-            <a class="button button-primary-solid" href="/agente/pedidos">Painel do agente</a>
-            <a class="button button-ghost" href="/agente/automoveis">Frota</a>
-        </div>
+        <!-- Guest Actions -->
+        <div class="actions-container" th:if="${!autenticado and !agenteAutenticado}">
+            <div class="action-group">
+                <div class="action-item primary">
+                    <div class="action-content">
+                        <span class="action-icon">✍️</span>
+                        <div class="action-details">
+                            <h3>Criar Conta</h3>
+                            <p>Junte-se a nós</p>
+                        </div>
+                    </div>
+                    <a href="/clientes/novo" class="action-link"></a>
+                </div>
 
-        <div class="actions" th:if="${!autenticado and !agenteAutenticado}">
-            <a class="button button-primary-solid" href="/clientes/novo">Criar conta</a>
-            <a class="button button-ghost" href="/login">Login do cliente</a>
-            <a class="button button-ghost" href="/agente/login">Área do agente</a>
+                <div class="action-item secondary">
+                    <div class="action-content">
+                        <span class="action-icon">🔐</span>
+                        <div class="action-details">
+                            <h3>Login Cliente</h3>
+                            <p>Acesse sua conta</p>
+                        </div>
+                    </div>
+                    <a href="/login" class="action-link"></a>
+                </div>
+
+                <div class="action-item secondary">
+                    <div class="action-content">
+                        <span class="action-icon">⚙️</span>
+                        <div class="action-details">
+                            <h3>Área Agente</h3>
+                            <p>Gestão e controle</p>
+                        </div>
+                    </div>
+                    <a href="/agente/login" class="action-link"></a>
+                </div>
+            </div>
         </div>
     </section>
     </th:block>
