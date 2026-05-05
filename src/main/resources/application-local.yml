@@ -12,5 +12,7 @@ jpa:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.H2Dialect
+        # H2 não cria o schema dbo; sem isso o startup falha com APP_SEED e consultas JPA
+        default_schema: PUBLIC
         hbm2ddl:
           auto: ${DB_HBM2DDL_AUTO:update}

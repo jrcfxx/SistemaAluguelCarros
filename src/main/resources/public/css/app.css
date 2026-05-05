@@ -1,4 +1,4 @@
-:root {
+﻿:root {
     color-scheme: light;
     --brand-navy: #07111f;
     --brand-slate: #102e4a;
@@ -784,3 +784,4 @@ textarea:disabled {
         font-size: 1.8rem;
     }
 }
+

@@ -72,6 +72,10 @@ public class PedidoAluguelService {
         return pedidoAluguelRepository.countByStatus(status);
     }
 
+    public long contarTodos() {
+        return pedidoAluguelRepository.count();
+    }
+
     public Optional<PedidoAluguel> buscarDetalheParaAnalise(Long id) {
         return pedidoAluguelRepository.buscarDetalhePorId(id);
     }

@@ -1,44 +1,380 @@
 <!DOCTYPE html>
-<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
-<th:block th:replace="~{fragments/layout :: layout('Início', ~{::content}, null)}">
-    <th:block th:fragment="content">
-    <div class="home-brand">
-        <div class="home-brand-mark" aria-hidden="true">
-            <span class="brand-dot"></span>
-        </div>
-        <div class="home-brand-text">
-            <h1 class="home-brand-title">AutoDrive</h1>
-            <p class="home-brand-subtitle">Sistema de aluguel de carros</p>
-        </div>
-    </div>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org" class="home-root">
+<head th:replace="~{fragments/head-home :: headHome('Início')}"></head>
+<body class="home-page home-page--concept">
+<a class="skip-link home-skip" href="#conteudo-principal">Pular para o conteúdo</a>
 
-    <section class="panel">
-        <div class="panel-header">
-            <div>
-                <h2>Atalhos</h2>
-                <p th:if="${autenticado}" th:text="|Bem-vindo(a), ${clienteNome}.|">Bem-vindo(a).</p>
-                <p th:if="${agenteAutenticado}" th:text="|Bem-vindo(a), ${agenteNome}.|">Bem-vindo(a).</p>
-                <p th:if="${!autenticado and !agenteAutenticado}">Escolha uma opção para começar.</p>
+<header class="concept-header home-navbar-wrap" id="home-top">
+    <nav class="concept-nav container-home" aria-label="Principal">
+        <a class="concept-brand" href="/">
+            <span class="concept-brand-glyph" aria-hidden="true">
+                <svg width="38" height="38" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="0.5" y="0.5" width="39" height="39" rx="10" stroke="#C8A76A" stroke-opacity="0.55"/>
+                    <text x="20" y="26.5" text-anchor="middle" font-family="Cormorant Garamond, Georgia, serif" font-size="17" font-weight="600" letter-spacing="-0.02em" fill="#111317">AD</text>
+                </svg>
+            </span>
+            <span class="concept-brand-text">
+                <span class="concept-brand-name">AUTODRIVE</span>
+                <span class="concept-brand-tag">Premium car rental</span>
+            </span>
+        </a>
+        <button type="button" class="home-nav-toggle concept-nav-toggle" aria-expanded="false" aria-controls="home-nav-menu" aria-label="Abrir menu">
+            <span class="home-nav-toggle-bar"></span>
+            <span class="home-nav-toggle-bar"></span>
+            <span class="home-nav-toggle-bar"></span>
+        </button>
+        <div class="home-nav-collapse concept-nav-collapse" id="home-nav-menu">
+            <div class="concept-nav-links">
+                <a class="concept-nav-link" href="/">Home</a>
+                <a class="concept-nav-link" href="#frota">Frota</a>
+                <a class="concept-nav-link" href="#como-funciona">Como funciona</a>
+                <a class="concept-nav-link" href="#empresas">Empresas</a>
+                <a class="concept-nav-link" href="#sobre">Sobre</a>
+                <a class="concept-nav-link" href="#contato">Contato</a>
+            </div>
+            <div class="concept-nav-cta">
+                <th:block th:if="${agenteAutenticado}">
+                    <a class="concept-btn concept-btn--ghost" href="/agente/pedidos">Painel agente</a>
+                    <form class="home-logout-form" method="post" action="/agente/logout">
+                        <button class="concept-btn concept-btn--solid" type="submit">Sair</button>
+                    </form>
+                </th:block>
+                <th:block th:if="${autenticado}">
+                    <a class="concept-btn concept-btn--ghost" href="/pedidos">Meus pedidos</a>
+                    <a class="concept-btn concept-btn--solid" href="/pedidos/novo">Novo pedido</a>
+                </th:block>
+                <th:block th:if="${!autenticado and !agenteAutenticado}">
+                    <a class="concept-btn concept-btn--ghost" href="/login" th:href="@{/login}">Entrar</a>
+                    <a class="concept-btn concept-btn--solid" href="/clientes/novo" th:href="@{/clientes/novo}">Cadastrar</a>
+                </th:block>
             </div>
         </div>
+    </nav>
+</header>
 
-        <div class="actions" th:if="${autenticado}">
-            <a class="button button-primary-solid" href="/pedidos">Meus pedidos</a>
-            <a class="button button-ghost" th:href="@{/clientes/{cid}/rendimentos(cid=${clienteId})}">Rendimentos</a>
-            <a class="button button-ghost" href="/clientes">Meu cadastro</a>
+<main id="conteudo-principal">
+    <section class="concept-hero" aria-labelledby="home-hero-title">
+        <div class="concept-hero-atmos" aria-hidden="true">
+            <div class="concept-hero-slab concept-hero-slab--a"></div>
+            <div class="concept-hero-slab concept-hero-slab--b"></div>
         </div>
-
-        <div class="actions" th:if="${agenteAutenticado}">
-            <a class="button button-primary-solid" href="/agente/pedidos">Painel do agente</a>
-            <a class="button button-ghost" href="/agente/automoveis">Frota</a>
-        </div>
-
-        <div class="actions" th:if="${!autenticado and !agenteAutenticado}">
-            <a class="button button-primary-solid" href="/clientes/novo">Criar conta</a>
-            <a class="button button-ghost" href="/login">Login do cliente</a>
-            <a class="button button-ghost" href="/agente/login">Área do agente</a>
+        <div class="concept-hero-grid container-home">
+            <div class="concept-hero-aside home-reveal">
+                <span class="concept-hero-chapter" aria-hidden="true">01</span>
+                <div class="concept-hero-rail">
+                    <span class="concept-rail-line" aria-hidden="true"></span>
+                    <ul class="concept-rail-labels">
+                        <li>Studio</li>
+                        <li>Fleet</li>
+                        <li>2026</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="concept-hero-vehicle home-reveal">
+                <div class="concept-vehicle-frame">
+                    <div class="concept-vehicle-cut" aria-hidden="true"></div>
+                    <img class="concept-vehicle-img" th:src="@{/images/hero/hero-car.jpg}" width="1200" height="720" alt="Sedan executivo em estúdio minimalista" decoding="async" fetchpriority="high"/>
+                </div>
+                <div class="concept-hero-metrics" aria-hidden="true">
+                    <div class="concept-metric">
+                        <span class="concept-metric-value">300</span>
+                        <span class="concept-metric-unit">hp</span>
+                    </div>
+                    <div class="concept-metric">
+                        <span class="concept-metric-value">4.9</span>
+                        <span class="concept-metric-unit">s</span>
+                    </div>
+                    <div class="concept-metric">
+                        <span class="concept-metric-value">280</span>
+                        <span class="concept-metric-unit">km/h</span>
+                    </div>
+                </div>
+                <p class="concept-hero-disclaimer">Especificações ilustrativas para composição visual — não vinculadas a veículos do catálogo.</p>
+            </div>
+            <div class="concept-hero-copy-block home-reveal">
+                <p class="concept-eyebrow">Aluguel de veículos premium</p>
+                <h1 id="home-hero-title" class="concept-headline">
+                    Mobilidade premium,<br/>
+                    <span class="concept-headline-accent">redefinida</span> pela<br/>
+                    inteligência.
+                </h1>
+                <p class="concept-lead">Alugue veículos selecionados com agilidade, segurança e atendimento pensado para cada jornada.</p>
+                <div class="concept-hero-data" th:if="${totalVeiculos != null}">
+                    <span class="concept-data-chip" th:text="|${totalVeiculos} unidades curadas|">Frota</span>
+                    <span class="concept-data-chip" th:text="|${totalAprovados} jornadas aprovadas|">Pedidos</span>
+                </div>
+                <div class="concept-hero-cta">
+                    <a class="concept-btn concept-btn--solid concept-btn--arrow" href="#frota">Explorar frota
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h12M13 6l6 6-6 6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </a>
+                    <a class="concept-btn concept-btn--wire" href="#como-funciona">Como funciona</a>
+                </div>
+            </div>
         </div>
     </section>
-    </th:block>
-</th:block>
+
+    <section class="concept-trust" aria-label="Principais benefícios">
+        <div class="container-home concept-trust-inner">
+            <div class="concept-trust-item home-reveal">
+                <span class="concept-trust-idx">01</span>
+                <div>
+                    <h2 class="concept-trust-title">Aprovação rápida</h2>
+                    <p class="concept-trust-desc">Fluxo digital, direto e sem ruído.</p>
+                </div>
+            </div>
+            <span class="concept-trust-sep" aria-hidden="true"></span>
+            <div class="concept-trust-item home-reveal">
+                <span class="concept-trust-idx">02</span>
+                <div>
+                    <h2 class="concept-trust-title">Frota selecionada</h2>
+                    <p class="concept-trust-desc">Veículos revisados antes de cada entrega.</p>
+                </div>
+            </div>
+            <span class="concept-trust-sep" aria-hidden="true"></span>
+            <div class="concept-trust-item home-reveal">
+                <span class="concept-trust-idx">03</span>
+                <div>
+                    <h2 class="concept-trust-title">Atendimento dedicado</h2>
+                    <p class="concept-trust-desc">Equipe próxima em cada etapa.</p>
+                </div>
+            </div>
+            <span class="concept-trust-sep" aria-hidden="true"></span>
+            <div class="concept-trust-item home-reveal">
+                <span class="concept-trust-idx">04</span>
+                <div>
+                    <h2 class="concept-trust-title">Plataforma segura</h2>
+                    <p class="concept-trust-desc">Dados e transações protegidos.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="concept-fleet" id="frota" aria-labelledby="frota-titulo">
+        <div class="container-home">
+            <header class="concept-fleet-head home-reveal">
+                <div>
+                    <p class="concept-section-label">Catálogo</p>
+                    <h2 id="frota-titulo" class="concept-section-title">Encontre o seu próximo carro</h2>
+                </div>
+                <a class="concept-section-link" href="/pedidos/novo" th:href="@{/pedidos/novo}">
+                    Ver toda a frota
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h12M13 6l6 6-6 6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+                </a>
+            </header>
+            <div class="concept-fleet-grid">
+                <article class="fleet-panel home-reveal" th:each="v : ${veiculosDestaque}" th:attr="aria-labelledby=${'card-cat-' + v.ordem}">
+                    <div class="fleet-panel-visual">
+                        <img class="fleet-panel-img" th:src="@{${v.imagemPath}}" th:alt="${v.categoria}" width="960" height="640" loading="lazy" decoding="async"/>
+                        <div class="fleet-panel-shade" aria-hidden="true"></div>
+                        <span class="fleet-panel-ix" th:text="${#numbers.formatInteger(v.ordem, 2)}">01</span>
+                    </div>
+                    <div class="fleet-panel-body">
+                        <h3 class="fleet-panel-title" th:id="${'card-cat-' + v.ordem}" th:text="${v.categoria}">Categoria</h3>
+                        <p class="fleet-panel-desc" th:text="${v.descricao}">Descrição</p>
+                        <div class="fleet-panel-specs">
+                            <span class="fleet-spec"><abbr title="Lugares">L</abbr> <span th:text="${v.passageiros}">5</span></span>
+                            <span class="fleet-spec"><abbr title="Bagagem">M</abbr> <span th:text="${v.bagagens}">4</span></span>
+                            <span class="fleet-spec" th:text="${v.cambio}">Automático</span>
+                        </div>
+                        <div class="fleet-panel-row">
+                            <div>
+                                <span class="fleet-price-hint">A partir de</span>
+                                <p class="fleet-price">R$ <span th:text="${v.precoValor}">549</span><span class="fleet-price-suf" th:text="${v.precoPeriodo}">/dia</span></p>
+                            </div>
+                            <a class="fleet-arrow" th:href="@{/pedidos/novo}" aria-label="Reservar categoria">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h12M13 6l6 6-6 6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+                            </a>
+                        </div>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <section class="concept-process" id="como-funciona" aria-labelledby="exp-titulo">
+        <span id="sobre" class="home-anchor"></span>
+        <div class="container-home concept-process-grid">
+            <div class="concept-process-copy home-reveal">
+                <p class="concept-section-label">Experiência que flui</p>
+                <h2 class="concept-process-title" id="exp-titulo">Da reserva à devolução,<br/><span class="concept-process-accent">uma experiência sem ruído.</span></h2>
+                <p class="concept-process-lead">Jornada digital, assistida e clara — do primeiro clique ao retorno das chaves.</p>
+                <ol class="concept-steps">
+                    <li class="concept-step">
+                        <span class="concept-step-num">1</span>
+                        <div>
+                            <span class="concept-step-name">Escolha seu carro</span>
+                            <span class="concept-step-note">Navegue pelo catálogo e defina o perfil ideal.</span>
+                        </div>
+                    </li>
+                    <li class="concept-step">
+                        <span class="concept-step-num">2</span>
+                        <div>
+                            <span class="concept-step-name">Reserve em poucos minutos</span>
+                            <span class="concept-step-note">Formulário enxuto, transparência total.</span>
+                        </div>
+                    </li>
+                    <li class="concept-step">
+                        <span class="concept-step-num">3</span>
+                        <div>
+                            <span class="concept-step-name">Retire e aproveite</span>
+                            <span class="concept-step-note">Pronto para conduzir com confiança.</span>
+                        </div>
+                    </li>
+                </ol>
+                <a class="concept-btn concept-btn--wire concept-btn--arrow" href="#frota">Explorar frota
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h12M13 6l6 6-6 6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+                </a>
+            </div>
+            <div class="concept-process-visual home-reveal home-reveal-delay">
+                <figure class="concept-figure">
+                    <img class="concept-figure-img" th:src="@{/images/experience/experience-photo.jpg}" width="1100" height="780" alt="Veículo premium em arquitetura contemporânea" loading="lazy" decoding="async"/>
+                    <figcaption class="concept-figure-cap">
+                        <ul class="concept-cap-list">
+                            <li><span class="concept-cap-dot"></span> Reserva rápida</li>
+                            <li><span class="concept-cap-dot"></span> Seguro premium</li>
+                            <li><span class="concept-cap-dot"></span> Retirada flexível</li>
+                            <li><span class="concept-cap-dot"></span> Devolução facilitada</li>
+                        </ul>
+                    </figcaption>
+                </figure>
+            </div>
+        </div>
+    </section>
+
+    <section class="concept-diff" id="beneficios" aria-labelledby="beneficios-titulo">
+        <span id="empresas" class="home-anchor"></span>
+        <div class="container-home">
+            <h2 id="beneficios-titulo" class="concept-diff-heading home-reveal">Tudo o que importa na jornada</h2>
+            <p class="concept-diff-sub home-reveal">Diferenciais desenhados com precisão de estúdio — discretos, consistentes, memoráveis.</p>
+            <div class="concept-diff-grid">
+                <article class="diff-cell home-reveal">
+                    <span class="diff-icon" aria-hidden="true">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 3l7 4v6a8 8 0 01-4 6M12 3L5 7v6a8 8 0 004 6" stroke="currentColor" stroke-width="1.15" stroke-linecap="round"/></svg>
+                    </span>
+                    <h3 class="diff-title">Segurança em primeiro lugar</h3>
+                    <p class="diff-text">Processos e checagens alinhados a uma experiência confiável.</p>
+                </article>
+                <article class="diff-cell home-reveal">
+                    <span class="diff-icon" aria-hidden="true">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M4 14l3-3 3 3 6-6 4 4M4 20h16" stroke="currentColor" stroke-width="1.15" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </span>
+                    <h3 class="diff-title">Frota premium</h3>
+                    <p class="diff-text">Modelos selecionados para conforto, presença e desempenho.</p>
+                </article>
+                <article class="diff-cell home-reveal">
+                    <span class="diff-icon" aria-hidden="true">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="7" stroke="currentColor" stroke-width="1.15"/><path d="M12 8v8M8 12h8" stroke="currentColor" stroke-width="1.15" stroke-linecap="round"/></svg>
+                    </span>
+                    <h3 class="diff-title">Liberdade total</h3>
+                    <p class="diff-text">Planos diários, semanais ou mensais conforme sua necessidade.</p>
+                </article>
+                <article class="diff-cell home-reveal">
+                    <span class="diff-icon" aria-hidden="true">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M4 7h16M4 12h10M4 17h16" stroke="currentColor" stroke-width="1.15" stroke-linecap="round"/><circle cx="17" cy="12" r="2.5" stroke="currentColor" stroke-width="1.15"/></svg>
+                    </span>
+                    <h3 class="diff-title">Gestão inteligente</h3>
+                    <p class="diff-text">Acompanhe pedidos, contratos e informações com clareza.</p>
+                </article>
+                <article class="diff-cell home-reveal">
+                    <span class="diff-icon" aria-hidden="true">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8" stroke="currentColor" stroke-width="1.15"/><path d="M12 8v5l3 2" stroke="currentColor" stroke-width="1.15" stroke-linecap="round"/></svg>
+                    </span>
+                    <h3 class="diff-title">Concierge 24/7</h3>
+                    <p class="diff-text">Suporte dedicado para orientar sua jornada.</p>
+                </article>
+                <article class="diff-cell home-reveal">
+                    <span class="diff-icon" aria-hidden="true">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M4 21V8l8-4 8 4v13l-8-3-8 3z" stroke="currentColor" stroke-width="1.15" stroke-linejoin="round"/><path d="M12 5v11" stroke="currentColor" stroke-width="1.15" stroke-linecap="round"/></svg>
+                    </span>
+                    <h3 class="diff-title">Soluções para empresas</h3>
+                    <p class="diff-text">Mobilidade corporativa para equipes e executivos.</p>
+                </article>
+            </div>
+        </div>
+    </section>
+</main>
+
+<footer class="concept-footer" id="contato">
+    <div class="container-home concept-footer-grid">
+        <div class="concept-footer-brand">
+            <a class="concept-footer-brandlink" href="/">
+                <span class="concept-brand-glyph concept-brand-glyph--footer" aria-hidden="true">
+                    <svg width="36" height="36" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="0.5" y="0.5" width="39" height="39" rx="10" stroke="#D1B278" stroke-opacity="0.45"/>
+                        <text x="20" y="26.5" text-anchor="middle" font-family="Cormorant Garamond, Georgia, serif" font-size="17" font-weight="600" letter-spacing="-0.02em" fill="#ECEAE4">AD</text>
+                    </svg>
+                </span>
+                <span class="concept-brand-text">
+                    <span class="concept-brand-name concept-brand-name--footer">AUTODRIVE</span>
+                    <span class="concept-brand-tag concept-brand-tag--footer">Premium car rental</span>
+                </span>
+            </a>
+            <p class="concept-footer-tag">Mobilidade com precisão tecnológica e atendimento que respeita o tempo.</p>
+            <div class="concept-social">
+                <a class="concept-social-link" href="https://instagram.com" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5" stroke="currentColor" stroke-width="1.1"/><circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.1"/></svg>
+                </a>
+                <a class="concept-social-link" href="https://linkedin.com" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6.5 8.5v10M6.5 6.5h.01M4 21h16M10 21v-7a3 3 0 016 0v7" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/></svg>
+                </a>
+                <a class="concept-social-link" href="https://youtube.com" target="_blank" rel="noopener noreferrer" aria-label="YouTube">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M10 9.5l6 2.5-6 2.5V9.5z" stroke="currentColor" stroke-width="1.1"/><path d="M4 15V9a2 2 0 012-2h12a2 2 0 012 2v6a2 2 0 01-2 2H6a2 2 0 01-2-2z" stroke="currentColor" stroke-width="1.1"/></svg>
+                </a>
+                <a class="concept-social-link" href="mailto:contato@autodrive.local" aria-label="E-mail">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 7h16v10H4z" stroke="currentColor" stroke-width="1.1"/><path d="M4 9l8 5 8-5" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/></svg>
+                </a>
+            </div>
+        </div>
+        <div class="concept-footer-col">
+            <h3 class="concept-footer-h">Navegação</h3>
+            <ul class="concept-footer-list">
+                <li><a href="/">Home</a></li>
+                <li><a href="#frota">Frota</a></li>
+                <li><a href="#como-funciona">Como funciona</a></li>
+                <li><a href="#sobre">Sobre</a></li>
+                <li><a href="#contato">Contato</a></li>
+            </ul>
+        </div>
+        <div class="concept-footer-col">
+            <h3 class="concept-footer-h">Frota</h3>
+            <ul class="concept-footer-list">
+                <li><a href="#frota">Sedans</a></li>
+                <li><a href="#frota">SUVs Premium</a></li>
+                <li><a href="#frota">Esportivos</a></li>
+                <li><a href="#frota">Elétricos</a></li>
+                <li><a href="/pedidos/novo" th:href="@{/pedidos/novo}">Ver toda</a></li>
+            </ul>
+        </div>
+        <div class="concept-footer-col">
+            <h3 class="concept-footer-h">Empresas</h3>
+            <ul class="concept-footer-list">
+                <li><a href="#empresas">Soluções</a></li>
+                <li><a href="#empresas">Gestão</a></li>
+                <li><a href="#contato">Parcerias</a></li>
+                <li><a href="#beneficios">Benefícios</a></li>
+            </ul>
+        </div>
+        <div class="concept-footer-col concept-footer-news">
+            <h3 class="concept-footer-h">Novidades</h3>
+            <form class="concept-news" action="#" method="get" onsubmit="return false">
+                <label class="visually-hidden" for="newsletter-email">E-mail</label>
+                <input id="newsletter-email" name="email" type="email" autocomplete="email" placeholder="E-mail" class="concept-news-input"/>
+                <button type="button" class="concept-news-btn" aria-label="Enviar">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h12M13 6l6 6-6 6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+                </button>
+            </form>
+        </div>
+    </div>
+    <div class="concept-footer-bottom container-home">
+        <p>© <span th:text="${#dates.format(#dates.createNow(), 'yyyy')}">2026</span> AutoDrive. Todos os direitos reservados.</p>
+        <div class="concept-footer-legal">
+            <a href="#">Termos</a>
+            <span aria-hidden="true">·</span>
+            <a href="#">Privacidade</a>
+        </div>
+    </div>
+</footer>
+
+<script th:src="@{/js/home.js}" defer></script>
+</body>
 </html>

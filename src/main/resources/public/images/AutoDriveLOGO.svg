@@ -1,5 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="AutoDrive">
-  <!-- Marca mínima: sem ícone de veículo; só monograma premium -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" aria-hidden="true">
+  <!-- Mesma direção da favicon: monograma AD, sem veículo -->
   <rect width="128" height="128" rx="32" fill="#080A0D"/>
   <rect x="12" y="12" width="104" height="104" rx="26" fill="none" stroke="#C9A45C" stroke-width="1.5" opacity="0.55"/>
   <text x="64" y="80" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="52" font-weight="600" letter-spacing="-0.02em" fill="#D6B56D">AD</text>
