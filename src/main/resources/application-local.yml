@@ -12,5 +12,6 @@ jpa:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.H2Dialect
+        default_schema: PUBLIC
         hbm2ddl:
           auto: ${DB_HBM2DDL_AUTO:update}

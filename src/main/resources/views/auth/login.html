@@ -1,34 +1,32 @@
 <!DOCTYPE html>
 <html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
-<th:block th:replace="~{fragments/layout :: layout('Login do cliente', ~{::content}, ~{::scripts})}">
-    <th:block th:fragment="content">
-    <div th:replace="~{fragments/page-header :: pageHeader(
-            'Login do cliente',
-            'Entre com CPF e senha cadastrados.',
-            null,
-            null
-        )}"></div>
+<th:block th:replace="~{fragments/layout :: layout('Login', ~{::content}, ~{::scripts})}">
+<th:block th:fragment="content">
+<div class="auth-page">
+    <div class="auth-card">
+        <a href="/" class="auth-logo-link">
+            <img src="/img/autodrive-logo.svg" alt="AutoDrive" class="auth-logo">
+        </a>
+        <h1 class="auth-title">Acesso<br>à conta</h1>
+        <p class="auth-subtitle">Área de clientes</p>
 
-    <section class="panel">
         <div th:replace="~{fragments/flash :: flash}"></div>
 
         <form method="post" action="/login" enctype="application/x-www-form-urlencoded" data-validate-form>
-            <div class="grid">
-                <div class="field field-full">
-                    <label for="cpf">CPF</label>
-                    <input id="cpf" name="cpf" type="text" autocomplete="username" required
-                           minlength="14" maxlength="14" inputmode="numeric"
-                           placeholder="000.000.000-00"
-                           pattern="\d{3}\.\d{3}\.\d{3}-\d{2}"
-                           title="Informe um CPF válido no formato 000.000.000-00."
-                           data-cpf-mask>
-                </div>
-                <div class="field field-full">
-                    <label for="senha">Senha</label>
-                    <input id="senha" name="senha" type="password" autocomplete="current-password" required
-                           minlength="6" maxlength="60"
-                           title="Informe sua senha cadastrada.">
-                </div>
+            <div class="field">
+                <label for="cpf">CPF</label>
+                <input id="cpf" name="cpf" type="text" autocomplete="username" required
+                       minlength="14" maxlength="14" inputmode="numeric"
+                       placeholder="000.000.000-00"
+                       pattern="\d{3}\.\d{3}\.\d{3}-\d{2}"
+                       title="Informe um CPF válido no formato 000.000.000-00."
+                       data-cpf-mask>
+            </div>
+            <div class="field">
+                <label for="senha">Senha</label>
+                <input id="senha" name="senha" type="password" autocomplete="current-password" required
+                       minlength="6" maxlength="60"
+                       title="Informe sua senha cadastrada.">
             </div>
 
             <div class="actions">
@@ -36,10 +34,11 @@
                 <button class="button button-primary-solid" type="submit">Entrar</button>
             </div>
         </form>
-    </section>
-    </th:block>
-    <th:block th:fragment="scripts">
-        <script src="/js/form-validations.js" defer></script>
-    </th:block>
+    </div>
+</div>
+</th:block>
+<th:block th:fragment="scripts">
+    <script src="/js/form-validations.js" defer></script>
+</th:block>
 </th:block>
 </html>

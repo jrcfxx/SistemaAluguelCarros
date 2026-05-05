@@ -69,20 +69,21 @@ public class AutomovelController {
             String placa,
             String marca,
             String modelo,
-            Integer ano
+            Integer ano,
+            @Nullable String fotoUrl
     ) {
         Optional<AgenteSessao> agente = agenteSessionService.agenteAutenticado(session);
         if (agente.isEmpty()) {
             return HttpResponse.redirect(LOGIN_URI);
         }
         try {
-            automovelService.cadastrar(placa, marca, modelo, ano);
+            automovelService.cadastrar(placa, marca, modelo, ano, fotoUrl);
             URI uri = UriBuilder.of("/agente/automoveis")
                     .queryParam("mensagem", "Automóvel cadastrado com sucesso.")
                     .build();
             return HttpResponse.seeOther(uri);
         } catch (IllegalStateException ex) {
-            return formulario(agente.get(), preencherForm(placa, marca, modelo, ano), ex.getMessage());
+            return formulario(agente.get(), preencherForm(placa, marca, modelo, ano, fotoUrl), ex.getMessage());
         }
     }
 
@@ -113,14 +114,15 @@ public class AutomovelController {
             String placa,
             String marca,
             String modelo,
-            Integer ano
+            Integer ano,
+            @Nullable String fotoUrl
     ) {
         Optional<AgenteSessao> agente = agenteSessionService.agenteAutenticado(session);
         if (agente.isEmpty()) {
             return HttpResponse.redirect(LOGIN_URI);
         }
         try {
-            automovelService.atualizar(id, placa, marca, modelo, ano);
+            automovelService.atualizar(id, placa, marca, modelo, ano, fotoUrl);
             URI uri = UriBuilder.of("/agente/automoveis")
                     .queryParam("mensagem", "Automóvel atualizado com sucesso.")
                     .build();
@@ -138,6 +140,7 @@ public class AutomovelController {
             a.setMarca(marca != null ? marca : "");
             a.setModelo(modelo != null ? modelo : "");
             a.setAno(ano != null ? ano : a.getAno());
+            a.setFotoUrl(fotoUrl != null ? fotoUrl : "");
             return formularioEdicao(agente.get(), a, ex.getMessage());
         }
     }
@@ -153,11 +156,13 @@ public class AutomovelController {
             model.put("marca", dados.getMarca());
             model.put("modelo", dados.getModelo());
             model.put("ano", dados.getAno());
+            model.put("fotoUrl", dados.getFotoUrl());
         } else {
             model.put("placa", "");
             model.put("marca", "");
             model.put("modelo", "");
             model.put("ano", null);
+            model.put("fotoUrl", "");
         }
         return new ModelAndView<>("agente/automoveis/formulario", model);
     }
@@ -173,15 +178,17 @@ public class AutomovelController {
         model.put("marca", a.getMarca());
         model.put("modelo", a.getModelo());
         model.put("ano", a.getAno());
+        model.put("fotoUrl", a.getFotoUrl());
         return new ModelAndView<>("agente/automoveis/formulario", model);
     }
 
-    private static Automovel preencherForm(String placa, String marca, String modelo, Integer ano) {
+    private static Automovel preencherForm(String placa, String marca, String modelo, Integer ano, @Nullable String fotoUrl) {
         Automovel a = new Automovel();
         a.setPlacaNormalizada(placa != null ? placa : "");
         a.setMarca(marca != null ? marca : "");
         a.setModelo(modelo != null ? modelo : "");
         a.setAno(ano != null ? ano : 0);
+        a.setFotoUrl(fotoUrl != null ? fotoUrl : "");
         return a;
     }
 }

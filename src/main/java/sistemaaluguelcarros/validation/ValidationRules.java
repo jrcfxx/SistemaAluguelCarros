@@ -27,6 +27,7 @@ public final class ValidationRules {
     public static final int MARCA_MODELO_MIN_LENGTH = 2;
     public static final int MARCA_MODELO_MAX_LENGTH = 80;
     public static final int PLACA_NORMALIZADA_LENGTH = 7;
+    public static final int FOTO_URL_MAX_LENGTH = 400;
 
     private static final String SOMENTE_DIGITOS_REGEX = "\\D";
     private static final Pattern NOME_PATTERN = Pattern.compile("^[A-Za-zÀ-ÿ]+(?:[ '\\-][A-Za-zÀ-ÿ]+)*$");
@@ -35,6 +36,8 @@ public final class ValidationRules {
     private static final Pattern SENHA_PATTERN = Pattern.compile("^(?=.*[A-Za-z])(?=.*\\d).{6,60}$");
     /** Placa Mercosul ou antiga, sem separadores (7 caracteres alfanuméricos). */
     private static final Pattern PLACA_BR_PATTERN = Pattern.compile("^[A-Z0-9]{7}$");
+    /** Aceita URLs externas (http/https) e caminhos locais iniciados com /. */
+    private static final Pattern FOTO_URL_PATTERN = Pattern.compile("^(https?://.+|/.+)$");
 
     private ValidationRules() {
     }
@@ -182,6 +185,20 @@ public final class ValidationRules {
         }
         if (mo.length() < MARCA_MODELO_MIN_LENGTH || mo.length() > MARCA_MODELO_MAX_LENGTH) {
             return Optional.of("O modelo deve ter entre 2 e 80 caracteres.");
+        }
+        return Optional.empty();
+    }
+
+    public static Optional<String> validarFotoUrlOpcional(String fotoUrl) {
+        String url = safeTrim(fotoUrl);
+        if (url.isEmpty()) {
+            return Optional.empty();
+        }
+        if (url.length() > FOTO_URL_MAX_LENGTH) {
+            return Optional.of("A URL da foto deve ter no máximo " + FOTO_URL_MAX_LENGTH + " caracteres.");
+        }
+        if (!FOTO_URL_PATTERN.matcher(url).matches()) {
+            return Optional.of("A URL deve começar com http://, https:// ou /caminho.");
         }
         return Optional.empty();
     }

@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
-<th:block th:replace="~{fragments/layout :: layout(${titulo}, ~{::content}, null)}">
+<th:block th:replace="~{fragments/layout :: layout(${titulo}, ~{::content}, ~{::scripts})}">
     <th:block th:fragment="content">
     <section class="hero">
         <span class="eyebrow" th:text="${modoEdicao} ? '• Editar pedido' : '• Pedido de aluguel'">• Pedido</span>
@@ -28,17 +28,35 @@
         <form method="post" th:action="${formAction}" enctype="application/x-www-form-urlencoded" data-validate-form>
             <div class="grid">
                 <div class="field field-full" th:if="${!modoEdicao}">
-                    <label for="automovelId">Automóvel *</label>
-                    <select id="automovelId" name="automovelId" required>
-                        <option value="" disabled th:selected="${automovelIdSelecionado == null}">Selecione o veículo</option>
-                        <option th:each="a : ${automoveis}"
-                                th:value="${a.id}"
-                                th:selected="${automovelIdSelecionado != null and automovelIdSelecionado == a.id}"
-                                th:text="|${a.marca} ${a.modelo} (${a.ano}) • ${a.placaNormalizada}|">
-                            Veículo
-                        </option>
-                    </select>
-                    <div class="hint">Escolha um veículo da frota cadastrada pelo agente. A propriedade será ajustada conforme o tipo de contrato na aprovação.</div>
+                    <label>Automóvel *</label>
+                    <div class="hint">Selecione um veículo da frota. A propriedade será ajustada conforme o tipo de contrato na aprovação.</div>
+
+                    <div class="catalog-grid catalog-grid-compact" role="radiogroup" aria-label="Seleção de automóvel">
+                        <label class="car-option" th:each="a : ${automoveis}">
+                            <input type="radio"
+                                   name="automovelId"
+                                   th:value="${a.id}"
+                                   required
+                                   th:checked="${automovelIdSelecionado != null and automovelIdSelecionado == a.id}">
+                            <span class="car-option-card">
+                                <span class="car-photo">
+                                    <img
+                                            th:src="${(a.fotoUrl != null and !#strings.isEmpty(a.fotoUrl)) ? a.fotoUrl : '/img/car-placeholder.svg'}"
+                                            th:alt="|Foto do ${a.marca} ${a.modelo}|"
+                                            loading="lazy">
+                                </span>
+                                <span class="car-body">
+                                    <span class="car-title">
+                                        <strong th:text="|${a.marca} ${a.modelo}|">Marca Modelo</strong>
+                                        <span class="muted" th:text="${a.ano}">2024</span>
+                                    </span>
+                                    <span class="car-meta">
+                                        <span class="chip chip-plate" th:text="${a.placaNormalizada}">ABC1D23</span>
+                                    </span>
+                                </span>
+                            </span>
+                        </label>
+                    </div>
                 </div>
                 <div class="field field-full">
                     <label for="descricaoSolicitacao">Descrição da solicitação *</label>
@@ -50,8 +68,8 @@
                               maxlength="1000"
                               placeholder="Ex.: preciso de um veículo compacto para deslocamento urbano durante 7 dias."
                               th:text="${descricaoSolicitacao}"></textarea>
-                    <div class="hint" th:if="${!modoEdicao}">Descreva a necessidade com 15 a 1000 caracteres. O pedido nasce com status `PENDENTE` até análise.</div>
-                    <div class="hint" th:if="${modoEdicao}">Use de 15 a 1000 caracteres. Somente pedidos `PENDENTE` podem ser editados.</div>
+                    <div class="hint" th:if="${!modoEdicao}">Descreva a necessidade com 15 a 1000 caracteres. O pedido ficará pendente até a análise do agente.</div>
+                    <div class="hint" th:if="${modoEdicao}">Use de 15 a 1000 caracteres. Apenas pedidos pendentes podem ser editados.</div>
                 </div>
             </div>
 
@@ -61,6 +79,9 @@
             </div>
         </form>
     </section>
+    </th:block>
+    <th:block th:fragment="scripts">
+        <script th:src="@{/js/form-validations.js}"></script>
     </th:block>
 </th:block>
 </html>

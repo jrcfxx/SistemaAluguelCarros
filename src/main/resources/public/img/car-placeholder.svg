@@ -1,0 +1,95 @@
+<svg viewBox="0 0 800 450" xmlns="http://www.w3.org/2000/svg" fill="none">
+  <!-- Background -->
+  <rect width="800" height="450" fill="#D2D8DE"/>
+
+  <!-- Ground shadow -->
+  <ellipse cx="400" cy="370" rx="280" ry="18" fill="rgba(23,27,31,0.10)"/>
+
+  <!-- Car body — sleek coupe silhouette -->
+  <path d="
+    M 130 310
+    L 145 250
+    L 200 210
+    L 290 178
+    L 390 168
+    L 510 172
+    L 590 198
+    L 650 240
+    L 672 295
+    L 672 310
+    Z"
+    fill="#B8BEC6"
+    stroke="rgba(23,27,31,0.12)"
+    stroke-width="1.5"/>
+
+  <!-- Roof -->
+  <path d="
+    M 215 210
+    L 252 172
+    L 320 156
+    L 420 150
+    L 510 158
+    L 555 178
+    L 590 198
+    L 560 210
+    Z"
+    fill="#C8CDD3"/>
+
+  <!-- Window cluster -->
+  <path d="
+    M 228 206
+    L 260 174
+    L 322 158
+    L 415 153
+    L 505 161
+    L 545 179
+    L 550 204
+    Z"
+    fill="rgba(23,27,31,0.18)"/>
+
+  <!-- Window divider (B-pillar) -->
+  <line x1="390" y1="153" x2="392" y2="206" stroke="rgba(23,27,31,0.22)" stroke-width="3"/>
+
+  <!-- Door line -->
+  <path d="M 220 295 Q 400 285 650 295" stroke="rgba(23,27,31,0.10)" stroke-width="1.5" fill="none"/>
+
+  <!-- Wheel arches -->
+  <path d="M 160 310 Q 235 260 310 310" fill="#B0B7BF" stroke="rgba(23,27,31,0.12)" stroke-width="1"/>
+  <path d="M 520 310 Q 595 260 670 310" fill="#B0B7BF" stroke="rgba(23,27,31,0.12)" stroke-width="1"/>
+
+  <!-- Front wheel -->
+  <circle cx="232" cy="328" r="52" fill="#1C2026"/>
+  <circle cx="232" cy="328" r="36" fill="#8A9099"/>
+  <circle cx="232" cy="328" r="22" fill="#1C2026"/>
+  <circle cx="232" cy="328" r="8"  fill="#6B737C"/>
+  <!-- Spoke lines -->
+  <line x1="232" y1="296" x2="232" y2="306" stroke="#6B737C" stroke-width="3"/>
+  <line x1="232" y1="350" x2="232" y2="360" stroke="#6B737C" stroke-width="3"/>
+  <line x1="200" y1="328" x2="210" y2="328" stroke="#6B737C" stroke-width="3"/>
+  <line x1="254" y1="328" x2="264" y2="328" stroke="#6B737C" stroke-width="3"/>
+
+  <!-- Rear wheel -->
+  <circle cx="596" cy="328" r="52" fill="#1C2026"/>
+  <circle cx="596" cy="328" r="36" fill="#8A9099"/>
+  <circle cx="596" cy="328" r="22" fill="#1C2026"/>
+  <circle cx="596" cy="328" r="8"  fill="#6B737C"/>
+  <line x1="596" y1="296" x2="596" y2="306" stroke="#6B737C" stroke-width="3"/>
+  <line x1="596" y1="350" x2="596" y2="360" stroke="#6B737C" stroke-width="3"/>
+  <line x1="564" y1="328" x2="574" y2="328" stroke="#6B737C" stroke-width="3"/>
+  <line x1="618" y1="328" x2="628" y2="328" stroke="#6B737C" stroke-width="3"/>
+
+  <!-- Headlight -->
+  <path d="M 138 258 L 160 250 L 165 268 L 140 272 Z" fill="rgba(255,255,255,0.55)"/>
+  <!-- Taillight -->
+  <path d="M 660 250 L 672 252 L 670 278 L 658 276 Z" fill="rgba(180,40,40,0.45)"/>
+
+  <!-- Label -->
+  <text x="400" y="418" text-anchor="middle"
+        font-family="Inter, system-ui, sans-serif"
+        font-size="13" font-weight="600"
+        letter-spacing="0.18em"
+        fill="rgba(23,27,31,0.32)"
+        text-transform="uppercase">
+    AUTODRIVE · FROTA
+  </text>
+</svg>

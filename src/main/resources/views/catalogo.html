@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<th:block th:replace="~{fragments/layout :: layout('Catálogo', ~{::content}, null)}">
+    <th:block th:fragment="content">
+        <div class="page-header">
+            <div class="page-header-title">
+                <h1 class="page-title">Catálogo</h1>
+                <p class="page-subtitle">Frota cadastrada · filtros rápidos · seleção visual</p>
+            </div>
+            <div class="page-header-actions">
+                <a class="button button-primary-solid" href="/pedidos/novo" th:if="${autenticado}">Novo pedido</a>
+                <a class="button button-ghost" href="/login" th:if="${!autenticado}">Entrar para alugar</a>
+            </div>
+        </div>
+
+        <section class="panel panel-tight">
+            <form class="search-shell" method="get" action="/catalogo">
+                <div class="search-grid">
+                    <div class="field field-full">
+                        <label for="q">Busca</label>
+                        <input id="q" name="q" type="text" placeholder="Ex.: Corolla, HB20, ABC1D23"
+                               th:value="${q}">
+                        <div class="hint">Busca por marca, modelo ou placa.</div>
+                    </div>
+
+                    <div class="field">
+                        <label for="anoMin">Ano (mín.)</label>
+                        <input id="anoMin" name="anoMin" type="number" min="1980" max="2100" th:value="${anoMin}">
+                    </div>
+                    <div class="field">
+                        <label for="anoMax">Ano (máx.)</label>
+                        <input id="anoMax" name="anoMax" type="number" min="1980" max="2100" th:value="${anoMax}">
+                    </div>
+
+                    <div class="field field-full">
+                        <label for="sort">Ordenação</label>
+                        <select id="sort" name="sort">
+                            <option value="relevancia" th:selected="${sort == 'relevancia'}">Relevância</option>
+                            <option value="marca" th:selected="${sort == 'marca'}">Marca / modelo</option>
+                            <option value="ano_desc" th:selected="${sort == 'ano_desc'}">Ano (mais novos)</option>
+                            <option value="ano_asc" th:selected="${sort == 'ano_asc'}">Ano (mais antigos)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="search-actions">
+                    <button class="button button-neutral" type="button" onclick="location.href='/catalogo'">Limpar</button>
+                    <button class="button button-primary-solid" type="submit">Buscar</button>
+                </div>
+            </form>
+        </section>
+
+        <section class="panel">
+            <div class="panel-header">
+                <div>
+                    <h2 th:text="|Resultados (${total})|">Resultados (0)</h2>
+                </div>
+            </div>
+
+            <div class="catalog-grid" th:if="${#lists.size(automoveis) > 0}">
+                <article class="car-card" th:each="a : ${automoveis}">
+                    <div class="car-photo">
+                        <img
+                                th:src="${(a.fotoUrl != null and !#strings.isEmpty(a.fotoUrl)) ? a.fotoUrl : '/img/car-placeholder.svg'}"
+                                th:alt="|Foto do ${a.marca} ${a.modelo}|"
+                                loading="lazy">
+                    </div>
+                    <div class="car-body">
+                        <div class="car-title">
+                            <strong th:text="|${a.marca} ${a.modelo}|">Marca Modelo</strong>
+                            <span class="muted" th:text="${a.ano}">2024</span>
+                        </div>
+                        <div class="car-meta">
+                            <span class="chip chip-plate" th:text="${a.placaNormalizada}">ABC1D23</span>
+                            <span class="chip chip-owner" th:text="${a.tipoProprietario.tituloAmigavel}">Locadora</span>
+                        </div>
+
+                        <div class="car-actions" th:if="${autenticado or agenteAutenticado}">
+                            <a class="button button-ghost btn-sm" th:if="${agenteAutenticado}"
+                               th:href="@{'/agente/automoveis/' + ${a.id} + '/editar'}">
+                                Editar
+                            </a>
+                            <a class="button button-primary-solid btn-sm" th:if="${autenticado}"
+                               th:href="@{/pedidos/novo}">
+                                Alugar
+                            </a>
+                        </div>
+                    </div>
+                </article>
+            </div>
+
+            <div class="empty-state" th:if="${#lists.size(automoveis) == 0}">
+                <strong>Nenhum veículo encontrado com esses filtros.</strong>
+                <p class="muted">Tente limpar a busca ou ajustar o intervalo de anos.</p>
+                <div class="actions">
+                    <a class="button button-primary-solid" href="/catalogo">Ver frota completa</a>
+                </div>
+            </div>
+        </section>
+    </th:block>
+</th:block>
+</html>
+

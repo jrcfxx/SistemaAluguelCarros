@@ -1,44 +1,172 @@
 <!DOCTYPE html>
 <html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
-<th:block th:replace="~{fragments/layout :: layout('Início', ~{::content}, null)}">
-    <th:block th:fragment="content">
-    <div class="home-brand">
-        <div class="home-brand-mark" aria-hidden="true">
-            <span class="brand-dot"></span>
-        </div>
-        <div class="home-brand-text">
-            <h1 class="home-brand-title">AutoDrive</h1>
-            <p class="home-brand-subtitle">Sistema de aluguel de carros</p>
-        </div>
-    </div>
+<th:block th:replace="~{fragments/layout :: layout-full('Início', ~{::content}, null)}">
+<th:block th:fragment="content">
 
-    <section class="panel">
-        <div class="panel-header">
-            <div>
-                <h2>Atalhos</h2>
-                <p th:if="${autenticado}" th:text="|Bem-vindo(a), ${clienteNome}.|">Bem-vindo(a).</p>
-                <p th:if="${agenteAutenticado}" th:text="|Bem-vindo(a), ${agenteNome}.|">Bem-vindo(a).</p>
-                <p th:if="${!autenticado and !agenteAutenticado}">Escolha uma opção para começar.</p>
+<div class="showcase">
+
+    <!-- ── Left thumbnail rail ──────────────────────────────────────── -->
+    <aside class="thumb-rail" id="thumbRail" aria-label="Modelos em destaque">
+        <th:block th:if="${#lists.size(carrosDestaque) > 0}">
+            <button th:each="carro, iter : ${carrosDestaque}"
+                    th:classappend="${iter.first} ? ' active' : ''"
+                    class="thumb-item"
+                    type="button"
+                    th:data-index="${iter.index}"
+                    th:data-foto="${(carro.fotoUrl != null and !#strings.isEmpty(carro.fotoUrl)) ? carro.fotoUrl : '/img/car-placeholder.svg'}"
+                    th:data-modelo="${carro.modelo}"
+                    th:data-marca="${carro.marca}"
+                    th:data-ano="${carro.ano}"
+                    th:aria-label="|${carro.marca} ${carro.modelo}|"
+                    onclick="goTo(+this.dataset.index)">
+                <img th:src="${(carro.fotoUrl != null and !#strings.isEmpty(carro.fotoUrl)) ? carro.fotoUrl : '/img/car-placeholder.svg'}"
+                     th:alt="|${carro.marca} ${carro.modelo}|"
+                     loading="lazy">
+            </button>
+        </th:block>
+        <th:block th:if="${#lists.size(carrosDestaque) == 0}">
+            <div class="thumb-item active" aria-hidden="true">
+                <img src="/img/car-placeholder.svg" alt="">
+            </div>
+        </th:block>
+    </aside>
+
+    <!-- ── Main stage ───────────────────────────────────────────────── -->
+    <section class="main-stage" aria-label="Destaque principal">
+
+        <!-- Painel diagonal direito = foto do carro (trocada pelo JS) -->
+        <div class="stage-photo-panel" aria-hidden="true">
+            <img id="stagePhoto"
+                 th:src="${(carroAtivo != null and carroAtivo.fotoUrl != null and !#strings.isEmpty(carroAtivo.fotoUrl)) ? carroAtivo.fotoUrl : '/img/car-placeholder.svg'}"
+                 alt="">
+        </div>
+        <div class="stage-photo-overlay" aria-hidden="true"></div>
+
+        <!-- Abas de filtro do palco -->
+        <div class="stage-top">
+            <div class="stage-tabs">
+                <a class="stage-tab active" href="/catalogo">TODOS</a>
+                <a class="stage-tab" href="/catalogo?sort=ano_desc">NOVOS</a>
+                <a class="stage-tab" href="/catalogo?sort=marca">MARCA</a>
             </div>
         </div>
 
-        <div class="actions" th:if="${autenticado}">
-            <a class="button button-primary-solid" href="/pedidos">Meus pedidos</a>
-            <a class="button button-ghost" th:href="@{/clientes/{cid}/rendimentos(cid=${clienteId})}">Rendimentos</a>
-            <a class="button button-ghost" href="/clientes">Meu cadastro</a>
+        <!-- Corpo: título do modelo -->
+        <div class="stage-body">
+            <img src="/img/autodrive-logo.svg" alt="AutoDrive" class="display-brand-logo">
+            <h1 class="display-title" id="stageModelo"
+                th:text="${carroAtivo != null ? carroAtivo.modelo : 'FROTA EXCLUSIVA'}">MODELO</h1>
+            <p class="display-mark" id="stageMarca"
+               th:text="${carroAtivo != null ? carroAtivo.marca + ' · ' + carroAtivo.ano : ''}"></p>
+            <div class="display-cta">
+                <a class="button button-primary-solid" href="/catalogo">Ver catálogo</a>
+                <a class="button button-ghost" href="/pedidos/novo"
+                   th:if="${autenticado}">Novo pedido</a>
+                <a class="button button-ghost" href="/agente/pedidos"
+                   th:if="${agenteAutenticado}">Painel</a>
+            </div>
         </div>
 
-        <div class="actions" th:if="${agenteAutenticado}">
-            <a class="button button-primary-solid" href="/agente/pedidos">Painel do agente</a>
-            <a class="button button-ghost" href="/agente/automoveis">Frota</a>
+        <!-- Contador -->
+        <div class="stage-counter" id="stageCounter" aria-hidden="true">01</div>
+
+        <!-- Setas do carousel -->
+        <button class="stage-arrow stage-arrow-prev" type="button"
+                aria-label="Anterior" onclick="prev()">&#8249;</button>
+        <button class="stage-arrow stage-arrow-next" type="button"
+                aria-label="Próximo" onclick="next()">&#8250;</button>
+
+        <!-- Spec bar -->
+        <div class="stage-specs">
+            <div class="spec-item">
+                <span class="spec-num" th:text="${totalFrota > 0 ? totalFrota : '10+'}">10</span>
+                <span class="spec-label">Veículos</span>
+            </div>
+            <div class="spec-item">
+                <span class="spec-num" id="stageAno"
+                      th:text="${carroAtivo != null ? carroAtivo.ano : '2024'}">2024</span>
+                <span class="spec-label">Ano do modelo</span>
+            </div>
+            <div class="spec-item">
+                <span class="spec-num">Premium</span>
+                <span class="spec-label">Categoria</span>
+            </div>
+            <div class="spec-item">
+                <span class="spec-num">Contrato</span>
+                <span class="spec-label">Automático</span>
+            </div>
         </div>
 
-        <div class="actions" th:if="${!autenticado and !agenteAutenticado}">
-            <a class="button button-primary-solid" href="/clientes/novo">Criar conta</a>
-            <a class="button button-ghost" href="/login">Login do cliente</a>
-            <a class="button button-ghost" href="/agente/login">Área do agente</a>
-        </div>
     </section>
-    </th:block>
+
+</div>
+
+<script>
+(function () {
+    const thumbs    = Array.from(document.querySelectorAll('#thumbRail .thumb-item'));
+    const elPhoto   = document.getElementById('stagePhoto');
+    const elModelo  = document.getElementById('stageModelo');
+    const elMarca   = document.getElementById('stageMarca');
+    const elAno     = document.getElementById('stageAno');
+    const elCounter = document.getElementById('stageCounter');
+    const total     = thumbs.length;
+    let atual       = 0;
+    let timer;
+
+    function pad(n) { return String(n + 1).padStart(2, '0'); }
+
+    window.goTo = function (idx) {
+        if (!total) return;
+        atual = ((idx % total) + total) % total;
+
+        const t = thumbs[atual];
+        const foto   = t.dataset.foto   || '/img/car-placeholder.svg';
+        const modelo = t.dataset.modelo || '';
+        const marca  = t.dataset.marca  || '';
+        const ano    = t.dataset.ano    || '';
+
+        // Foto com fade
+        elPhoto.style.transition = 'none';
+        elPhoto.style.opacity    = '0';
+        requestAnimationFrame(() => {
+            elPhoto.src = foto;
+            requestAnimationFrame(() => {
+                elPhoto.style.transition = 'opacity 0.22s ease';
+                elPhoto.style.opacity    = '1';
+            });
+        });
+
+        // Textos
+        elModelo.textContent  = modelo;
+        elMarca.textContent   = marca + ' · ' + ano;
+        if (elAno) elAno.textContent = ano;
+        elCounter.textContent = pad(atual);
+
+        // Thumbs
+        thumbs.forEach((th, i) => th.classList.toggle('active', i === atual));
+    };
+
+    window.next = function () { goTo(atual + 1); };
+    window.prev = function () { goTo(atual - 1); };
+
+    function startAuto() {
+        timer = setInterval(window.next, 5000);
+    }
+    function stopAuto() {
+        clearInterval(timer);
+    }
+
+    const showcase = document.querySelector('.showcase');
+    if (showcase) {
+        showcase.addEventListener('mouseenter', stopAuto);
+        showcase.addEventListener('mouseleave', startAuto);
+    }
+
+    // Inicia auto-play
+    if (total > 1) startAuto();
+})();
+</script>
+
+</th:block>
 </th:block>
 </html>
