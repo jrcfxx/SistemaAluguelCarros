@@ -35,6 +35,13 @@
                     <label for="modelo">Modelo *</label>
                     <input id="modelo" name="modelo" type="text" maxlength="80" required th:value="${modelo}">
                 </div>
+                <div class="field-full">
+                    <label for="fotoUrl">Foto (URL)</label>
+                    <input id="fotoUrl" name="fotoUrl" type="url" maxlength="400"
+                           th:value="${fotoUrl}"
+                           placeholder="https://...">
+                    <div class="hint">Opcional. Use uma URL pública (http/https). Se ficar em branco, usamos uma imagem padrão.</div>
+                </div>
             </div>
             <div class="actions">
                 <a class="button button-neutral" href="/agente/automoveis">Cancelar</a>

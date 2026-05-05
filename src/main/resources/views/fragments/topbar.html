@@ -1,33 +1,51 @@
-<div th:fragment="topbar" xmlns:th="http://www.thymeleaf.org" class="topbar">
+<nav th:fragment="topbar" xmlns:th="http://www.thymeleaf.org" class="topbar" aria-label="Navegação principal">
+
     <a class="brand-mark" href="/">
-        <span class="brand-dot"></span>
-        <span>AutoDrive</span>
+        <img src="/img/autodrive-logo.svg" alt="AutoDrive" class="brand-logo">
     </a>
 
-    <div class="topbar-actions">
-        <!-- Cliente -->
-        <a class="button button-ghost" href="/pedidos" th:if="${autenticado}">Meus pedidos</a>
-        <a class="button button-primary-solid" href="/pedidos/novo" th:if="${autenticado}">Novo pedido</a>
-        <a class="button button-ghost" th:href="@{/clientes/{cid}/rendimentos(cid=${clienteId})}" th:if="${autenticado}">Rendimentos</a>
-        <a class="button button-ghost" href="/clientes" th:if="${autenticado}">Cadastro</a>
+    <!-- Links de navegação (centro) -->
+    <div class="topbar-links">
+        <a class="topbar-link" href="/catalogo">Catálogo</a>
 
-        <!-- Agente -->
-        <a class="button button-ghost" href="/agente/pedidos" th:if="${agenteAutenticado}">Pedidos</a>
-        <a class="button button-ghost" href="/agente/automoveis" th:if="${agenteAutenticado}">Frota</a>
+        <th:block th:if="${autenticado}">
+            <a class="topbar-link" href="/pedidos">Meus pedidos</a>
+            <a class="topbar-link" th:href="@{/clientes/{cid}/rendimentos(cid=${clienteId})}">Rendimentos</a>
+            <a class="topbar-link" href="/clientes">Cadastro</a>
+        </th:block>
+
+        <th:block th:if="${agenteAutenticado}">
+            <a class="topbar-link" href="/agente/pedidos">Pedidos</a>
+            <a class="topbar-link" href="/agente/automoveis">Frota</a>
+        </th:block>
+    </div>
+
+    <!-- Ações (direita) -->
+    <div class="topbar-actions">
+
+        <!-- Cliente autenticado -->
+        <th:block th:if="${autenticado}">
+            <span class="user-chip" th:text="${clienteNome}">Nome</span>
+            <a class="button button-primary-solid" href="/pedidos/novo">Novo pedido</a>
+            <form method="post" action="/logout" class="inline-form">
+                <button class="button button-neutral" type="submit">Sair</button>
+            </form>
+        </th:block>
+
+        <!-- Agente autenticado -->
+        <th:block th:if="${agenteAutenticado}">
+            <span class="user-chip" th:text="|Agente · ${agenteNome}|">Agente</span>
+            <form method="post" action="/agente/logout" class="inline-form">
+                <button class="button button-neutral" type="submit">Sair</button>
+            </form>
+        </th:block>
 
         <!-- Visitante -->
-        <a class="button button-ghost" href="/login" th:if="${!autenticado}">Entrar</a>
-        <a class="button button-primary-solid" href="/clientes/novo" th:if="${!autenticado}">Criar conta</a>
-        <a class="button button-ghost" href="/agente/login" th:if="${!agenteAutenticado}">Área do agente</a>
+        <th:block th:if="${!autenticado and !agenteAutenticado}">
+            <a class="topbar-link topbar-link-muted" href="/agente/login">Área do agente</a>
+            <a class="button button-ghost" href="/login">Entrar</a>
+            <a class="button button-primary-solid" href="/clientes/novo">Criar conta</a>
+        </th:block>
 
-        <span class="user-chip" th:if="${clienteNome != null}" th:text="|Olá, ${clienteNome}|">Olá, usuário</span>
-        <span class="user-chip" th:if="${agenteNome != null}" th:text="|Agente: ${agenteNome}|">Agente</span>
-
-        <form method="post" action="/logout" class="inline-form" th:if="${autenticado}">
-            <button class="button button-neutral" type="submit">Sair</button>
-        </form>
-        <form method="post" action="/agente/logout" class="inline-form" th:if="${agenteAutenticado}">
-            <button class="button button-neutral" type="submit">Sair da área do agente</button>
-        </form>
     </div>
-</div>
+</nav>

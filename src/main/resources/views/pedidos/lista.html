@@ -42,7 +42,7 @@
                               th:text="|${pedido.automovel.marca} ${pedido.automovel.modelo} (${pedido.automovel.placaNormalizada})|">Veículo</span>
                         <span class="muted" th:if="${pedido.automovel == null}">—</span>
                     </td>
-                    <td th:text="${pedido.descricaoSolicitacao}">Descrição</td>
+                    <td class="td-truncate" th:title="${pedido.descricaoSolicitacao}" th:text="${pedido.descricaoSolicitacao}">Descrição</td>
                     <td>
                         <span class="status-badge"
                               th:classappend="${pedido.status.name() == 'PENDENTE'} ? ' status-pendente' :

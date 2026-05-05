@@ -46,8 +46,8 @@
                 <tr th:each="pedido : ${pedidos}">
                     <td th:text="${pedido.id}">1</td>
                     <td th:text="${pedido.cliente.nome}">Cliente</td>
-                    <td th:text="${pedido.cliente.cpf}">00000000000</td>
-                    <td th:text="${pedido.descricaoSolicitacao}">Descrição</td>
+                    <td class="muted" th:text="${pedido.cliente.cpf}">000.000.000-00</td>
+                    <td class="td-truncate" th:title="${pedido.descricaoSolicitacao}" th:text="${pedido.descricaoSolicitacao}">Descrição</td>
                     <td>
                         <span class="status-badge"
                               th:classappend="${pedido.status.name() == 'PENDENTE'} ? ' status-pendente' :
@@ -72,7 +72,7 @@
                                   method="post" class="inline-form"
                                   onsubmit="return confirm('Aprovar com locação simples? Na fila rápida o tipo é sempre locação simples; use o detalhe do pedido para outro tipo.');">
                                 <input type="hidden" name="tipoContrato" value="LOCACAO_SIMPLES">
-                                <button type="submit" class="link-button">Aprovar</button>
+                                <button type="submit" class="button button-primary-solid btn-sm">Aprovar</button>
                             </form>
                             <form th:if="${pedido.status.name() == 'PENDENTE'}"
                                   th:action="@{'/agente/pedidos/' + ${pedido.id} + '/reprovar'}"

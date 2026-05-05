@@ -146,32 +146,42 @@ public class DevDataSeeder {
 
         criarRendimento(heitor, "Construtora Delta", SeedDataFactory.gerarCnpjValidoSomenteDigitos(random), "10200.00");
 
-        Automovel corolla = criarAutomovelLocadora("ABC1D23", "Toyota", "Corolla", 2022);
-        Automovel gol = criarAutomovelLocadora("DEF2E34", "Volkswagen", "Gol", 2019);
-        criarAutomovelCliente("GHI3F45", "Honda", "Civic", 2021, bruno);
-        Automovel hb20 = criarAutomovelLocadora("JKL4G56", "Hyundai", "HB20", 2020);
-        Automovel onix = criarAutomovelLocadora("MNO5H67", "Chevrolet", "Onix", 2023);
-        Automovel uno = criarAutomovelLocadora("PQR6J78", "Fiat", "Uno", 2016);
-        Automovel renegade = criarAutomovelLocadora("STU7K89", "Jeep", "Renegade", 2021);
-        criarAutomovelLocadora("VWX8L90", "Ford", "Ka", 2018);
-        criarAutomovelLocadora("YZA9M12", "Honda", "City", 2022);
-        Automovel corollaCrossBanco = criarAutomovelBanco("BCD0N34", "Toyota", "Corolla Cross", 2024);
+        // Frota de luxo — fotos armazenadas localmente em /img/cars/
+        Automovel porsche = criarAutomovelLocadora("POR0A11", "Porsche", "911 GT3", 2024,
+                "/img/cars/porsche-911.png");
+        Automovel ferrari = criarAutomovelLocadora("FER0B24", "Ferrari", "Roma", 2024,
+                "/img/cars/ferrari-roma.png");
+        Automovel lamborghini = criarAutomovelLocadora("LAM0C23", "Lamborghini", "Huracán EVO", 2023,
+                "/img/cars/lamborghini-huracan.png");
+        Automovel mclaren = criarAutomovelLocadora("MCL0D22", "McLaren", "720S", 2022,
+                "/img/cars/mclaren-720s.png");
+        Automovel mercedesAMG = criarAutomovelLocadora("AMG0E23", "Mercedes-AMG", "GT S", 2023,
+                "/img/cars/mercedes-amg.png");
+        Automovel bmwM8 = criarAutomovelLocadora("BMW0F22", "BMW", "M8 Gran Coupé", 2022,
+                "/img/cars/bmw-m8.png");
+        Automovel astonMartin = criarAutomovelCliente("AST0G21", "Aston Martin", "DB11", 2021, bruno,
+                "/img/cars/aston-martin-db11.png");
+        Automovel bentley = criarAutomovelLocadora("BNT0H23", "Bentley", "Continental GT", 2023,
+                "/img/cars/bentley-continental.png");
+        Automovel rangeRover = criarAutomovelLocadora("RRV0J24", "Range Rover", "Autobiography", 2024,
+                "/img/cars/range-rover.png");
+        Automovel rollsRoyceBanco = criarAutomovelBanco("RRC0K23", "Rolls-Royce", "Ghost", 2023,
+                "/img/cars/rolls-royce-ghost.png");
 
-        PedidoAluguel p1 = criarPedido(ana, corolla, "Preciso de um carro para viagens a trabalho por 30 dias.", StatusPedido.PENDENTE);
-        criarPedido(carla, hb20, "Preciso de um carro econômico para deslocamento diário por 15 dias.", StatusPedido.PENDENTE);
-        criarPedido(diego, uno, "Carro para uso urbano e visitas técnicas por duas semanas.", StatusPedido.REPROVADO);
-        criarPedido(elisa, renegade, "Solicito veículo para audiências e deslocamentos no interior por 20 dias.", StatusPedido.CANCELADO);
+        PedidoAluguel p1 = criarPedido(ana, porsche, "Solicito o Porsche 911 GT3 para viagens executivas por 30 dias.", StatusPedido.PENDENTE);
+        criarPedido(carla, mclaren, "Preciso do McLaren 720S para eventos corporativos por 15 dias.", StatusPedido.PENDENTE);
+        criarPedido(diego, mercedesAMG, "Veículo para deslocamentos de alto padrão por duas semanas.", StatusPedido.REPROVADO);
+        criarPedido(elisa, rangeRover, "Solicito Range Rover para audiências e deslocamentos por 20 dias.", StatusPedido.CANCELADO);
 
-        PedidoAluguel pAprovado1 = criarPedido(bruno, gol, "Locação com opção de compra para uso familiar ao longo do ano.", StatusPedido.APROVADO);
+        PedidoAluguel pAprovado1 = criarPedido(bruno, astonMartin, "Locação do Aston Martin DB11 com opção de compra ao final.", StatusPedido.APROVADO);
         criarContrato(pAprovado1, 1, "Contrato de locação com opção de compra gerado para ambiente local.", TipoContrato.LOCACAO_COM_OPCAO_COMPRA);
 
-        PedidoAluguel pAprovado2 = criarPedido(gabriela, onix, "Preciso de carro para plantões e deslocamentos noturnos por 45 dias.", StatusPedido.APROVADO);
+        PedidoAluguel pAprovado2 = criarPedido(gabriela, ferrari, "Ferrari Roma para deslocamentos premium por 45 dias.", StatusPedido.APROVADO);
         criarContrato(pAprovado2, 2, "Contrato de locação simples gerado para ambiente local.", TipoContrato.LOCACAO_SIMPLES);
 
-        PedidoAluguel pAprovado3 = criarPedido(heitor, corollaCrossBanco, "Veículo para visitas a obras com contratação via crédito bancário.", StatusPedido.APROVADO);
+        PedidoAluguel pAprovado3 = criarPedido(heitor, rollsRoyceBanco, "Rolls-Royce Ghost para uso executivo via crédito bancário.", StatusPedido.APROVADO);
         criarContrato(pAprovado3, 3, "Contrato de crédito bancário (leasing) gerado para ambiente local.", TipoContrato.CREDITO_BANCARIO);
 
-        // Mantém pelo menos um pedido pendente com bom texto (útil para testar análise)
         pedidoAluguelRepository.save(p1);
     }
 
@@ -196,21 +206,21 @@ public class DevDataSeeder {
         rendimentoRepository.save(r);
     }
 
-    private Automovel criarAutomovelLocadora(String placa, String marca, String modelo, int ano) {
-        Automovel a = new Automovel(placa, marca, modelo, ano);
+    private Automovel criarAutomovelLocadora(String placa, String marca, String modelo, int ano, String fotoUrl) {
+        Automovel a = new Automovel(placa, marca, modelo, ano, fotoUrl);
         a.setTipoProprietario(TipoProprietarioVeiculo.LOCADORA);
         return automovelRepository.save(a);
     }
 
-    private Automovel criarAutomovelCliente(String placa, String marca, String modelo, int ano, Cliente proprietario) {
-        Automovel a = new Automovel(placa, marca, modelo, ano);
+    private Automovel criarAutomovelCliente(String placa, String marca, String modelo, int ano, Cliente proprietario, String fotoUrl) {
+        Automovel a = new Automovel(placa, marca, modelo, ano, fotoUrl);
         a.setTipoProprietario(TipoProprietarioVeiculo.CLIENTE);
         a.setProprietarioCliente(proprietario);
         return automovelRepository.save(a);
     }
 
-    private Automovel criarAutomovelBanco(String placa, String marca, String modelo, int ano) {
-        Automovel a = new Automovel(placa, marca, modelo, ano);
+    private Automovel criarAutomovelBanco(String placa, String marca, String modelo, int ano, String fotoUrl) {
+        Automovel a = new Automovel(placa, marca, modelo, ano, fotoUrl);
         a.setTipoProprietario(TipoProprietarioVeiculo.BANCO);
         return automovelRepository.save(a);
     }

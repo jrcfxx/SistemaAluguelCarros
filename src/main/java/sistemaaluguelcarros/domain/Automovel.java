@@ -49,6 +49,9 @@ public class Automovel {
     @Column(nullable = false)
     private Integer ano;
 
+    @Column(name = "foto_url", length = 400)
+    private String fotoUrl;
+
     @NotNull
     @Enumerated(EnumType.STRING)
     @Column(name = "tipo_proprietario", nullable = false, length = 30)
@@ -62,10 +65,15 @@ public class Automovel {
     }
 
     public Automovel(String placaNormalizada, String marca, String modelo, Integer ano) {
+        this(placaNormalizada, marca, modelo, ano, null);
+    }
+
+    public Automovel(String placaNormalizada, String marca, String modelo, Integer ano, String fotoUrl) {
         this.placaNormalizada = placaNormalizada;
         this.marca = marca;
         this.modelo = modelo;
         this.ano = ano;
+        this.fotoUrl = fotoUrl;
     }
 
     public Long getId() {
@@ -106,6 +114,14 @@ public class Automovel {
 
     public void setAno(Integer ano) {
         this.ano = ano;
+    }
+
+    public String getFotoUrl() {
+        return fotoUrl;
+    }
+
+    public void setFotoUrl(String fotoUrl) {
+        this.fotoUrl = fotoUrl;
     }
 
     public TipoProprietarioVeiculo getTipoProprietario() {

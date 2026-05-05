@@ -1,34 +1,36 @@
 <!DOCTYPE html>
 <html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
-<th:block th:replace="~{fragments/layout :: layout('Login do agente', ~{::content}, null)}">
-    <th:block th:fragment="content">
-    <div th:replace="~{fragments/page-header :: pageHeader(
-            'Login do agente',
-            'Acesso à fila de análise de pedidos e gestão de frota.',
-            null,
-            null
-        )}"></div>
+<th:block th:replace="~{fragments/layout :: layout('Login do Agente', ~{::content}, null)}">
+<th:block th:fragment="content">
+<div class="auth-page">
+    <div class="auth-card">
+        <a href="/" class="auth-logo-link">
+            <img src="/img/autodrive-logo.svg" alt="AutoDrive" class="auth-logo">
+        </a>
+        <h1 class="auth-title">Painel<br>do agente</h1>
+        <p class="auth-subtitle">Área restrita</p>
 
-    <section class="panel">
         <div th:replace="~{fragments/flash :: flash}"></div>
 
         <form method="post" action="/agente/login" enctype="application/x-www-form-urlencoded">
-            <div class="grid">
-                <div class="field field-full">
-                    <label for="username">Usuário</label>
-                    <input id="username" name="username" type="text" autocomplete="username" required>
-                </div>
-                <div class="field field-full">
-                    <label for="senha">Senha</label>
-                    <input id="senha" name="senha" type="password" autocomplete="current-password" required>
-                </div>
+            <div class="field">
+                <label for="username">Usuário</label>
+                <input id="username" name="username" type="text" autocomplete="username" required
+                       minlength="3" maxlength="60">
+            </div>
+            <div class="field">
+                <label for="senha">Senha</label>
+                <input id="senha" name="senha" type="password" autocomplete="current-password" required
+                       minlength="6" maxlength="60">
             </div>
 
             <div class="actions">
-                <button class="button button-primary-solid" type="submit">Entrar como agente</button>
+                <a class="button button-ghost" href="/">Voltar</a>
+                <button class="button button-primary-solid" type="submit">Entrar</button>
             </div>
         </form>
-    </section>
-    </th:block>
+    </div>
+</div>
+</th:block>
 </th:block>
 </html>
