@@ -4,6 +4,12 @@
 
 Este Pull Request tem como objetivo realizar uma revisão técnica do projeto, conforme solicitado na atividade de Code Review.
 
+A revisão técnica foi organizada no arquivo `docs/CODE_REVIEW_ERICK.md`, conforme orientação recebida.
+
+Os comentários foram separados por arquivo analisado e incluem pontos de arquitetura, padrões de projeto, refatorações, code smells, boas práticas, validações, segurança e testabilidade.
+
+Entendo que, em um fluxo profissional de mercado, o ideal seria realizar comentários inline diretamente no Pull Request pela ferramenta de revisão do GitHub. Para esta atividade, mantive a revisão em Markdown para facilitar a organização e leitura.
+
 ## Pontos analisados
 
 - Arquitetura geral do sistema
